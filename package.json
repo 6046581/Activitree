@@ -1,7 +1,7 @@
 {
   "name": "partyplanner",
   "version": "1.0.0",
-  "description": "A Ripple application created with create-ripple",
+  "description": "A party planning application.",
   "type": "module",
   "engines": {
     "node": ">=20.0.0"
