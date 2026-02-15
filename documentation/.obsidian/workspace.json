@@ -4,21 +4,11 @@
     "type": "split",
     "children": [
       {
-        "id": "1715fecc2f87c001",
+        "id": "1aaebce0654250dd",
         "type": "tabs",
         "children": [
           {
-            "id": "fc72c67f35e1234f",
-            "type": "leaf",
-            "state": {
-              "type": "graph",
-              "state": {},
-              "icon": "lucide-git-fork",
-              "title": "Graph view"
-            }
-          },
-          {
-            "id": "25610b498a4a7ffe",
+            "id": "cd052fb06c07b02b",
             "type": "leaf",
             "state": {
               "type": "markdown",
@@ -32,20 +22,21 @@
             }
           },
           {
-            "id": "7a9ba51766ac354b",
+            "id": "d5ac8ad790161354",
             "type": "leaf",
             "state": {
               "type": "markdown",
               "state": {
-                "file": "User Stories.md",
+                "file": "Project waar is dat feestje.md",
                 "mode": "source",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "User Stories"
+              "title": "Project waar is dat feestje"
             }
           }
-        ]
+        ],
+        "currentTab": 1
       }
     ],
     "direction": "vertical"
@@ -204,11 +195,12 @@
       "bases:Create new base": false
     }
   },
-  "active": "fc72c67f35e1234f",
+  "active": "d5ac8ad790161354",
   "lastOpenFiles": [
-    "Project waar is dat feestje.md",
-    "Use Case Diagram.md",
     "User Stories.md",
+    "Use Case Diagram.md",
+    "Use case diagram image.png",
+    "Project waar is dat feestje.md",
     "create a link.md"
   ]
 }
