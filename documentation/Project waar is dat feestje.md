@@ -1,6 +1,6 @@
 [[User Stories]] 
 [[Use Case Diagram]]
-
+[[Class Diagram]]
 
 # Doel
 
