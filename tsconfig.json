@@ -32,7 +32,6 @@
 		"verbatimModuleSyntax": true,
 		"allowSyntheticDefaultImports": true,
 		"esModuleInterop": true,
-		"importsNotUsedAsValues": "error",
 
 		"jsx": "preserve",
 		"jsxImportSource": "ripple",
