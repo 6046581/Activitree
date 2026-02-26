@@ -13,12 +13,12 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "Project waar is dat feestje.md",
+                "file": "Progression.md",
                 "mode": "source",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "Project waar is dat feestje"
+              "title": "Progression"
             }
           }
         ]
@@ -182,8 +182,8 @@
   },
   "active": "d5ac8ad790161354",
   "lastOpenFiles": [
-    "Class Diagram.md",
     "Project waar is dat feestje.md",
+    "Class Diagram.md",
     "User Stories.md",
     "Use Case Diagram.md",
     "Use case diagram image.png",
