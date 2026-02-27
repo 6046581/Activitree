@@ -1,33 +1,74 @@
+import { Header } from './components/Header.ripple';
 import { track } from 'ripple';
 
 export component App() {
-	let count = track(0);
+	let wallpaperSrc = track('');
+	let showFallback = track(false);
+
+	function getRandomWallpaper() {
+		const randomNum = Math.floor(Math.random() * 8) + 1;
+		return `assets/wallpapers/wallpaper-${randomNum}.jpg`;
+	}
+
+	function handleImageError() {
+		@showFallback = true;
+	}
+
+	function handleImageLoad() {
+		@showFallback = false;
+	}
+
+	// Initialize wallpaper on component mount
+	@wallpaperSrc = getRandomWallpaper();
+
+	 <div class="wallpaper" style={@showFallback ? 'background: radial-gradient(circle at top left, #2f3986, #222439 85%);' : ''}>
+		if (!@showFallback) {
+			<img src={@wallpaperSrc} alt="Wallpaper" onload={handleImageLoad} onerror={handleImageError} />
+		}
+	</div>
 
 	<div class="app">
+		<Header />
+
 		<div class="card">
-			<img src="../src/assets/ripple-logo-horizontal.png" alt="Ripple Logo" class="logo" />
+			<p>{'Some text that happens to be'}<b>{' bold'}</b> {' or'} <i>{' italic'}</i></p>
 
-			<p>{'The elegant TypeScript UI framework.'}</p>
-
-			<h1>{'Ripple'}</h1>
-			<h2>{'Ripple'}</h2>
-			<h3>{'Ripple'}</h3>
-			<h4>{'Ripple'}</h4>
-			<h5>{'Ripple'}</h5>
-			<h6>{'Ripple'}</h6>
+			<h1>{'Header'}</h1>
+			<h2>{'Header'}</h2>
+			<h3>{'Header'}</h3>
+			<h4>{'Header'}</h4>
+			<h5>{'Header'}</h5>
+			<h6>{'Header'}</h6>
 
 			<div class="button-group">
 				<a href="https://www.ripple-ts.com/" target="_blank" class="button docs">
 					{'Docs'}
 				</a>
-				<a
-					href="https://github.com/Ripple-TS/ripple"
-					target="_blank"
-					class="button github"
-				>
+				<a href="https://github.com/Ripple-TS/ripple" target="_blank" class="button github">
 					{'GitHub'}
 				</a>
 			</div>
 		</div>
 	</div>
+
+	<style>
+		.wallpaper {
+			position: fixed;
+			top: 0;
+			left: 0;
+			width: 100%;
+			height: 100%;
+			overflow: hidden;
+			z-index: -1;
+			background: radial-gradient(circle at top left, #2f3986, #222439 85%);
+		}
+
+		.wallpaper img {
+			width: 100%;
+			height: 100%;
+			object-fit: cover;
+			object-position: center;
+			filter: blur(2px) brightness(0.75);
+		}
+	</style>
 }
