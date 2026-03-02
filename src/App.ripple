@@ -1,37 +1,20 @@
 import { Header } from './components/Header.ripple';
+import { Wallpaper } from './components/Wallpaper.ripple';
 import { track } from 'ripple';
 
 export component App() {
-	let wallpaperSrc = track('');
-	let showFallback = track(false);
-
-	function getRandomWallpaper() {
-		const randomNum = Math.floor(Math.random() * 8) + 1;
-		return `assets/wallpapers/wallpaper-${randomNum}.jpg`;
-	}
-
-	function handleImageError() {
-		@showFallback = true;
-	}
-
-	function handleImageLoad() {
-		@showFallback = false;
-	}
-
-	// Initialize wallpaper on component mount
-	@wallpaperSrc = getRandomWallpaper();
-
-	 <div class="wallpaper" style={@showFallback ? 'background: radial-gradient(circle at top left, #2f3986, #222439 85%);' : ''}>
-		if (!@showFallback) {
-			<img src={@wallpaperSrc} alt="Wallpaper" onload={handleImageLoad} onerror={handleImageError} />
-		}
-	</div>
+	<Wallpaper />
 
 	<div class="app">
 		<Header />
 
 		<div class="card">
-			<p>{'Some text that happens to be'}<b>{' bold'}</b> {' or'} <i>{' italic'}</i></p>
+			<p>
+				{'Some text that happens to be'}
+				<b>{' bold'}</b>
+				{' or'}
+				<i>{' italic'}</i>
+			</p>
 
 			<h1>{'Header'}</h1>
 			<h2>{'Header'}</h2>
@@ -50,25 +33,4 @@ export component App() {
 			</div>
 		</div>
 	</div>
-
-	<style>
-		.wallpaper {
-			position: fixed;
-			top: 0;
-			left: 0;
-			width: 100%;
-			height: 100%;
-			overflow: hidden;
-			z-index: -1;
-			background: radial-gradient(circle at top left, #2f3986, #222439 85%);
-		}
-
-		.wallpaper img {
-			width: 100%;
-			height: 100%;
-			object-fit: cover;
-			object-position: center;
-			filter: blur(2px) brightness(0.75);
-		}
-	</style>
 }
