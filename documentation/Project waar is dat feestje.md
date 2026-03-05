@@ -22,7 +22,7 @@ Gebruik:
 - **Scrumboard in GitHub**
 - **Documentatie** (use case diagram, class diagram, narratives)
 
-Belangrijk: Het project draait niet alleen om functionaliteit, maar ook om **architectuur, OOP-principes en documentatie**.
+> Het project draait niet alleen om functionaliteit, maar ook om **architectuur, OOP-principes en documentatie**.
 
 ---
 
@@ -74,7 +74,7 @@ Elke activiteit moet bevatten:
 - Optionele notities
 - Bij buitenactiviteiten: gekoppelde weersinformatie
 
-Dit vormt de kern van je datamodel.
+> Dit vormt de kern van ons datamodel.
 
 ---
 
@@ -93,165 +93,81 @@ Dit vormt de kern van je datamodel.
 ---
 
 ## Week 3: Narratives
-
 - Narratives schrijven vóór implementatie
-
 - Functionaliteiten bouwen
-
 - Verdere DOM-manipulatie
 
-
-👉 Narratives zijn verplicht vóór coderen.
+ Narratives zijn verplicht vóór coderen.
 
 ---
 
 ## Week 4: Abstracte classes + API
-
 - Abstracte classes in PHP
-
 - Weer-API koppelen (JSON ophalen via JS)
-
 - Use case diagram bijwerken
-
 
 ---
 
 ## Week 5: Class Diagram + Modules
-
 - Class diagram maken van bestaande code
-
 - JavaScript modules gebruiken
-
 - PHP static methods toepassen
-
 
 ---
 
 ## Week 6: Database + Volledige OOP JS
-
 - Database class (Singleton of Dependency Injection)
-
 - JS volledig OOP
-
 - Class diagram verbeteren
-
 
 ---
 
 ## Week 7–8: Eindopdracht
-
 - Nieuwe eisen verwerken
-
 - Diagrams aanpassen
-
 - Narratives schrijven
-
 - Applicatie verfijnen
-
 
 ---
 
-# 🧠 Technisch Ontwerp – Verplichte Relaties
-
+# Technisch Ontwerp – Verplichte Relaties
 Je moet aantonen dat je deze 4 UML-relaties kunt implementeren:
-
 1. **Associatie**
-
 2. **Aggregatie**
-
 3. **Compositie**
-
 4. **Generalisatie (overerving)**
 
-
-⚠️ Als één relatie ontbreekt in je class diagram, moet je een apart PHP-bestand maken waarin je die relatie alsnog demonstreert.
+> Als één relatie ontbreekt in je class diagram, moet je een apart PHP-bestand maken waarin je die relatie alsnog demonstreert.
 
 Voorbeelden moeten logisch zijn (geen onzinnige relaties).
 
 ---
 
-# 📝 Beoordeling
-
-Je wordt beoordeeld op:
-
+# Beoordeling
+Wordt beoordeeld op:
 ### 🔹 Technische werking
-
 - PHP
-
 - JavaScript
-
 - Database
-
 - API-integratie
 
-
 ### 🔹 Scrum & GitHub
-
 - Scrumboard
-
 - Planning
-
 - Transparantie
 
-
 ### 🔹 Documentatie
-
 - Use case diagram
-
 - Class diagram
-
 - Narratives
-
 - Correcte UML-relaties
 
-
-### 🔹 Samenwerking & Presentatie
-
----
-
-# ⚡ Wat is écht het belangrijkste?
+# Wat is écht het belangrijkste?
 
 Als je het project strategisch bekijkt, draait alles om:
-
 1. **Correcte toepassing van OOP in PHP én JS**
-
 2. **Een goed doordacht datamodel**
-
 3. **Documentatie vóór implementatie**
-
 4. **Schaalbare architectuur**
-
 5. **De 4 verplichte UML-relaties correct aantonen**
-
 6. **Weer-API correct integreren bij buitenactiviteiten**
-
-
-Dit is geen simpele CRUD-opdracht — het is een combinatie van:
-
-- Webdevelopment
-
-- Software architectuur
-
-- Scrum
-
-- Documentatie
-
-- OOP-principes
-
-
----
-
-Als je wilt, kan ik ook:
-
-- Een architectuurvoorstel maken
-
-- Een mogelijke class-structuur schetsen
-
-- Helpen met een datamodel
-
-- De UML-relaties concreet uitwerken voor dit project
-
-- Of het project analyseren vanuit een software-architectuur perspectief
-
-
-Wat wil je als volgende stap?
