@@ -4,21 +4,17 @@
     "type": "split",
     "children": [
       {
-        "id": "81e1595fadac68c0",
+        "id": "54a51a5a525a8917",
         "type": "tabs",
         "children": [
           {
-            "id": "89f51f93f71f1dcf",
+            "id": "14ae974869aa8906",
             "type": "leaf",
             "state": {
-              "type": "markdown",
-              "state": {
-                "file": "User Stories.md",
-                "mode": "source",
-                "source": false
-              },
+              "type": "empty",
+              "state": {},
               "icon": "lucide-file",
-              "title": "User Stories"
+              "title": "New tab"
             }
           }
         ]
@@ -181,13 +177,13 @@
       "bases:Create new base": false
     }
   },
-  "active": "89f51f93f71f1dcf",
+  "active": "14ae974869aa8906",
   "lastOpenFiles": [
+    "User Stories.md",
     "Project waar is dat feestje.md",
     "Naritives.md",
     "Use Case Diagram.md",
     "Use case diagram image.png",
-    "User Stories.md",
     "Planning.md",
     "naritives",
     "Class Diagram.md",
