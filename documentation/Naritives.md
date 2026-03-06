@@ -1,19 +1,19 @@
 # Use Case Specification
 
-**Use Case:** `        `
+**Use Case:** `Planning a party`
 **Version No:** 0.1
 
 ---
 
 ## 🎯 End Goal
 
-Describe the final outcome of this use case.
+Has a party planned
 
 ---
 
 ## 📘 Description
 
-Brief summary of what this use case covers.
+This use case covers how a user and the system interacts while making a party in the app
 
 ---
 
