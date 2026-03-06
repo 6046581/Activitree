@@ -1,36 +1,68 @@
-import { Header } from './components/Header.ripple';
-import { Wallpaper } from './components/Wallpaper.ripple';
-import { track } from 'ripple';
+import { track } from "ripple";
+
+import { NavBar } from "./components/NavBar.ripple";
+import { Wallpaper } from "./components/Wallpaper.ripple";
+import { ActivityTile } from "./components/ActivityTile.ripple";
 
 export component App() {
-	<Wallpaper />
+   let activities = track([
+      {
+         id: 1,
+         title: "Hiking in the Mountains",
+         description: "Join us for a refreshing hike through the scenic mountain trails. Perfect for all skill levels!",
+      },
+      {
+         id: 2,
+         title: "Cooking Class",
+         description: "Learn to cook delicious meals with our hands-on cooking class. Suitable for beginners and food enthusiasts alike.",
+      },
+      {
+         id: 3,
+         title: "Yoga in the Park",
+         description: "Relax and rejuvenate with our outdoor yoga sessions in the park. All levels welcome, bring your own mat!",
+      },
+   ]);
 
-	<div class="app">
-		<Header />
+   <Wallpaper />
 
-		<div class="card">
-			<p>
-				{'Some text that happens to be'}
-				<b>{' bold'}</b>
-				{' or'}
-				<i>{' italic'}</i>
-			</p>
+   <div class="app">
+      <NavBar />
 
-			<h1>{'Header'}</h1>
-			<h2>{'Header'}</h2>
-			<h3>{'Header'}</h3>
-			<h4>{'Header'}</h4>
-			<h5>{'Header'}</h5>
-			<h6>{'Header'}</h6>
+      <article class="card">
+         <p>
+            {"Some text that happens to be"}
+            <b>{" bold"}</b>
+            {" or"}
+            <i>{" italic"}</i>
+         </p>
 
-			<div class="button-group">
-				<a href="https://www.ripple-ts.com/" target="_blank" class="button docs">
-					{'Docs'}
-				</a>
-				<a href="https://github.com/Ripple-TS/ripple" target="_blank" class="button github">
-					{'GitHub'}
-				</a>
-			</div>
-		</div>
-	</div>
+         <h1>{"Header"}</h1>
+         <h2>{"Header"}</h2>
+         <h3>{"Header"}</h3>
+         <h4>{"Header"}</h4>
+         <h5>{"Header"}</h5>
+         <h6>{"Header"}</h6>
+
+         <div class="button-group">
+            <a href="https://www.ripple-ts.com/" target="_blank" class="button docs">{"Docs"}</a>
+            <a href="https://github.com/Ripple-TS/ripple" target="_blank" class="button github">
+               {"GitHub"}
+            </a>
+         </div>
+      </article>
+
+      <section class="activities">
+         for (let activity of @activities) {
+            <ActivityTile />
+         }
+      </section>
+   </div>
+
+   <style scoped>
+      .activities {
+         display: grid;
+         grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+         gap: 2rem;
+      }
+   </style>
 }

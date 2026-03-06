@@ -6,20 +6,20 @@ A minimal Ripple application template with TypeScript and Vite.
 
 1. Install dependencies:
 
-    ```bash
-    npm install # or pnpm or yarn
-    ```
+   ```bash
+   npm install # or pnpm or yarn
+   ```
 
 2. Start the development server:
 
-    ```bash
-    npm run dev
-    ```
+   ```bash
+   npm run dev
+   ```
 
 3. Build for production:
-    ```bash
-    npm run build
-    ```
+   ```bash
+   npm run build
+   ```
 
 ## Code Formatting
 

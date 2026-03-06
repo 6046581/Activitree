@@ -1,7 +1,7 @@
-import { mount } from 'ripple';
-import { App } from './App.ripple';
+import { mount } from "ripple";
+import { App } from "./App.ripple";
 
 mount(App, {
-	// @ts-ignore
-	target: document.getElementById('root'),
+   // @ts-ignore
+   target: document.getElementById("root"),
 });

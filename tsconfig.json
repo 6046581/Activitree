@@ -1,49 +1,42 @@
 {
-	"compilerOptions":
-	{
-		/* Language & Emit */
-		"target": "ESNext",
-		"module": "ESNext",
-		"lib":
-		[
-			"ES2022",
-			"DOM",
-			"DOM.Iterable"
-		],
-		"moduleResolution": "bundler",
-		"noEmit": true,
-		"isolatedModules": true,
+   "compilerOptions": {
+      /* Language & Emit */
+      "target": "ESNext",
+      "module": "ESNext",
+      "lib": ["ES2022", "DOM", "DOM.Iterable"],
+      "moduleResolution": "bundler",
+      "noEmit": true,
+      "isolatedModules": true,
 
-		"strict": true,
-		"noImplicitAny": true,
-		"strictNullChecks": true,
-		"strictFunctionTypes": true,
-		"strictBindCallApply": true,
-		"strictPropertyInitialization": true,
-		"noImplicitThis": true,
-		"useUnknownInCatchVariables": true,
+      "strict": true,
+      "noImplicitAny": true,
+      "strictNullChecks": true,
+      "strictFunctionTypes": true,
+      "strictBindCallApply": true,
+      "strictPropertyInitialization": true,
+      "noImplicitThis": true,
+      "useUnknownInCatchVariables": true,
 
-		"noUncheckedIndexedAccess": true,
-		"noPropertyAccessFromIndexSignature": true,
-		"exactOptionalPropertyTypes": true,
-		"noImplicitOverride": true,
-		"noFallthroughCasesInSwitch": true,
+      "noUncheckedIndexedAccess": true,
+      "noPropertyAccessFromIndexSignature": true,
+      "exactOptionalPropertyTypes": true,
+      "noImplicitOverride": true,
+      "noFallthroughCasesInSwitch": true,
 
-		"verbatimModuleSyntax": true,
-		"allowSyntheticDefaultImports": true,
-		"esModuleInterop": true,
+      "verbatimModuleSyntax": true,
+      "allowSyntheticDefaultImports": true,
+      "esModuleInterop": true,
 
-		"jsx": "preserve",
-		"jsxImportSource": "ripple",
+      "jsx": "preserve",
+      "jsxImportSource": "ripple",
 
-		"forceConsistentCasingInFileNames": true,
-		"skipLibCheck": false,
+      "forceConsistentCasingInFileNames": true,
+      "skipLibCheck": false,
 
-		"plugins":
-		[
-			{
-				"name": "@ripple-ts/typescript-plugin"
-			}
-		]
-	}
+      "plugins": [
+         {
+            "name": "@ripple-ts/typescript-plugin"
+         }
+      ]
+   }
 }

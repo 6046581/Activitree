@@ -1,10 +1,11 @@
-[[User Stories]] 
+[[User Stories]]
 [[Use Case Diagram]]
 [[Class Diagram]]
 
 # Doel
 
 Bedrijf X organiseert regelmatig activiteiten voor medewerkers, maar de planning verloopt chaotisch door:
+
 - Slechte communicatie
 - Verouderde systemen
 - Geen centraal overzicht
@@ -13,8 +14,11 @@ Bedrijf X organiseert regelmatig activiteiten voor medewerkers, maar de planning
 - Activiteiten die niet aansluiten bij voorkeuren
 
 ---
+
 # Kern
+
 Gebruik:
+
 - **PHP** (OOP)
 - **JavaScript** (OOP)
 - **Weer-API** (JSON van https://weerlive.nl/)
@@ -29,6 +33,7 @@ Gebruik:
 # Stakeholders Eisen
 
 ## Klant
+
 - Gebruiksvriendelijke applicatie
 - Activiteiten kunnen aanmaken, beheren en bekijken
 - Onderscheid tussen binnen- en buitenactiviteiten
@@ -48,7 +53,6 @@ Gebruik:
 - Narratives
 - Toepassing van OOP in **zowel PHP als JavaScript**
 
-
 ---
 
 ## Eindgebruikers
@@ -63,6 +67,7 @@ Gebruik:
 # Activiteitseisen
 
 Elke activiteit moet bevatten:
+
 - Titel + beschrijving
 - Datum, tijd, locatie
 - Type (binnen/buiten)
@@ -89,19 +94,20 @@ Elke activiteit moet bevatten:
 - Eerste OOP in PHP
 - Basis JS (DOM + forms)
 
-
 ---
 
 ## Week 3: Narratives
+
 - Narratives schrijven vóór implementatie
 - Functionaliteiten bouwen
 - Verdere DOM-manipulatie
 
- Narratives zijn verplicht vóór coderen.
+Narratives zijn verplicht vóór coderen.
 
 ---
 
 ## Week 4: Abstracte classes + API
+
 - Abstracte classes in PHP
 - Weer-API koppelen (JSON ophalen via JS)
 - Use case diagram bijwerken
@@ -109,6 +115,7 @@ Elke activiteit moet bevatten:
 ---
 
 ## Week 5: Class Diagram + Modules
+
 - Class diagram maken van bestaande code
 - JavaScript modules gebruiken
 - PHP static methods toepassen
@@ -116,6 +123,7 @@ Elke activiteit moet bevatten:
 ---
 
 ## Week 6: Database + Volledige OOP JS
+
 - Database class (Singleton of Dependency Injection)
 - JS volledig OOP
 - Class diagram verbeteren
@@ -123,6 +131,7 @@ Elke activiteit moet bevatten:
 ---
 
 ## Week 7–8: Eindopdracht
+
 - Nieuwe eisen verwerken
 - Diagrams aanpassen
 - Narratives schrijven
@@ -131,7 +140,9 @@ Elke activiteit moet bevatten:
 ---
 
 # Technisch Ontwerp – Verplichte Relaties
+
 Je moet aantonen dat je deze 4 UML-relaties kunt implementeren:
+
 1. **Associatie**
 2. **Aggregatie**
 3. **Compositie**
@@ -144,19 +155,24 @@ Voorbeelden moeten logisch zijn (geen onzinnige relaties).
 ---
 
 # Beoordeling
+
 Wordt beoordeeld op:
+
 ### 🔹 Technische werking
+
 - PHP
 - JavaScript
 - Database
 - API-integratie
 
 ### 🔹 Scrum & GitHub
+
 - Scrumboard
 - Planning
 - Transparantie
 
 ### 🔹 Documentatie
+
 - Use case diagram
 - Class diagram
 - Narratives
@@ -165,6 +181,7 @@ Wordt beoordeeld op:
 # Wat is écht het belangrijkste?
 
 Als je het project strategisch bekijkt, draait alles om:
+
 1. **Correcte toepassing van OOP in PHP én JS**
 2. **Een goed doordacht datamodel**
 3. **Documentatie vóór implementatie**

@@ -1,0 +1,83 @@
+export component NavBar() {
+   <header>
+      <h2>{"Activitree"}</h2>
+      <nav>
+         <div class="tab-bar">
+            <span class="category">{"activities"}</span>
+            <a href="/activities">{"Discover"}</a>
+            <a href="/activities">{"I'm Attending"}</a>
+            <a href="/activities">{"I'm Organizing"}</a>
+         </div>
+      </nav>
+   </header>
+
+   <style scoped>
+      header {
+         position: absolute;
+         top: 0;
+         width: 100%;
+         display: flex;
+         justify-content: space-between;
+         align-items: center;
+         padding: 1rem 2rem;
+         color: var(--color-text);
+         font-weight: 600;
+      }
+
+      nav {
+         display: flex;
+         align-items: center;
+         gap: 1rem;
+         height: 100%;
+      }
+
+      .tab-bar {
+         position: relative;
+         display: flex;
+         align-items: center;
+         gap: 0.4rem;
+         padding: 0.4rem 0.4rem;
+         height: 100%;
+         border-radius: 1000px;
+         color: var(--color-card-text);
+         background: var(--color-card-bg);
+         backdrop-filter: var(--effect-card);
+         box-shadow:
+            0 8px 24px rgba(0, 0, 0, 0.25),
+            0 4px 12px rgba(0, 0, 0, 0.5);
+      }
+
+      .tab-bar .category {
+         position: absolute;
+         top: 0;
+         left: 50%;
+         transform: translateX(-50%) translateY(-100%);
+         font-size: 0.9rem;
+         font-weight: 400;
+         text-transform: lowercase;
+         padding: 0.1rem 1rem;
+         border-radius: 1000px;
+         background: transparent;
+      }
+
+      .tab-bar a {
+         color: var(--color-card-text);
+         text-decoration: none;
+         font-size: 1.1rem;
+         padding: 0.6rem 3rem;
+         gap: 1.5rem;
+         border-radius: 1000px;
+         background: transparent;
+         white-space: nowrap;
+         transition:
+            color 0.3s ease,
+            background-color 0.3s ease;
+      }
+
+      .tab-bar a:hover {
+         color: var(--color-primary);
+         background: var(--color-card-bg);
+         backdrop-filter: var(--effect-card);
+      }
+   </style>
+}

@@ -1,29 +1,34 @@
 # Use Case Specification
 
-**Use Case:**  `        `
-**Version No:** 0.1  
+**Use Case:** `        `
+**Version No:** 0.1
 
 ---
 
 ## 🎯 End Goal
+
 Describe the final outcome of this use case.
 
 ---
 
 ## 📘 Description
+
 Brief summary of what this use case covers.
 
 ---
 
 ## 👥 Actors
+
 - Actor 1
-	- User
+   - User
 
 ---
 
 ## ✅ Preconditions
-- Condition 1 
-	- Need to be logged in
+
+- Condition 1
+   - Need to be logged in
+
 ---
 
 ## 🟢 Basic Flow (Happy Path)
@@ -43,9 +48,9 @@ Brief summary of what this use case covers.
 ## 🟡 Alternate Flow(s)
 
 | Step | User Actions | System Actions |
-|------|--------------|---------------|
-| 1 |  |  |
-| 2 |  |  |
+| ---- | ------------ | -------------- |
+| 1    |              |                |
+| 2    |              |                |
 
 ---
 
@@ -54,9 +59,9 @@ Brief summary of what this use case covers.
 Identify system and data error conditions.
 
 | Step | Exception Condition | System Response |
-|------|--------------------|----------------|
-| 1 |  |  |
-| 2 |  |  |
+| ---- | ------------------- | --------------- |
+| 1    |                     |                 |
+| 2    |                     |                 |
 
 ---
 

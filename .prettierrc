@@ -1,8 +1,8 @@
 {
-	"useTabs": true,
-	"singleQuote": true,
-	"trailingComma": "es5",
-	"printWidth": 100,
-	"tabWidth": 4,
-	"plugins": ["@ripple-ts/prettier-plugin"]
+   "useTabs": false,
+   "singleQuote": false,
+   "trailingComma": "es5",
+   "printWidth": 100,
+   "tabWidth": 3,
+   "plugins": ["@ripple-ts/prettier-plugin"]
 }

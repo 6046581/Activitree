@@ -1,121 +1,150 @@
-:root
-{
-    --color-primary: #2f3986;
-    --color-text: #f2f4f8;
+:root {
+   --color-primary: #2f3986;
+   --color-text: #f2f4f8;
 
-    --color-card-bg: rgba(255, 255, 255, 0.9);
-    --color-card-text: rgb(34, 36, 57);
+   --color-card-text: rgb(34, 36, 57);
+   --color-card-bg: rgba(255, 255, 255, 0.85);
+   --effect-card: blur(10px) saturate(1000%) contrast(200%);
 }
 
 * {
-    box-sizing: border-box;
-    margin: 0;
-    padding: 0;
+   box-sizing: border-box;
+   margin: 0;
+   padding: 0;
+}
+
+#root {
+   display: flex;
+   justify-content: center;
+   align-items: center;
+   min-height: 100vh;
 }
 
 .app {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    flex-direction: column;
-    min-height: 100vh;
-    font-family: 'Inter', 'Segoe UI', sans-serif;
-    letter-spacing: 0.25px;
-    padding: 1rem;
-    padding-top: 7.5rem;
-    gap: 2rem;
+   display: flex;
+   justify-content: center;
+   align-items: center;
+   flex-direction: column;
+   min-height: 100vh;
+   width: 100%;
+   max-width: 1600px;
+   font-family: "Inter", "Segoe UI", sans-serif;
+   letter-spacing: 0.25px;
+   padding: 1rem;
+   padding-top: 7.5rem;
+   gap: 2rem;
+}
+
+.app > * {
+   width: 100%;
 }
 
 .card {
-    background: var(--color-card-bg);
-    padding: 2.5rem 2rem;
-    border-radius: 1rem;
-    color: var(--color-card-text);
-    backdrop-filter: blur(10px);
-    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.25), 0 4px 12px rgba(0, 0, 0, 0.5);
-    width: 100%;
-    min-height: 50px;
-    box-sizing: border-box;
+   background: var(--color-card-bg);
+   padding: 1rem 1.5rem;
+   border-radius: 1rem;
+   color: var(--color-card-text);
+   backdrop-filter: var(--effect-card);
+   box-shadow:
+      0 8px 24px rgba(0, 0, 0, 0.25),
+      0 4px 12px rgba(0, 0, 0, 0.5);
+   min-height: 50px;
+   box-sizing: border-box;
 }
 
 @keyframes wallpaperFadeIn {
-    from {
-        scale: 1.05;
-        opacity: 0;
-    }
-    to {
-        scale: 1;
-        opacity: 0.5;
-    }
+   from {
+      scale: 1.05;
+      opacity: 0;
+   }
+
+   to {
+      scale: 1;
+      opacity: 0.5;
+   }
 }
 
 p {
-    font-size: 1.2rem;
-    margin-bottom: 1rem;
-    font-weight: 400;
+   font-size: 1.2rem;
+   font-weight: 400;
 }
 
 h1 {
-    font-size: 5rem;
-    margin-bottom: 0.5rem;
-    font-weight: 800;
-    letter-spacing: 0.01em;
+   font-size: 5rem;
+   margin-bottom: 0.5rem;
+   font-weight: 800;
+   letter-spacing: 0.01em;
 }
 
 h2 {
-    font-size: 3.5rem;
-    margin-bottom: 0.5rem;
-    font-weight: 700;
+   font-size: 3.5rem;
+   margin-bottom: 0.5rem;
+   font-weight: 700;
 }
 
 h3 {
-    font-size: 2rem;
-    margin-bottom: 0.5rem;
-    font-weight: 700;
+   font-size: 2.5rem;
+   margin-bottom: 0.5rem;
+   font-weight: 700;
 }
 
 h4 {
-    font-size: 1.6rem;
-    margin-bottom: 0.5rem;
-    font-weight: 600;
+   font-size: 1.75rem;
+   margin-bottom: 0.5rem;
+   font-weight: 600;
 }
 
 h5 {
-    font-size: 1.2rem;
-    margin-bottom: 0.5rem;
-    font-weight: 500;
+   font-size: 1.25rem;
+   margin-bottom: 0.5rem;
+   font-weight: 500;
 }
 
 h6 {
-    font-size: 0.9rem;
-    margin-bottom: 0.5rem;
-    font-weight: 400;
+   font-size: 0.9rem;
+   margin-bottom: 0.5rem;
+   font-weight: 400;
 }
 
 img {
-    max-width: 100%;
-    height: auto;
-    border-radius: 0.5rem;
+   max-width: 100%;
+   height: auto;
+   border-radius: 0.5rem;
 }
 
 .button {
-    background-color: rgba(20, 45, 116, 0.9);
-    color: #f2f4f8;
-    text-decoration: none;
-    font-size: 1.1rem;
-    font-weight: 600;
-    border-radius: 0.75rem;
-    padding: 0.5rem 1rem;
-    cursor: pointer;
-    transition: background 0.15s ease;
+   display: flex;
+   justify-content: center;
+   align-items: center;
+   background-color: rgba(20, 45, 116, 0.9);
+   color: #f2f4f8;
+   text-decoration: none;
+   font-size: 1.1rem;
+   font-weight: 600;
+   border-radius: 1000px;
+   padding: 0.6rem 1.2rem;
+   cursor: pointer;
+   transition: background 0.15s ease;
 }
 
 .button:hover {
-    background-color: rgba(20, 45, 116, 1);
+   background-color: rgba(20, 45, 116, 1);
 }
 
 .button-group {
-    display: flex;
-    gap: 1rem;
-    justify-content: center;
+   display: flex;
+   gap: 1rem;
+   justify-content: center;
+}
+
+.icon-text {
+   display: flex;
+   align-items: center;
+   flex-direction: row;
+   gap: 0.5rem;
+}
+
+.icon-text .fas {
+   width: 1.5em;
+   height: 1em;
 }
