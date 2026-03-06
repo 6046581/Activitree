@@ -1,28 +1,28 @@
 export component ActivityTile() {
    <article class="activity card">
-      <div>
-         <img
-            src="https://images.unsplash.com/photo-1506744038136-46273834b3fb?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8Mnx8aGlraW5nJTIwaW4lMjB0aGUlMjBtb3VudGFpbnN8ZW58MHx8MHx8fDA%3D&auto=format&fit=crop&w=800&q=60"
-            alt="Activity Image"
-         />
-      </div>
+      <img
+         src="https://images.unsplash.com/photo-1506744038136-46273834b3fb?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8Mnx8aGlraW5nJTIwaW4lMjB0aGUlMjBtb3VudGFpbnN8ZW58MHx8MHx8fDA%3D&auto=format&fit=crop&w=800&q=60"
+         alt="Activity Image"
+      />
+      <h4 class="title">{"Hiking in the Mountains"}</h4>
       <div class="content">
-         <h4>{"Hiking in the Mountains"}</h4>
-         <p class="icon-text">
-            <i class="fas fa-clock" />
-            {"Jan 14th 2014, 13:00"}
-         </p>
-         <p class="icon-text">
-            <i class="fas fa-location-dot" />
-            {"120 PeePoo St, London"}
-         </p>
-         <p class="icon-text">
-            <i class="fas fa-cloud" />
-            {"Outside"}
-         </p>
+         <div class="details">
+            <p class="icon-text">
+               <i class="fas fa-clock" />
+               {"Jan 14th 2014, 13:00"}
+            </p>
+            <p class="icon-text">
+               <i class="fas fa-location-dot" />
+               {"120 PeePoo St, London"}
+            </p>
+            <p class="icon-text">
+               <i class="fas fa-cloud" />
+               {"Outside"}
+            </p>
+         </div>
 
-         <p>
-            {"Join us for a refreshing hike through the scenic mountain trails. Perfect for all skill levels!"}
+         <p class="description">
+            {"Join us for a refreshing hike through the scenic mountain trails. Perfect for all skill levels! This is a great opportunity to connect with nature and meet new people who share your love for the outdoors. Don't forget to bring water and wear comfortable shoes!"}
          </p>
 
          <div class="attendance">
@@ -42,8 +42,12 @@ export component ActivityTile() {
    <style scoped>
       .activity {
          position: relative;
+         display: flex;
+         flex-direction: column;
+         gap: 0.5rem;
          width: 100%;
          aspect-ratio: 16 / 9;
+         isolation: isolate;
       }
 
       .activity:hover {
@@ -51,7 +55,7 @@ export component ActivityTile() {
       }
 
       .activity .icon-text {
-         font-weight: 500;
+         font-weight: 600;
       }
 
       .activity::before {
@@ -67,10 +71,10 @@ export component ActivityTile() {
          height: 100%;
          opacity: 0;
          transition:
-            width 0.4s cubic-bezier(0.1, 1.25, 0.15, 1.2),
-            height 0.4s cubic-bezier(0.1, 1.25, 0.15, 1.2),
-            opacity 0.4s cubic-bezier(0.1, 1.25, 0.15, 1.2),
-            transform 0.4s cubic-bezier(0.1, 1.25, 0.15, 1.2);
+            width 0.4s var(--ease),
+            height 0.4s var(--ease),
+            opacity 0.4s var(--ease),
+            transform 0.4s var(--ease);
       }
 
       .activity:hover::before {
@@ -87,11 +91,12 @@ export component ActivityTile() {
          width: 40%;
          height: 100%;
          object-fit: cover;
+         z-index: 0;
          border-radius: 0;
          border-top-right-radius: 1rem;
          border-bottom-right-radius: 1rem;
          clip-path: polygon(25% 0%, 100% 0%, 100% 100%, 0% 100%);
-         transition: width 0.4s cubic-bezier(0.1, 1.25, 0.15, 1.2);
+         transition: width 0.4s var(--ease);
       }
 
       .activity:hover img {
@@ -110,7 +115,7 @@ export component ActivityTile() {
          z-index: -1;
          pointer-events: none;
          clip-path: polygon(25% 0%, 100% 0%, 100% 100%, 0% 100%);
-         transition: width 0.6s cubic-bezier(0.1, 1.25, 0.15, 1.2);
+         transition: width 0.6s var(--ease);
       }
 
       .activity:hover::after {
@@ -120,20 +125,47 @@ export component ActivityTile() {
       .activity .content {
          display: flex;
          flex-direction: column;
+         justify-content: space-between;
          gap: 0.5rem;
+         flex: 1;
+         position: relative;
+         z-index: 2;
+         color: white;
+         mix-blend-mode: difference;
+      }
+
+      .activity .title {
+         position: relative;
+         z-index: 2;
+         white-space: nowrap;
+         color: white;
+         mix-blend-mode: difference;
+      }
+
+      .details {
+         display: flex;
+         flex-direction: column;
+         gap: 0.5rem;
+      }
+
+      .description {
+         display: -webkit-box;
+         -webkit-box-orient: vertical;
+         line-clamp: 3;
+         -webkit-line-clamp: 3;
+         overflow: hidden;
          width: 60%;
-         height: 100%;
       }
 
       .attendance {
          display: flex;
          flex-direction: row;
          gap: 0.75em;
-         margin-top: auto;
       }
 
       .attendance p {
          font-size: 1rem;
+         white-space: nowrap;
       }
    </style>
 }

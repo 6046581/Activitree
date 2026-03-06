@@ -3,7 +3,6 @@ export component NavBar() {
       <h2>{"Activitree"}</h2>
       <nav>
          <div class="tab-bar">
-            <span class="category">{"activities"}</span>
             <a href="/activities">{"Discover"}</a>
             <a href="/activities">{"I'm Attending"}</a>
             <a href="/activities">{"I'm Organizing"}</a>
@@ -42,22 +41,7 @@ export component NavBar() {
          color: var(--color-card-text);
          background: var(--color-card-bg);
          backdrop-filter: var(--effect-card);
-         box-shadow:
-            0 8px 24px rgba(0, 0, 0, 0.25),
-            0 4px 12px rgba(0, 0, 0, 0.5);
-      }
-
-      .tab-bar .category {
-         position: absolute;
-         top: 0;
-         left: 50%;
-         transform: translateX(-50%) translateY(-100%);
-         font-size: 0.9rem;
-         font-weight: 400;
-         text-transform: lowercase;
-         padding: 0.1rem 1rem;
-         border-radius: 1000px;
-         background: transparent;
+         box-shadow: var(--shadow);
       }
 
       .tab-bar a {
@@ -69,15 +53,20 @@ export component NavBar() {
          border-radius: 1000px;
          background: transparent;
          white-space: nowrap;
+         box-shadow:
+            0 0 0 transparent,
+            0 0 0 transparent;
          transition:
             color 0.3s ease,
             background-color 0.3s ease;
+         box-shadow: 0.3s ease;
       }
 
       .tab-bar a:hover {
          color: var(--color-primary);
          background: var(--color-card-bg);
          backdrop-filter: var(--effect-card);
+         box-shadow: var(--shadow);
       }
    </style>
 }
