@@ -82,7 +82,7 @@
             "state": {
               "type": "search",
               "state": {
-                "query": "",
+                "query": "tag:#outdoor",
                 "matchingCase": false,
                 "explainSearch": false,
                 "collapseAll": false,
@@ -103,12 +103,12 @@
               "title": "Bookmarks"
             }
           }
-        ]
+        ],
+        "currentTab": 1
       }
     ],
     "direction": "horizontal",
-    "width": 200,
-    "collapsed": true
+    "width": 200
   },
   "right": {
     "id": "b7164fe4e1b67bff",
@@ -211,7 +211,7 @@
       "bases:Create new base": false
     }
   },
-  "active": "5e2639ba3e143fb2",
+  "active": "1af97f898f9b2179",
   "lastOpenFiles": [
     "Use Case Diagram.md",
     "Naritives.md",
