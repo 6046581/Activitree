@@ -63,18 +63,6 @@
    box-sizing: border-box;
 }
 
-@keyframes wallpaperFadeIn {
-   from {
-      scale: 1.05;
-      opacity: 0;
-   }
-
-   to {
-      scale: 1;
-      opacity: 0.5;
-   }
-}
-
 .card p,
 .card h1,
 .card h2,

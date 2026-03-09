@@ -5,6 +5,10 @@ export default defineConfig({
    plugins: [ripple()],
    server: {
       port: 3000,
+      watch: {
+         usePolling: true,
+         interval: 100,
+      },
    },
    build: {
       target: "esnext",
