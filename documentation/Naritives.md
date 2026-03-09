@@ -33,7 +33,6 @@ This use case covers how a user and the system interacts while making a party in
 
 ## 🟢 Basic Flow (Happy Path)
 
-
 | Step | User Actions                                                                                  | System Actions                                                                                                          |
 | ---- | --------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------- |
 | 1    | clicks on the "+" to create an activity                                                       | creates a space where the user is able to select an activity and tell with how many persons the activity is going to be |
@@ -45,11 +44,12 @@ This use case covers how a user and the system interacts while making a party in
 
 ## 🟡 Alternate Flow(s)
 
-### 1. outdoor  
+### 1. outdoor
 
 | Step | User Actions                         | System Actions                                                                                               |
 | ---- | ------------------------------------ | ------------------------------------------------------------------------------------------------------------ |
 | 1    | The user selects an outdoor activety | The system shows the weather for that date and location and adds a warning "weather can effect the activety" |
+
 ### 2. canceling activity
 
 | Step | User Actions                                           | System Acitons                                                                                                     |
@@ -74,29 +74,31 @@ This use case covers how a user and the system interacts while making a party in
 Describe the true state of the system after successful completion.
 
 - Result 1
-	- Staff is assigned
+   - Staff is assigned
 - Result 2
-	- The event is fully organized
-
+   - The event is fully organized
 
 # Use Case 2
 
 **Use Case:**  
-**Version No:** 0.1  
+**Version No:** 0.1
 
 ---
 
 ## 🎯 End Goal
+
 Describe the final outcome of this use case.
 
 ---
 
 ## 📘 Description
+
 Brief summary of what this use case covers.
 
 ---
 
 ## 👥 Actors
+
 - Actor 1
 - Actor 2
 - Actor 3
@@ -104,6 +106,7 @@ Brief summary of what this use case covers.
 ---
 
 ## ✅ Preconditions
+
 - Condition 1
 - Condition 2
 - Condition 3
@@ -116,20 +119,20 @@ Brief summary of what this use case covers.
 > No conditional logic.
 
 | Step | User Actions | System Actions |
-|------|--------------|---------------|
-| 1 |  |  |
-| 2 |  |  |
-| 3 |  |  |
-| 4 |  |  |
+| ---- | ------------ | -------------- |
+| 1    |              |                |
+| 2    |              |                |
+| 3    |              |                |
+| 4    |              |                |
 
 ---
 
 ## 🟡 Alternate Flow(s)
 
 | Step | User Actions | System Actions |
-|------|--------------|---------------|
-| 1 |  |  |
-| 2 |  |  |
+| ---- | ------------ | -------------- |
+| 1    |              |                |
+| 2    |              |                |
 
 ---
 
@@ -138,9 +141,9 @@ Brief summary of what this use case covers.
 Identify system and data error conditions.
 
 | Step | Exception Condition | System Response |
-|------|--------------------|----------------|
-| 1 |  |  |
-| 2 |  |  |
+| ---- | ------------------- | --------------- |
+| 1    |                     |                 |
+| 2    |                     |                 |
 
 ---
 
@@ -155,21 +158,24 @@ Describe the true state of the system after successful completion.
 # Use Case Specification
 
 **Use Case:**  
-**Version No:** 0.1  
+**Version No:** 0.1
 
 ---
 
 ## 🎯 End Goal
+
 Describe the final outcome of this use case.
 
 ---
 
 ## 📘 Description
+
 Brief summary of what this use case covers.
 
 ---
 
 ## 👥 Actors
+
 - Actor 1
 - Actor 2
 - Actor 3
@@ -177,6 +183,7 @@ Brief summary of what this use case covers.
 ---
 
 ## ✅ Preconditions
+
 - Condition 1
 - Condition 2
 - Condition 3
@@ -189,20 +196,20 @@ Brief summary of what this use case covers.
 > No conditional logic.
 
 | Step | User Actions | System Actions |
-|------|--------------|---------------|
-| 1 |  |  |
-| 2 |  |  |
-| 3 |  |  |
-| 4 |  |  |
+| ---- | ------------ | -------------- |
+| 1    |              |                |
+| 2    |              |                |
+| 3    |              |                |
+| 4    |              |                |
 
 ---
 
 ## 🟡 Alternate Flow(s)
 
 | Step | User Actions | System Actions |
-|------|--------------|---------------|
-| 1 |  |  |
-| 2 |  |  |
+| ---- | ------------ | -------------- |
+| 1    |              |                |
+| 2    |              |                |
 
 ---
 
@@ -211,9 +218,9 @@ Brief summary of what this use case covers.
 Identify system and data error conditions.
 
 | Step | Exception Condition | System Response |
-|------|--------------------|----------------|
-| 1 |  |  |
-| 2 |  |  |
+| ---- | ------------------- | --------------- |
+| 1    |                     |                 |
+| 2    |                     |                 |
 
 ---
 
@@ -228,21 +235,24 @@ Describe the true state of the system after successful completion.
 # Use Case Specification
 
 **Use Case:**  
-**Version No:** 0.1  
+**Version No:** 0.1
 
 ---
 
 ## 🎯 End Goal
+
 Describe the final outcome of this use case.
 
 ---
 
 ## 📘 Description
+
 Brief summary of what this use case covers.
 
 ---
 
 ## 👥 Actors
+
 - Actor 1
 - Actor 2
 - Actor 3
@@ -250,6 +260,7 @@ Brief summary of what this use case covers.
 ---
 
 ## ✅ Preconditions
+
 - Condition 1
 - Condition 2
 - Condition 3
@@ -262,20 +273,20 @@ Brief summary of what this use case covers.
 > No conditional logic.
 
 | Step | User Actions | System Actions |
-|------|--------------|---------------|
-| 1 |  |  |
-| 2 |  |  |
-| 3 |  |  |
-| 4 |  |  |
+| ---- | ------------ | -------------- |
+| 1    |              |                |
+| 2    |              |                |
+| 3    |              |                |
+| 4    |              |                |
 
 ---
 
 ## 🟡 Alternate Flow(s)
 
 | Step | User Actions | System Actions |
-|------|--------------|---------------|
-| 1 |  |  |
-| 2 |  |  |
+| ---- | ------------ | -------------- |
+| 1    |              |                |
+| 2    |              |                |
 
 ---
 
@@ -284,9 +295,9 @@ Brief summary of what this use case covers.
 Identify system and data error conditions.
 
 | Step | Exception Condition | System Response |
-|------|--------------------|----------------|
-| 1 |  |  |
-| 2 |  |  |
+| ---- | ------------------- | --------------- |
+| 1    |                     |                 |
+| 2    |                     |                 |
 
 ---
 
