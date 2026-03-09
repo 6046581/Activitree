@@ -1,0 +1,60 @@
+import { track } from "ripple";
+
+import { ActivityTile } from "../components/ActivityTile.ripple";
+
+export component Activities() {
+   let activities = track([
+      {
+         id: 1,
+         title: "Hiking in the Mountains",
+         description: "Join us for a refreshing hike through the scenic mountain trails. Perfect for all skill levels!",
+      },
+      {
+         id: 2,
+         title: "Cooking Class",
+         description: "Learn to cook delicious meals with our hands-on cooking class. Suitable for beginners and food enthusiasts alike.",
+      },
+      {
+         id: 3,
+         title: "Yoga in the Park",
+         description: "Relax and rejuvenate with our outdoor yoga sessions in the park. All levels welcome, bring your own mat!",
+      },
+   ]);
+
+   <article class="card">
+      <p>
+         {"Some text that happens to be"}
+         <b>{" bold"}</b>
+         {" or"}
+         <i>{" italic"}</i>
+      </p>
+
+      <h1>{"Header"}</h1>
+      <h2>{"Header"}</h2>
+      <h3>{"Header"}</h3>
+      <h4>{"Header"}</h4>
+      <h5>{"Header"}</h5>
+      <h6>{"Header"}</h6>
+
+      <div class="button-group">
+         <a href="https://www.ripple-ts.com/" target="_blank" class="button docs">{"Docs"}</a>
+         <a href="https://github.com/Ripple-TS/ripple" target="_blank" class="button github">
+            {"GitHub"}
+         </a>
+      </div>
+   </article>
+
+   <section class="activities">
+      for (let activity of @activities) {
+         <ActivityTile />
+      }
+   </section>
+
+   <style scoped>
+      .activities {
+         display: grid;
+         grid-template-columns: repeat(auto-fit, minmax(500px, 1fr));
+         gap: 2rem;
+      }
+   </style>
+}

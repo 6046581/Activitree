@@ -7,7 +7,9 @@ export component NavBar() {
             <a href="/activities">{"I'm Attending"}</a>
             <a href="/activities">{"I'm Organizing"}</a>
          </div>
-         <a id="profile" href="/profile"><img src="https://placehold.co/600x400" alt="profile"/></a>
+         <a id="profile" href="/profile">
+            <img src="https://placehold.co/600x400" alt="profile" />
+         </a>
       </nav>
    </header>
 
@@ -32,7 +34,7 @@ export component NavBar() {
          height: 100%;
       }
 
-       .tab-bar {
+      .tab-bar {
          position: relative;
          display: flex;
          align-items: center;
@@ -75,7 +77,8 @@ export component NavBar() {
             0 4px 12px rgba(48, 7, 77, 0.1);
       }
 
-      #profile,#profile img {
+      #profile,
+      #profile img {
          aspect-ratio: 1/1;
          height: 100%;
          overflow: hidden;
