@@ -6,7 +6,7 @@
       "name": "partyplanner",
       "dependencies": {
         "ripple": "latest",
-        "ripple-router": "1.0.1",
+        "ripple-router": "^1.0.1",
       },
       "devDependencies": {
         "@ripple-ts/eslint-parser": "latest",

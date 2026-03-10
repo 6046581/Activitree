@@ -1,0 +1,5 @@
+export component Profile() {
+    <article class="card">
+        <p>{"hoi"}</p>
+    </article>
+}
