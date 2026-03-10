@@ -1,6 +1,8 @@
 export component NavBar() {
    <header>
-      <h2>{"Activitree"}</h2>
+      <a id="logo" href="/">
+         <img src="./assets/logo-horizontal.png" alt="Activitree"/>
+      </a>
       <nav>
          <div class="tab-bar">
             <a href="/activities">{"Discover"}</a>
@@ -32,6 +34,16 @@ export component NavBar() {
          align-items: center;
          gap: 1rem;
          height: 100%;
+      }
+
+      #logo {
+         height: 100%;
+         object-fit: contain;
+      }
+
+      #logo img {
+         height: 100%;
+         object-fit: contain;
       }
 
       .tab-bar {
