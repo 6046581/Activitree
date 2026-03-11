@@ -1,5 +1,70 @@
+import { track } from "ripple";
+
 export component Profile() {
-    <article class="card">
-        <p>{"hoi"}</p>
-    </article>
+   let firstname = track("iwjdiwjdiwjdi");
+   <article class="card">
+      <section id="profile-user">
+         <a id="profile-picture">
+            <img src="https://placehold.co/600x400" alt="profile-picture" />
+            <p>{@firstname}</p>
+         </a>
+      </section>
+      <section id="profile-form">
+         <form action="" method="post">
+            <input
+               class="profile-input"
+               type="text"
+               name="username"
+               id="username"
+               placeholder="Username"
+            />
+            <input
+               class="profile-input"
+               type="text"
+               name="fName"
+               id="first-name"
+               placeholder="First Name"
+            />
+            <input
+               class="profile-input"
+               type="text"
+               name="sName"
+               id="surname-name"
+               placeholder="Surname"
+            />
+            <input class="profile-input" type="email" name="email" id="email" placeholder="Email" />
+            <input
+               class="profile-input"
+               type="password"
+               name="password"
+               id="password"
+               placeholder="Password"
+               required
+            />
+            <input
+               class="profile-input"
+               type="password"
+               name="change-password"
+               id="change-password"
+               placeholder="Change password"
+            />
+            <button class="submit-input" type="submit">{"Change"}</button>
+         </form>
+      </section>
+   </article>
+
+   <style scoped>
+      #profile-picture,
+      #profile-picture img {
+         aspect-ratio: 1/1;
+         height: 10rem;
+         overflow: hidden;
+         object-fit: cover;
+         border-radius: 1000px;
+      }
+
+      #profile-user {
+         
+      }
+   </style>
 }
