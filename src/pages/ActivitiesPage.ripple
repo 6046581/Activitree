@@ -8,6 +8,12 @@ export component ActivitiesPage(props: Record<string, any>) {
       activityId?: string;
    };
 
+    const params = props.$params as ActivityParams
+
+    const mode = params.mode
+    const activityId = params.activityId
+
+
    let activities = track([
       {
          id: 1,
@@ -25,6 +31,8 @@ export component ActivitiesPage(props: Record<string, any>) {
          description: "Relax and rejuvenate with our outdoor yoga sessions in the park. All levels welcome, bring your own mat!",
       },
    ]);
+
+   
 
    <article class="card">
       <p>
