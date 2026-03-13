@@ -3,6 +3,7 @@ import { Router, Route } from "ripple-router";
 import { Home } from "./pages/Home.ripple";
 import { Activities } from "./pages/Activities.ripple";
 import { Profile } from "./pages/Profile.ripple";
+import { Login } from "./pages/Login.ripple";
 
 import { NavBar } from "./components/NavBar.ripple";
 import { Wallpaper } from "./components/Wallpaper.ripple";
@@ -19,6 +20,7 @@ export component App() {
          <Route path="/activities/:mode" element={Activities} />
          <Route path="/activities/:mode/:activityId" element={Activities} />
          <Route path="/profile" element={Profile} />
+         <Route path="/Login" element={Login} />
       </Router>
    </div>
 }

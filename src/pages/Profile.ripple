@@ -62,9 +62,5 @@ export component Profile() {
          object-fit: cover;
          border-radius: 1000px;
       }
-
-      #profile-user {
-         
-      }
    </style>
 }

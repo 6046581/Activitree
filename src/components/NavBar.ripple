@@ -1,7 +1,19 @@
+import { isLoggedIn } from "../auth";
+
 export component NavBar() {
+   function handleProfileClick(e: Event) {
+      if (!isLoggedIn()) {
+         e.preventDefault();
+         window.location.href = "/login";
+         return;
+      }
+
+      window.location.href = "/profile";
+   }
+
    <header>
       <a id="logo" href="/">
-         <img src="/assets/logo.png" alt="Activitree"/>
+         <img src="/assets/logo.png" alt="Activitree" />
       </a>
       <nav>
          <div class="tab-bar">
@@ -9,7 +21,7 @@ export component NavBar() {
             <a href="/activities/attending">{"I'm Attending"}</a>
             <a href="/activities/organizing">{"I'm Organizing"}</a>
          </div>
-         <a id="profile" href="/profile">
+         <a id="profile" href="/profile" onClick={handleProfileClick}>
             <img src="https://placehold.co/600x400" alt="profile" />
          </a>
       </nav>

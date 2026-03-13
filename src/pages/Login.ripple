@@ -1,0 +1,24 @@
+export component Login() {
+   <article class="card">
+      <p>
+         {"Some text that happens to be"}
+         <b>{" bold"}</b>
+         {" or"}
+         <i>{" italic"}</i>
+      </p>
+
+      <h1>{"Header"}</h1>
+      <h2>{"Header"}</h2>
+      <h3>{"Header"}</h3>
+      <h4>{"Header"}</h4>
+      <h5>{"Header"}</h5>
+      <h6>{"Header"}</h6>
+
+      <div class="button-group">
+         <a href="https://www.ripple-ts.com/" target="_blank" class="button docs">{"Docs"}</a>
+         <a href="https://github.com/Ripple-TS/ripple" target="_blank" class="button github">
+            {"GitHub"}
+         </a>
+      </div>
+   </article>
+}
