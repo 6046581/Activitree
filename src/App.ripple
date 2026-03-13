@@ -1,10 +1,12 @@
 import { Router, Route } from "ripple-router";
 
-import { Home } from "./pages/Home.ripple";
-import { Activities } from "./pages/Activities.ripple";
-import { Profile } from "./pages/Profile.ripple";
-import { Login } from "./pages/Login.ripple";
+// Pages
+import { HomePage } from "./pages/HomePage.ripple";
+import { ActivitiesPage } from "./pages/ActivitiesPage.ripple";
+import { ProfilePage } from "./pages/ProfilePage.ripple";
+import { LoginPage } from "./pages/LoginPage.ripple";
 
+// Components
 import { NavBar } from "./components/NavBar.ripple";
 import { Wallpaper } from "./components/Wallpaper.ripple";
 
@@ -15,12 +17,12 @@ export component App() {
       <NavBar />
 
       <Router>
-         <Route path="/" element={Home} />
-         <Route path="/activities" element={Activities} />
-         <Route path="/activities/:mode" element={Activities} />
-         <Route path="/activities/:mode/:activityId" element={Activities} />
-         <Route path="/profile" element={Profile} />
-         <Route path="/login" element={Login} />
+         <Route path="/" element={HomePage} />
+         <Route path="/activities" element={ActivitiesPage} />
+         <Route path="/activities/:mode" element={ActivitiesPage} />
+         <Route path="/activities/:mode/:activityId" element={ActivitiesPage} />
+         <Route path="/profile" element={ProfilePage} />
+         <Route path="/login" element={LoginPage} />
       </Router>
    </div>
 }

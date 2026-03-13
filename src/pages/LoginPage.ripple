@@ -1,4 +1,4 @@
-export component Home() {
+export component LoginPage() {
    <article class="card">
       <p>
          {"Some text that happens to be"}

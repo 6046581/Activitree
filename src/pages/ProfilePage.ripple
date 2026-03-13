@@ -1,6 +1,6 @@
 import { track } from "ripple";
 
-export component Profile() {
+export component ProfilePage() {
    let firstname = track("iwjdiwjdiwjdi");
    <article class="card">
       <section id="profile-user">
