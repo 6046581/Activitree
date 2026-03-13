@@ -7,7 +7,7 @@ export component Wallpaper() {
 
    function getRandomWallpaper() {
       const randomNum = Math.floor(Math.random() * 9) + 1;
-      return `assets/wallpapers/wallpaper-${randomNum}.jpg`;
+      return `/assets/wallpapers/wallpaper-${randomNum}.jpg`;
    }
 
    function getWallpaperSource() {

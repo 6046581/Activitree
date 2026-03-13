@@ -2,7 +2,12 @@ import { track } from "ripple";
 
 import { ActivityTile } from "../components/ActivityTile.ripple";
 
-export component Activities() {
+export component Activities(props: Record<string, any>) {
+   type ActivityParams = {
+      mode?: string;
+      activityId?: string;
+   };
+
    let activities = track([
       {
          id: 1,

@@ -1,13 +1,13 @@
 export component NavBar() {
    <header>
       <a id="logo" href="/">
-         <img src="./assets/logo.png" alt="Activitree"/>
+         <img src="/assets/logo.png" alt="Activitree"/>
       </a>
       <nav>
          <div class="tab-bar">
-            <a href="/activities">{"Discover"}</a>
-            <a href="/activities">{"I'm Attending"}</a>
-            <a href="/activities">{"I'm Organizing"}</a>
+            <a href="/activities/discover">{"Discover"}</a>
+            <a href="/activities/attending">{"I'm Attending"}</a>
+            <a href="/activities/organizing">{"I'm Organizing"}</a>
          </div>
          <a id="profile" href="/profile">
             <img src="https://placehold.co/600x400" alt="profile" />
@@ -82,8 +82,8 @@ export component NavBar() {
             0 0 0 transparent;
          transition:
             color 0.3s ease,
-            background-color 0.3s ease;
-         box-shadow: 0.3s ease;
+            background-color 0.3s ease,
+            box-shadow 0.3s ease;
       }
 
       .tab-bar a:hover {
