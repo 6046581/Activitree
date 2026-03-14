@@ -25,5 +25,4 @@ export component App() {
          <Route path="/login" element={LoginPage} />
       </Router>
    </div>
-
 }

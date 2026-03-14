@@ -11,24 +11,33 @@ export component NavBar() {
       window.location.href = "/profile";
    }
 
-   <header>
-      <a id="logo" href="/">
+   <header class="nav-bar">
+      <a class="nav-logo" href="/">
          <img src="/assets/logo.png" alt="Activitree" />
       </a>
       <nav>
-         <div class="tab-bar">
-            <a href="/activities/discover">{"Discover"}</a>
-            <a href="/activities/attending">{"I'm Attending"}</a>
-            <a href="/activities/organizing">{"I'm Organizing"}</a>
+         <div class="nav-tab-bar">
+            <a href="/activities/discover">
+               <i class="fas fa-compass" />
+               {"Discover"}
+            </a>
+            <a href="/activities/attending">
+               <i class="fas fa-calendar-check" />
+               {"I'm Attending"}
+            </a>
+            <a href="/activities/organizing">
+               <i class="fas fa-crown" />
+               {"I'm Organizing"}
+            </a>
          </div>
-         <a id="profile" href="/profile" onClick={handleProfileClick}>
+         <a class="nav-profile" href="/profile" onClick={handleProfileClick}>
             <img src="https://placehold.co/600x400" alt="profile" />
          </a>
       </nav>
    </header>
 
    <style scoped>
-      header {
+      .nav-bar {
          position: absolute;
          top: 0;
          width: 100%;
@@ -37,29 +46,29 @@ export component NavBar() {
          justify-content: space-between;
          align-items: center;
          padding: 1rem 2rem;
-         color: var(--color-text);
+         color: white;
          font-weight: 600;
       }
 
-      nav {
+      .nav-bar nav {
          display: flex;
          align-items: center;
          gap: 1rem;
          height: 100%;
       }
 
-      #logo {
+      .nav-logo {
          height: 100%;
          object-fit: contain;
       }
 
-      #logo img {
+      .nav-logo img {
          height: 100%;
          object-fit: contain;
          filter: drop-shadow(var(--shadow));
       }
 
-      .tab-bar {
+      .nav-tab-bar {
          position: relative;
          display: flex;
          align-items: center;
@@ -67,28 +76,27 @@ export component NavBar() {
          padding: 0.4rem 0.4rem;
          height: 100%;
          border-radius: 1000px;
-         color: var(--color-card-text);
          background: var(--color-card-bg);
          backdrop-filter: var(--effect-card);
          box-shadow: var(--shadow);
       }
 
-      .tab-bar a {
+      .nav-tab-bar a {
          display: flex;
          flex-direction: row;
          justify-content: center;
          align-items: center;
          gap: 0.6rem;
-         color: var(--color-card-text);
          text-decoration: none;
          font-size: 1.1rem;
+         font-weight: 700;
          padding: 0.6rem 0.6rem;
          height: 100%;
          min-width: 12rem;
-         gap: 1.5rem;
          border-radius: 1000px;
          background: transparent;
          white-space: nowrap;
+         color: var(--color-primary);
          box-shadow:
             0 0 0 transparent,
             0 0 0 transparent;
@@ -98,8 +106,13 @@ export component NavBar() {
             box-shadow 0.3s ease;
       }
 
-      .tab-bar a:hover {
-         color: var(--color-primary);
+      .nav-tab-bar a i {
+         font-size: 1em;
+         scale: 1.2;
+      }
+
+      .nav-tab-bar a:hover {
+         color: var(--color-primary-light);
          background: var(--color-card-bg);
          backdrop-filter: var(--effect-card);
          box-shadow:
@@ -107,9 +120,9 @@ export component NavBar() {
             0 4px 12px rgba(48, 7, 77, 0.1);
       }
 
-      #profile,
-      #profile img {
-         aspect-ratio: 1/1;
+      .nav-profile,
+      .nav-profile img {
+         aspect-ratio: 1 / 1;
          height: 100%;
          overflow: hidden;
          object-fit: cover;
