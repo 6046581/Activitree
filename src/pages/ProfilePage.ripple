@@ -1,12 +1,38 @@
 import { track } from "ripple";
 
 export component ProfilePage() {
-   let firstname = track("iwjdiwjdiwjdi");
+   let firstname = track("Loading...");
+   let loadError = track("");
+   const tokenValue = Number(localStorage.getItem("authToken"));
+   const userId = Number.isInteger(tokenValue) && tokenValue > 0 ? tokenValue : 1;
+
+   async function loadProfileName() {
+      try {
+         const response = await fetch(`/api/index.php?resource=user&id=${userId}`);
+
+         if (!response.ok) {
+            throw new Error(`Request failed with status ${response.status}`);
+         }
+
+         const payload = await response.json();
+         @firstname = payload?.user?.username ?? "Unknown user";
+      } catch (error) {
+         console.error("Failed to load profile", error);
+         @firstname = "Unknown user";
+         @loadError = "Could not load user profile.";
+      }
+   }
+
+   loadProfileName();
+
    <article class="card">
       <section id="profile-user">
          <a id="profile-picture">
             <img src="https://placehold.co/600x400" alt="profile-picture" />
             <p>{@firstname}</p>
+            if (@loadError) {
+               <p class="error">{@loadError}</p>
+            }
          </a>
       </section>
       <section id="profile-form">
@@ -61,6 +87,10 @@ export component ProfilePage() {
          overflow: hidden;
          object-fit: cover;
          border-radius: 1000px;
+      }
+
+      .error {
+         color: #a02f2f;
       }
    </style>
 }
