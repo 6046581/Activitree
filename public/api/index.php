@@ -11,8 +11,8 @@ function outputJson(int $statusCode, array $payload): void {
 
 function getApiRoute(): array {
 	$resource = trim((string) ($_GET["resource"] ?? ""));
-	$id = filter_input(INPUT_GET, "id", FILTER_VALIDATE_INT);
-	$id = $id !== false ? $id : null;
+	$parameter = filter_input(INPUT_GET, "parameter", FILTER_VALIDATE_INT);
+	$parameter = $parameter !== false ? $parameter : null;
 
 	$requestPath = parse_url($_SERVER["REQUEST_URI"] ?? "", PHP_URL_PATH);
 	$segments = array_values(array_filter(explode("/", trim((string) $requestPath, "/")), "strlen"));
@@ -29,18 +29,18 @@ function getApiRoute(): array {
 			$resource = $segments[$routeOffset] ?? "";
 		}
 
-		if ($id === null) {
-			$idSegment = $segments[$routeOffset + 1] ?? null;
+		if ($parameter === null) {
+			$parameterSegment = $segments[$routeOffset + 1] ?? null;
 
-			if ($idSegment !== null && ctype_digit($idSegment)) {
-				$id = (int) $idSegment;
+			if ($parameterSegment !== null && ctype_digit($parameterSegment)) {
+				$parameter = (int) $parameterSegment;
 			}
 		}
 	}
 
 	return [
 		"resource" => $resource,
-		"id" => $id,
+		"parameter" => $parameter,
 	];
 }
 
@@ -69,7 +69,7 @@ if ($_SERVER["REQUEST_METHOD"] !== "GET") {
 
 $route = getApiRoute();
 $resource = $route["resource"];
-$id = $route["id"];
+$parameter = $route["parameter"];
 
 if ($resource === "") {
 	outputJson(200, getApiInfo());
@@ -87,7 +87,7 @@ if ($resource !== "user") {
 try {
 	$database = new Database();
 	$user = new User($database->getConnection());
-	$user->outputUserByIdJson($id);
+	$user->outputUserByIdJson($parameter);
 } catch (Throwable $exception) {
 	outputJson(500, [
 		"success" => false,
