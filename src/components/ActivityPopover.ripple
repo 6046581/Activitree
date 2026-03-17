@@ -2,34 +2,54 @@ export component ActivityPopover() {
    <div class="popover">
       <article class="activity card">
          <div class="content">
-            <div>
+            <section>
                <p class="hosting">{"Username is hosting:"}</p>
                <h4 class="title">{"Hiking in the Mountains"}</h4>
-            </div>
-            <div class="details">
-               <p class="icon-text">
-                  <i class="fas fa-clock" />
-                  {"Jan 14th 2014, 13:00"}
-               </p>
-               <p class="icon-text">
-                  <i class="fas fa-location-dot" />
-                  {"120 PeePoo St, London"}
-               </p>
-               <p class="icon-text">
-                  <i class="fas fa-cloud" />
-                  {"Outside"}
-               </p>
-            </div>
+            </section>
 
             <p class="description">
                {"\"Join us for a refreshing hike through the scenic mountain trails. Perfect for all skill levels! This is a great opportunity to connect with nature and meet new people who share your love for the outdoors. Don't forget to bring water and wear comfortable shoes!\""}
             </p>
+
+            <section class="details">
+               <div class="info-box date-time">
+                  <i class="fas fa-calendar-alt" />
+                  <div>
+                     <h4>{"Saturday at 9:00"}</h4>
+                     <p>{"June 15th, 2024"}</p>
+                  </div>
+               </div>
+               <div class="info-box location">
+                  <i class="fas fa-map-marker-alt" />
+                  <div>
+                     <h4>{"PeePoo St. 24"}</h4>
+                     <p>{"Blue Ridge Mountains, North Carolina"}</p>
+                  </div>
+               </div>
+               <div class="info-box weather">
+                  <i class="fas fa-cloud-sun" />
+                  <div>
+                     <h4>{"Sunny, 75°F"}</h4>
+                     <p>{"Slight breeze or something idk"}</p>
+                  </div>
+               </div>
+            </section>
          </div>
          <div class="aside">
             <img
                src="https://images.unsplash.com/photo-1506744038136-46273834b3fb?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8Mnx8aGlraW5nJTIwaW4lMjB0aGUlMjBtb3VudGFpbnN8ZW58MHx8MHx8fDA%3D&auto=format&fit=crop&w=800&q=60"
                alt="Activity Image"
             />
+            <section class="attendance">
+               <p>
+                  <i class="fas fa-user" />
+                  {"12 Going"}
+               </p>
+               <p>
+                  <i class="fas fa-user-plus" />
+                  {"5 Interested"}
+               </p>
+            </section>
          </div>
       </article>
    </div>
@@ -58,7 +78,7 @@ export component ActivityPopover() {
          display: flex;
          flex-direction: row;
          padding: 1.5rem 2rem;
-         gap: 0.5rem;
+         gap: 2rem;
          max-width: calc(100% - 5rem);
          max-height: calc(100% - 5rem);
          aspect-ratio: 4/3;
@@ -107,12 +127,6 @@ export component ActivityPopover() {
          width: 100%;
       }
 
-      .activity .details {
-         display: flex;
-         flex-direction: column;
-         gap: 0.6rem;
-      }
-
       .activity .description {
          display: -webkit-box;
          -webkit-box-orient: vertical;
@@ -120,6 +134,67 @@ export component ActivityPopover() {
          -webkit-line-clamp: 10;
          overflow: hidden;
          width: 100%;
+      }
+
+      .activity .details {
+         display: flex;
+         flex-direction: column;
+         gap: 0.6rem;
+      }
+
+      .activity .info-box {
+         --info-box-image: url("https://images.unsplash.com/photo-1506744038136-46273834b3fb?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8Mnx8aGlraW5nJTIwaW4lMjB0aGUlMjBtb3VudGFpbnN8ZW58MHx8MHx8fDA%3D&auto=format&fit=crop&w=800&q=60");
+         position: relative;
+         display: flex;
+         flex-direction: row;
+         align-items: center;
+         width: 100%;
+         height: 6rem;
+         padding: 0 1rem;
+         border-radius: 1rem;
+         gap: 1rem;
+         font-size: 0.9rem;
+         z-index: 10;
+         overflow: hidden;
+         isolation: isolate;
+         background-image: var(--info-box-image);
+         background-size: cover;
+         background-position: center;
+      }
+
+      .activity .info-box::before {
+         content: "";
+         position: absolute;
+         inset: -0.75rem;
+         width: 45%;
+         background-image:
+            linear-gradient(rgba(0, 0, 0, 0.1), rgba(0, 0, 0, 0.125)),
+            var(--info-box-image);
+         background-size: auto, cover;
+         background-position: center;
+         filter: blur(10px) contrast(125%);
+         z-index: 0;
+         pointer-events: none;
+         clip-path: polygon(0% 0%, 75% 0%, 100% 100%, 0% 100%);
+         -webkit-clip-path: polygon(0% 0%, 75% 0%, 100% 100%, 0% 100%);
+         transition: width 0.6s var(--ease);
+      }
+
+      .activity .info-box > * {
+         position: relative;
+         z-index: 1;
+      }
+
+      .activity .info-box i {
+         color: white;
+         font-size: 2rem;
+      }
+
+      .activity .info-box * {
+         color: white;
+         mix-blend-mode: normal;
+         margin: 0;
+         text-shadow: 0 0 4px rgba(0, 0, 0, 0.8);
       }
 
       .activity .attendance {

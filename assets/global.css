@@ -52,10 +52,10 @@
 }
 
 .card {
-   background: var(--color-card-bg);
    padding: 1rem 1.5rem;
    border-radius: 1rem;
    color: var(--color-card-text);
+   background: var(--color-card-bg);
    backdrop-filter: var(--effect-card);
    box-shadow: var(--shadow);
    min-height: 50px;
