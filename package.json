@@ -9,8 +9,6 @@
    "scripts": {
       "start": "vite",
       "dev": "vite",
-      "clean:dev": "powershell -NoProfile -ExecutionPolicy Bypass -File ./scripts/clean-dev.ps1",
-      "dev:clean": "bun run clean:dev && vite",
       "build": "vite build",
       "lint": "eslint .",
       "serve": "vite preview",
@@ -19,11 +17,11 @@
    },
    "license": "MIT",
    "devDependencies": {
-      "@ripple-ts/eslint-parser": "0.3.3",
-      "@ripple-ts/eslint-plugin": "0.3.3",
-      "@ripple-ts/prettier-plugin": "0.3.3",
-      "@ripple-ts/typescript-plugin": "0.3.3",
-      "@ripple-ts/vite-plugin": "0.3.3",
+      "@ripple-ts/eslint-parser": "latest",
+      "@ripple-ts/eslint-plugin": "latest",
+      "@ripple-ts/prettier-plugin": "latest",
+      "@ripple-ts/typescript-plugin": "latest",
+      "@ripple-ts/vite-plugin": "latest",
       "@types/node": "^25.4.0",
       "@typescript-eslint/parser": "^8.57.0",
       "eslint": "^9.39.4",
@@ -33,8 +31,8 @@
       "vitest": "^4.0.18"
    },
    "dependencies": {
-      "ripple": "0.3.3",
+      "ripple": "latest",
       "ripple-router": "^1.0.1"
    },
-   "packageManager": "bun@1.3.0"
+   "packageManager": "bun@1.3.10"
 }
