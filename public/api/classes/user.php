@@ -9,43 +9,64 @@ class User {
     }
 
     public function getUserById(int $id): ?array {
-
         $stmt = $this->conn->prepare(
-            "SELECT id, username FROM users WHERE id = ?"
+            "SELECT id, username, email, role, created_at FROM users WHERE id = ?"
         );
 
-        $stmt->bind_param("i", $id);
-        $stmt->execute();
+        $stmt->execute([$id]);
+        $row = $stmt->fetch();
 
-        $result = $stmt->get_result();
-        return $result->fetch_assoc() ?: null;
+        return $row ?: null;
     }
 
-    public function outputUserByIdJson(?int $id): void {
-        if ($id === null || $id <= 0) {
-            http_response_code(400);
-            echo json_encode([
-                "success" => false,
-                "error" => "Missing or invalid user id"
-            ]);
-            return;
+    private function getUserByEmail(string $email): ?array {
+        $stmt = $this->conn->prepare(
+            "SELECT id, username, email, password, role, created_at FROM users WHERE email = ? LIMIT 1"
+        );
+
+        $stmt->execute([$email]);
+        $row = $stmt->fetch();
+
+        return $row ?: null;
+    }
+
+    private function toPublicUser(array $user): array {
+        return [
+            "id" => (int) $user["id"],
+            "username" => $user["username"],
+            "email" => $user["email"],
+            "role" => $user["role"],
+            "created_at" => $user["created_at"]
+        ];
+    }
+
+    public function authenticate(string $email, string $password): ?array {
+        $user = $this->getUserByEmail($email);
+
+        if ($user === null) {
+            return null;
         }
 
+        $storedPassword = (string) $user["password"];
+        $isHashed = password_get_info($storedPassword)["algo"] !== null;
+        $passwordMatches = $isHashed
+            ? password_verify($password, $storedPassword)
+            : hash_equals($storedPassword, $password);
+
+        if (!$passwordMatches) {
+            return null;
+        }
+
+        return $this->toPublicUser($user);
+    }
+
+    public function findPublicUserById(int $id): ?array {
         $user = $this->getUserById($id);
 
         if ($user === null) {
-            http_response_code(404);
-            echo json_encode([
-                "success" => false,
-                "error" => "User not found"
-            ]);
-            return;
+            return null;
         }
 
-        http_response_code(200);
-        echo json_encode([
-            "success" => true,
-            "user" => $user
-        ]);
+        return $this->toPublicUser($user);
     }
 }
