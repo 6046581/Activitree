@@ -25,9 +25,20 @@ CREATE TABLE users (
 
 CREATE TABLE locations (
     id INT AUTO_INCREMENT PRIMARY KEY,
-    name VARCHAR(150),
-    address VARCHAR(255),
-    city VARCHAR(100)
+
+    latitude DECIMAL(9,6) NOT NULL,
+    longitude DECIMAL(9,6) NOT NULL,
+
+    country VARCHAR(100),
+    country_code VARCHAR(10),
+    city VARCHAR(100),
+    postal_code VARCHAR(20),
+    street VARCHAR(150),
+    house_number VARCHAR(20),
+
+    formatted_address VARCHAR(255),
+
+    INDEX (latitude, longitude)
 );
 
 -- ======================================
@@ -36,7 +47,8 @@ CREATE TABLE locations (
 
 CREATE TABLE activities (
     id INT AUTO_INCREMENT PRIMARY KEY,
-    title VARCHAR(200) NOT NULL,
+
+    title VARCHAR(100) NOT NULL,
     description TEXT,
     activity_type ENUM('indoor','outdoor') NOT NULL,
     status ENUM('planned','cancelled','completed') DEFAULT 'planned',
@@ -137,16 +149,20 @@ VALUES
 ('Diana', 'Diana@mail.fake', 'password', 'user'),
 ('Eve', 'Eve@mail.fake', 'password', 'user');
 
-INSERT INTO locations (name, address, city)
+INSERT INTO locations (
+    latitude, longitude,
+    country, country_code, city, postal_code,
+    street, house_number, formatted_address
+)
 VALUES
-('Bowling Center', 'Main Street 10', 'Rotterdam'),
-('City Park', 'Park Lane 5', 'Den Haag'),
-('Community Hall', 'Community Street 3', 'Leiden'),
-('Art Studio', 'Creative Avenue 7', 'Weesp'),
-('Tech Hub', 'Innovation Road 2', 'Amsterdam'),
-('Garden Center', 'Green Street 8', 'Utrecht'),
-('Mountain Trails', 'Nature Road 1', 'Alps'),
-('Cooking School', 'Culinary Street 4', 'Rotterdam');
+(40.712776, -74.005974, 'United States', 'US', 'New York', '10007', 'Broadway', '1', '1 Broadway, New York, NY 10007, USA'),
+(34.052235, -118.243683, 'United States', 'US', 'Los Angeles', '90012', 'Spring St', '200', '200 Spring St, Los Angeles, CA 90012, USA'),
+(41.878113, -87.629799, 'United States', 'US', 'Chicago', '60604', 'S LaSalle St', '50', '50 S LaSalle St, Chicago, IL 60604, USA'),
+(29.760427, -95.369804, 'United States', 'US', 'Houston', '77002', 'Travis St', '901', '901 Travis St, Houston, TX 77002, USA'),
+(25.761681, -80.191788, 'United States', 'US', 'Miami', '33130', 'Biscayne Blvd', '600', '600 Biscayne Blvd, Miami, FL 33130, USA'),
+(47.606209, -122.332069, 'United States', 'US', 'Seattle', '98101', '4th Ave', '600', '600 4th Ave, Seattle, WA 98101, USA'),
+(39.739235, -104.990250, 'United States', 'US', 'Denver', '80202', 'Colfax Ave', '100', '100 E Colfax Ave, Denver, CO 80202, USA'),
+(37.774929, -122.419418, 'United States', 'US', 'San Francisco', '94103', 'Market St', '1355', '1355 Market St, San Francisco, CA 94103, USA');
 
 INSERT INTO activities (title, description, activity_type, activity_date, activity_time, location_id, created_by)
 VALUES
