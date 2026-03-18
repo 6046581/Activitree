@@ -107,7 +107,6 @@ export component ActivityPopover() {
       .activity .content {
          display: flex;
          flex-direction: column;
-         justify-content: space-between;
          gap: 1rem;
          flex: 1.5;
       }
@@ -155,6 +154,7 @@ export component ActivityPopover() {
       }
 
       .activity .details {
+         margin-top: auto;
          display: flex;
          flex-direction: column;
          gap: 0.6rem;
