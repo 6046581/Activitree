@@ -1,24 +1,114 @@
+import { track } from "ripple";
+import { login } from "../auth";
+
+type LoginResponse = {
+   success: boolean;
+   token?: string;
+   user?: {
+      id: number;
+      username: string;
+      email: string;
+      role: "admin" | "user";
+      created_at?: string;
+   };
+   error?: string;
+};
+
 export component LoginPage() {
-   <article class="card">
-      <p>
-         {"Some text that happens to be"}
-         <b>{" bold"}</b>
-         {" or"}
-         <i>{" italic"}</i>
-      </p>
+   let isLoading = track(false);
+   let errorMessage = track("");
 
-      <h1>{"Header"}</h1>
-      <h2>{"Header"}</h2>
-      <h3>{"Header"}</h3>
-      <h4>{"Header"}</h4>
-      <h5>{"Header"}</h5>
-      <h6>{"Header"}</h6>
+   async function handleSubmit(event: Event) {
+      event.preventDefault();
+      @errorMessage = "";
 
-      <div class="button-group">
-         <a href="https://www.ripple-ts.com/" target="_blank" class="button docs">{"Docs"}</a>
-         <a href="https://github.com/Ripple-TS/ripple" target="_blank" class="button github">
-            {"GitHub"}
-         </a>
-      </div>
+      if (@isLoading) {
+         return;
+      }
+
+      const form = event.currentTarget as HTMLFormElement | null;
+
+      if (!form) {
+         @errorMessage = "Unable to submit form.";
+         return;
+      }
+
+      const formData = new FormData(form);
+      const email = String(formData.get("email") ?? "").trim();
+      const password = String(formData.get("password") ?? "");
+
+      if (!email || !password) {
+         @errorMessage = "Email and password are required.";
+         return;
+      }
+
+      @isLoading = true;
+
+      try {
+         const response = await fetch("/api/index.php?resource=auth&action=login", {
+            method: "POST",
+            headers: {
+               "Content-Type": "application/json",
+            },
+            body: JSON.stringify({ email, password }),
+         });
+
+         const result = (await response.json()) as LoginResponse;
+
+         if (!response.ok || !result.success || !result.token || !result.user) {
+            @errorMessage = result.error ?? "Login failed. Please try again.";
+            return;
+         }
+
+         login(result.token, result.user);
+         window.location.href = "/profile";
+      } catch {
+         @errorMessage = "Could not reach the API. Please check the server and try again.";
+      } finally {
+         @isLoading = false;
+      }
+   }
+
+   <article class="card login-card">
+      <h2>{"Welcome back"}</h2>
+      <p>{"Login to your Party Planner account."}</p>
+
+      if (@errorMessage) {
+         <p class="error">{@errorMessage}</p>
+      }
+
+      <form onSubmit={handleSubmit}>
+         <input class="profile-input" type="email" name="email" placeholder="Email" required />
+         <input
+            class="profile-input"
+            type="password"
+            name="password"
+            placeholder="Password"
+            required
+         />
+         <button class="submit-input" type="submit" disabled={@isLoading}>
+            {@isLoading ? "Logging in..." : "Login"}
+         </button>
+      </form>
    </article>
+
+   <style scoped>
+      .login-card {
+         display: flex;
+         flex-direction: column;
+         gap: 1rem;
+         max-width: 28rem;
+      }
+
+      .login-card form {
+         display: flex;
+         flex-direction: column;
+         gap: 0.75rem;
+      }
+
+      .error {
+         color: #d84545;
+         font-weight: 600;
+      }
+   </style>
 }

@@ -1,39 +1,59 @@
 import { track } from "ripple";
+import { getCurrentUser, isLoggedIn, logout } from "../auth";
+
+type UserResponse = {
+   success: boolean;
+   user?: {
+      id: number;
+      username: string;
+      email: string;
+      role: "admin" | "user";
+      created_at?: string;
+   };
+};
 
 export component ProfilePage() {
-   let firstname = track("Loading...");
-   let loadError = track("");
-   const tokenValue = Number(localStorage.getItem("authToken"));
-   const userId =
-      Number.isInteger(tokenValue) && tokenValue > 0 ? tokenValue : 1;
-
-   async function loadProfileName() {
-      try {
-         const response = await fetch(`/api/index.php?resource=user&id=${userId}`);
-
-         if (!response.ok) {
-            throw new Error(`Request failed with status ${response.status}`);
-         }
-
-         const payload = await response.json();
-         @firstname = payload?.user?.username ?? "Unknown user";
-      } catch (error) {
-         console.error("Failed to load profile", error);
-         @firstname = "Unknown user";
-         @loadError = "Could not load user profile.";
+   function redirectIfLoggedOut() {
+      if (!isLoggedIn()) {
+         window.location.href = "/login";
       }
    }
 
-   loadProfileName();
+   const currentUser = getCurrentUser();
+   let username = track(currentUser?.username ?? "Guest");
+   let email = track(currentUser?.email ?? "");
+
+   async function loadProfile() {
+      if (!currentUser?.id) {
+         return;
+      }
+
+      try {
+         const response = await fetch(`/api/index.php?resource=user&parameter=${currentUser.id}`);
+         const result = (await response.json()) as UserResponse;
+
+         if (response.ok && result.success && result.user) {
+            @username = result.user.username;
+            @email = result.user.email;
+         }
+      } catch {
+         // Keep local profile fallback when API is unavailable.
+      }
+   }
+
+   function handleLogout() {
+      logout();
+      window.location.href = "/login";
+   }
+
+   redirectIfLoggedOut();
+   loadProfile();
 
    <article class="card">
       <section id="profile-user">
          <a id="profile-picture">
             <img src="https://placehold.co/600x400" alt="profile-picture" />
-            <p>{@firstname}</p>
-            if (@loadError) {
-               <p class="error">{@loadError}</p>
-            }
+            <p>{@username}</p>
          </a>
       </section>
       <section id="profile-form">
@@ -44,6 +64,7 @@ export component ProfilePage() {
                name="username"
                id="username"
                placeholder="Username"
+               value={@username}
             />
             <input
                class="profile-input"
@@ -59,7 +80,14 @@ export component ProfilePage() {
                id="surname-name"
                placeholder="Surname"
             />
-            <input class="profile-input" type="email" name="email" id="email" placeholder="Email" />
+            <input
+               class="profile-input"
+               type="email"
+               name="email"
+               id="email"
+               placeholder="Email"
+               value={@email}
+            />
             <input
                class="profile-input"
                type="password"
@@ -76,6 +104,7 @@ export component ProfilePage() {
                placeholder="Change password"
             />
             <button class="submit-input" type="submit">{"Change"}</button>
+            <button class="submit-input" type="button" onClick={handleLogout}>{"Logout"}</button>
          </form>
       </section>
    </article>
@@ -88,10 +117,6 @@ export component ProfilePage() {
          overflow: hidden;
          object-fit: cover;
          border-radius: 1000px;
-      }
-
-      .error {
-         color: #a02f2f;
       }
    </style>
 }
