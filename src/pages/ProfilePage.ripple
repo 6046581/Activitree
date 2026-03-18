@@ -4,7 +4,8 @@ export component ProfilePage() {
    let firstname = track("Loading...");
    let loadError = track("");
    const tokenValue = Number(localStorage.getItem("authToken"));
-   const userId = Number.isInteger(tokenValue) && tokenValue > 0 ? tokenValue : 1;
+   const userId =
+      Number.isInteger(tokenValue) && tokenValue > 0 ? tokenValue : 1;
 
    async function loadProfileName() {
       try {

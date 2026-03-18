@@ -22,13 +22,13 @@
       "@ripple-ts/prettier-plugin": "latest",
       "@ripple-ts/typescript-plugin": "latest",
       "@ripple-ts/vite-plugin": "latest",
-      "@types/node": "^25.4.0",
-      "@typescript-eslint/parser": "^8.57.0",
+      "@types/node": "^25.5.0",
+      "@typescript-eslint/parser": "^8.57.1",
       "eslint": "^9.39.4",
       "prettier": "^3.8.1",
       "typescript": "^5.9.3",
       "vite": "^7.3.1",
-      "vitest": "^4.0.18"
+      "vitest": "^4.1.0"
    },
    "dependencies": {
       "ripple": "latest",
