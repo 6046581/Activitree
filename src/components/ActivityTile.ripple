@@ -1,5 +1,6 @@
 export component ActivityTile() {
-   <article class="activity card">
+   // TODO: Properly link to the activity and fetch real data
+   <a class="activity card" href="/activities/discover/1">
       <img
          src="https://images.unsplash.com/photo-1506744038136-46273834b3fb?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8Mnx8aGlraW5nJTIwaW4lMjB0aGUlMjBtb3VudGFpbnN8ZW58MHx8MHx8fDA%3D&auto=format&fit=crop&w=800&q=60"
          alt="Activity Image"
@@ -37,7 +38,7 @@ export component ActivityTile() {
             </p>
          </div>
       </div>
-   </article>
+   </a>
 
    <style scoped>
       .activity {

@@ -3,26 +3,13 @@ import { track } from "ripple";
 export component Wallpaper() {
    let wallpaperSrc = track("");
    let loadError = track(false);
-   const wallpaperStorageKey = "activitree.wallpaper";
 
    function getRandomWallpaper() {
       const randomNum = Math.floor(Math.random() * 9) + 1;
       return `/assets/wallpapers/wallpaper-${randomNum}.jpg`;
    }
 
-   function getWallpaperSource() {
-      const storedWallpaper = sessionStorage.getItem(wallpaperStorageKey);
-      if (storedWallpaper) {
-         return storedWallpaper;
-      }
-
-      const nextWallpaper = getRandomWallpaper();
-      sessionStorage.setItem(wallpaperStorageKey, nextWallpaper);
-      return nextWallpaper;
-   }
-
    function handleImageError() {
-      sessionStorage.removeItem(wallpaperStorageKey);
       @loadError = true;
    }
 
@@ -33,7 +20,7 @@ export component Wallpaper() {
       }
    }
 
-   @wallpaperSrc = getWallpaperSource();
+   @wallpaperSrc = getRandomWallpaper();
 
    <div id="wallpaper">
       if (!@loadError) {
