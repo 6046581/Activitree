@@ -1,17 +1,17 @@
 ## Week 1 en 2: Voorbereiding
 
 - [x] Maak duo’s en bespreek de opdracht.
-- [ ] Analyseer de klantwensen en vertaal deze naar user stories.
+- [x] Analyseer de klantwensen en vertaal deze naar user stories.
 - [x] Richt een Scrumboard in op GitHub en plan de eerste sprint.
 - [x] Maak een use case diagram op basis van de user stories.
-- [ ] Realiseer minimaal één user story per persoon met bestaande kennis (PHP, basis OOP).
-- [ ] Experimenteer met JavaScript voor DOM-manipulatie en form handling.
+- [x] Realiseer minimaal één user story per persoon met bestaande kennis (PHP, basis OOP).
+- [x] Experimenteer met JavaScript voor DOM-manipulatie en form handling.
 
 ## Week 3: Functionaliteiten Voorbereiden met Narratives
 
-- [ ] Schrijf narratives voor de functionaliteiten die je deze week gaat realiseren.
-- [ ] Realiseer de functionaliteiten met PHP en JavaScript.
-- [ ] Werk verder met DOM-manipulatie en form handling.
+- [x] Schrijf narratives voor de functionaliteiten die je deze week gaat realiseren.
+- [x] Realiseer de functionaliteiten met PHP en JavaScript.
+- [x] Werk verder met DOM-manipulatie en form handling.
 
 ## Week 4: Abstracte Classes en JSON Data
 

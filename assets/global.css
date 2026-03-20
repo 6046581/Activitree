@@ -10,7 +10,8 @@
 
    --ease: cubic-bezier(0.1, 1.25, 0.15, 1.2);
 
-   --shadow: 0 8px 24px rgba(48, 7, 77, 0.25), 0 4px 12px rgba(48, 7, 77, 0.5);
+   --card-shadow: 0 8px 24px rgba(48, 7, 77, 0.25), 0 4px 12px rgba(48, 7, 77, 0.5);
+   --shadow: 0 1px 3px rgba(0, 0, 0, 0.1), 0 1px 2px rgba(0, 0, 0, 0.2);
 }
 
 * {
@@ -47,7 +48,7 @@
    }
 }
 
-.app > * {
+.app>* {
    width: 100%;
 }
 
@@ -57,7 +58,7 @@
    color: var(--color-card-text);
    background: var(--color-card-bg);
    backdrop-filter: var(--effect-card);
-   box-shadow: var(--shadow);
+   box-shadow: var(--card-shadow);
    min-height: 50px;
    box-sizing: border-box;
 }
@@ -123,25 +124,75 @@ img {
    display: flex;
    justify-content: center;
    align-items: center;
-   background-color: rgba(20, 45, 116, 0.9);
+   gap: 0.6rem;
+   background: rgba(37, 47, 123, 0.9);
+   backdrop-filter: blur(10px) saturate(1000%) contrast(500%);
    color: #f2f4f8;
    text-decoration: none;
-   font-size: 1.1rem;
-   font-weight: 600;
+   font-size: 1rem;
+   font-weight: 700;
+   letter-spacing: 0.02em;
+   text-wrap: nowrap;
    border-radius: 1000px;
-   padding: 0.6rem 1.2rem;
+   border: 0;
+   box-shadow: 0 8px 18px rgba(47, 57, 134, 0.22);
+   padding: 0.65rem 1.2rem;
    cursor: pointer;
-   transition: background 0.15s ease;
+   transition:
+      transform 0.2s ease,
+      box-shadow 0.2s ease,
+      background 0.2s ease;
+}
+
+.button.green {
+   background: rgba(0, 133, 80, 0.9);
+}
+
+.button.green:hover {
+   background: rgb(0, 119, 101);
+}
+
+.button.yellow {
+   background: rgba(234, 179, 8, 0.9);
+}
+
+.button.yellow:hover {
+   background: rgba(234, 179, 8, 1);
+}
+
+.button.red {
+   background: rgba(160, 0, 51, 0.9);
+}
+
+.button.red:hover {
+   background: rgb(138, 0, 71);
 }
 
 .button:hover {
-   background-color: rgba(20, 45, 116, 1);
+   transform: translateY(-1px);
+   box-shadow: 0 10px 20px rgba(47, 57, 134, 0.28);
+   background: rgb(47, 47, 134);
+}
+
+.button:active {
+   transform: translateY(0);
+}
+
+.button:disabled {
+   opacity: 0.6;
+   cursor: not-allowed;
+   transform: none;
 }
 
 .button-group {
    display: flex;
-   gap: 1rem;
+   width: 100%;
+   gap: 0.6rem;
    justify-content: center;
+}
+
+.button-group .button {
+   flex: 1;
 }
 
 .icon-text {
