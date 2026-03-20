@@ -1,4 +1,43 @@
+import { track } from "ripple";
+
 export component ActivityPopover() {
+   let isAttending = track(false);
+
+   const attendees = [
+      {
+         name: "John Person",
+         avatar: "https://i.pravatar.cc/120?img=12",
+      },
+      {
+         name: "Aisha Carter",
+         avatar: "https://i.pravatar.cc/120?img=32",
+      },
+      {
+         name: "Luca Moretti",
+         avatar: "https://i.pravatar.cc/120?img=48",
+      },
+      {
+         name: "Sofia Hernandez",
+         avatar: "https://i.pravatar.cc/120?img=5",
+      },
+      {
+         name: "Noah Kim",
+         avatar: "https://i.pravatar.cc/120?img=18",
+      },
+      {
+         name: "Maya Patel",
+         avatar: "https://i.pravatar.cc/120?img=28",
+      },
+   ];
+
+   function toggleAttendance() {
+      @isAttending = !@isAttending;
+   }
+
+   function inviteOthers() {
+      window.alert("Invite flow coming soon.");
+   }
+
    <div class="popover">
       <article class="activity card">
          <div class="content">
@@ -55,18 +94,39 @@ export component ActivityPopover() {
          </div>
          <div class="aside">
             <img
+               class="activity-cover"
                src="https://images.unsplash.com/photo-1506744038136-46273834b3fb?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8Mnx8aGlraW5nJTIwaW4lMjB0aGUlMjBtb3VudGFpbnN8ZW58MHx8MHx8fDA%3D&auto=format&fit=crop&w=800&q=60"
                alt="Activity Image"
             />
-            <section class="attendance">
-               <p>
-                  <i class="fas fa-user" />
-                  {"12 Going"}
+            <section class="attendance" aria-label="Attendance">
+               <p class="attendance-title">
+                  <i class="fas fa-users" />
+                  {`${attendees.length + (@isAttending ? 1 : 0)} Attending`}
                </p>
-               <p>
-                  <i class="fas fa-user-plus" />
-                  {"5 Interested"}
-               </p>
+
+               <div class="attendance-list" role="list">
+                  for (let attendee of attendees) {
+                     <article class="attendee" role="listitem">
+                        <img class="attendee-avatar" src={attendee.avatar} alt={`${attendee.name} profile`} />
+                        <p class="attendee-name">{attendee.name}</p>
+                     </article>
+                  }
+               </div>
+
+               <div class="button-group">
+                  <button
+                     class={`button ${@isAttending ? "red" : "green"}`}
+                     type="button"
+                     onClick={toggleAttendance}
+                  >
+                     <i class={`fas ${@isAttending ? "fa-user-minus" : "fa-user-plus"}`} />
+                     {@isAttending ? "Leave" : "Join"}
+                  </button>
+                  <button class="button" type="button" onClick={inviteOthers}>
+                     <i class="fas fa-paper-plane" />
+                     {"Share"}
+                  </button>
+               </div>
             </section>
          </div>
       </article>
@@ -92,7 +152,7 @@ export component ActivityPopover() {
       }
 
       .activity {
-         font-size: 1.25rem;
+         font-size: 1.4rem;
          display: flex;
          flex-direction: row;
          padding: 1.5rem 2rem;
@@ -102,6 +162,22 @@ export component ActivityPopover() {
          aspect-ratio: 4/3;
          isolation: isolate;
          animation: popover-card-in 0.6s var(--ease) both;
+      }
+
+      @media screen and (max-width: 1080px) {
+         .activity {
+            font-size: 1.2rem;
+            padding: 1.25rem 1.5rem;
+            gap: 1.5rem;
+         }
+      }
+
+      @media screen and (max-width: 800px) {
+         .activity {
+            font-size: 1rem;
+            padding: 1rem 1.25rem;
+            gap: 1.25rem;
+         }
       }
 
       .activity .content {
@@ -116,22 +192,21 @@ export component ActivityPopover() {
          flex-direction: column;
          flex: 1;
          margin-top: 0.5rem;
+         gap: 1rem;
       }
 
       .activity .hosting {
-         font-size: 1rem;
+         font-size: 0.75em;
          margin: 0;
       }
 
-      .activity .icon-text {
-         font-weight: 500;
-      }
-      .activity img {
+      .activity .activity-cover {
          width: 100%;
          aspect-ratio: 4/3;
          object-fit: cover;
          z-index: 0;
          border-radius: 1rem;
+         box-shadow: var(--shadow);
       }
 
       .activity .title {
@@ -166,15 +241,16 @@ export component ActivityPopover() {
          flex-direction: row;
          align-items: center;
          width: 100%;
-         height: 6rem;
-         padding: 0 1rem;
-         border-radius: 1rem;
-         gap: 1rem;
-         font-size: 0.9rem;
+         font-size: 0.6em;
+         height: 7.5em;
+         padding: 0 1.5em;
+         gap: 1.5em;
+         border-radius: 1.5em;
          z-index: 10;
          overflow: hidden;
          isolation: isolate;
          contain: paint;
+         box-shadow: var(--shadow);
       }
 
       .activity .info-box .info-box-background {
@@ -222,7 +298,7 @@ export component ActivityPopover() {
 
       .activity .info-box i {
          color: white;
-         font-size: 2rem;
+         font-size: 2.5em;
       }
 
       .activity .info-box * {
@@ -232,15 +308,91 @@ export component ActivityPopover() {
          text-shadow: 1px 1px 4px rgba(0, 0, 0, 1);
       }
 
-      .activity .attendance {
-         display: flex;
-         flex-direction: row;
-         gap: 0.75em;
+      .activity .info-box p {
+         font-weight: 400;
       }
 
-      .activity .attendance p {
+      .activity .attendance {
+         display: flex;
+         flex-direction: column;
+         border-radius: 1rem;
+         padding: 0.75rem;
+         min-height: 0;
+         flex: 1;
+         background-color: rgba(255, 255, 255, 0.5);
+         box-shadow: var(--shadow);
+      }
+
+      .activity .attendance-title {
+         display: flex;
+         justify-content: center;
+         align-items: center;
+         gap: 0.45rem;
+         text-align: center;
          font-size: 1rem;
+         font-weight: 700;
          white-space: nowrap;
+      }
+
+      .activity .attendance-list {
+         display: flex;
+         flex-direction: column;
+         gap: 0.8rem;
+         overflow-y: auto;
+         min-height: 0;
+         padding-right: 0.2rem;
+      }
+
+      .activity .attendance-list::-webkit-scrollbar {
+         width: 0.25rem;
+      }
+
+      .activity .attendance-list::-webkit-scrollbar-thumb {
+         border-radius: 1000px;
+         background-color: rgba(0, 0, 0, 0.2);
+      }
+
+      .activity .attendee {
+         display: flex;
+         align-items: center;
+         gap: 0.6rem;
+         border-radius: 0.85rem;
+         padding: 0 0.6rem;
+      }
+
+      .activity .attendee-avatar {
+         width: 2.25rem;
+         height: 2.25rem;
+         aspect-ratio: 1 / 1;
+         object-fit: cover;
+         border-radius: 1000px;
+         box-shadow: var(--shadow);
+      }
+
+      .activity .attendee-name {
+         font-size: 1rem;
+         font-weight: 600;
+         line-height: 1.2;
+      }
+
+      @media screen and (max-width: 900px) {
+         .activity {
+            flex-direction: column;
+            aspect-ratio: unset;
+            overflow-y: auto;
+         }
+
+         .activity .aside {
+            margin-top: 0;
+         }
+
+         .activity .activity-cover {
+            aspect-ratio: 16 / 8;
+         }
+
+         .activity .attendance {
+            max-height: 22rem;
+         }
       }
 
       @keyframes popover-backdrop-in {

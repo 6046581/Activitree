@@ -65,7 +65,7 @@ export component NavBar() {
       .nav-logo img {
          height: 100%;
          object-fit: contain;
-         filter: drop-shadow(var(--shadow));
+         filter: drop-shadow(var(--card-shadow));
       }
 
       .nav-tab-bar {
@@ -78,7 +78,7 @@ export component NavBar() {
          border-radius: 1000px;
          background: var(--color-card-bg);
          backdrop-filter: var(--effect-card);
-         box-shadow: var(--shadow);
+         box-shadow: var(--card-shadow);
       }
 
       .nav-tab-bar a {
