@@ -1,6 +1,6 @@
 <?php
 
-class activitee {
+class Activity {
 
 	private $conn;
 

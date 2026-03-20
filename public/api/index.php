@@ -200,7 +200,7 @@ try {
 			]);
 		}
 
-		$activities = new activitee($conn);
+		$activities = new activity($conn);
 		outputJson(200, [
 			"success" => true,
 			"activities" => $activities->getActivities()
