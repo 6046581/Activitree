@@ -18,11 +18,9 @@ type LoginResponse = {
 
 export component LoginPage() {
    let isLoading = track(false);
-   let errorMessage = track("");
 
    async function handleSubmit(event: Event) {
       event.preventDefault();
-      @errorMessage = "";
 
       if (@isLoading) {
          return;
@@ -31,7 +29,7 @@ export component LoginPage() {
       const form = event.currentTarget as HTMLFormElement | null;
 
       if (!form) {
-         @errorMessage = "Unable to submit form.";
+         notyf.error("Unable to submit form.");
          return;
       }
 
@@ -40,7 +38,7 @@ export component LoginPage() {
       const password = String(formData.get("password") ?? "");
 
       if (!email || !password) {
-         @errorMessage = "Email and password are required.";
+         notyf.error("Email and password are required.");
          return;
       }
 
@@ -58,16 +56,14 @@ export component LoginPage() {
          const result = await response.json() as LoginResponse;
 
          if (!response.ok || !result.success || !result.token || !result.user) {
-            @errorMessage = result.error ?? "Login failed. Please try again.";
-            notyf.error(@errorMessage);
+            notyf.error(result.error ?? "Login failed. Please try again.");
             return;
          }
 
          login(result.token, result.user);
          window.location.href = "/profile";
       } catch {
-         @errorMessage = "Could not reach the API. Please check the server and try again.";
-         notyf.error(@errorMessage);
+         notyf.error("Could not reach the Server. Please try again later.");
       } finally {
          @isLoading = false;
       }

@@ -1,5 +1,7 @@
-const TOKEN_STORAGE_KEY = "authToken";
-const USER_STORAGE_KEY = "authUser";
+const USER_STORAGE_KEY = "user";
+const TOKEN_STORAGE_KEY = "token";
+
+import { notyf } from "./notyf";
 
 export type AuthUser = {
    id: number;
@@ -19,6 +21,8 @@ export function login(token: string, user?: AuthUser) {
    if (user) {
       localStorage.setItem(USER_STORAGE_KEY, JSON.stringify(user));
    }
+
+   notyf.success("Logged in.");
 }
 
 export function logout() {
