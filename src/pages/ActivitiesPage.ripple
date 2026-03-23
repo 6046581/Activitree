@@ -79,7 +79,7 @@ export component ActivitiesPage(props: Record<string, any>) {
       {
          id: 1,
          title: "Hiking in the Mountains",
-         description: "Join us for a refreshing hike through the scenic mountain trails. Perfect for all skill levels!",
+         description: "Join us for a refreshing hike through the scenic mountain trails. Perfect for all skill levels! Boy do I love hiking in the mountains. The fresh air, the beautiful views, the sense of adventure - it's all so invigorating. Whether you're a seasoned hiker or just looking for a leisurely stroll, this activity is sure to be a great time. Don't forget to bring your water bottle and hiking boots! I could talk about hiking all day! Enough that it would be a good character limit test for the activity description. Hiking in the mountains is truly one of my favorite things to do. The feeling of being surrounded by nature, the sound of birds chirping, and the breathtaking views make it an unforgettable experience. I can't wait to share this adventure with you all! Let's hit the trails and make some amazing memories together. See you on the mountain!",
          type: "outdoor",
          status: "planned",
          date: "2026-07-15",
@@ -246,7 +246,9 @@ export component ActivitiesPage(props: Record<string, any>) {
       },
    ]);
 
-   const selectedActivity = @activities.find((a) => String(a.id) === new URLSearchParams(window.location.search).get("id"));
+   const selectedActivity = @activities.find(
+      (a) => String(a.id) === new URLSearchParams(window.location.search).get("id"),
+   );
 
    if (selectedActivity) {
       const host = @users.find((u) => u.id === selectedActivity.createdBy);

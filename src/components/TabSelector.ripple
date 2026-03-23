@@ -1,0 +1,166 @@
+type TabItem = {
+   id?: string;
+   href?: string;
+   label: string;
+   icon?: string;
+   isActive?: boolean;
+   onClick?: (event: Event) => void;
+};
+
+type TabSelectorProps = {
+   tabs?: TabItem[];
+   activeTabId?: string;
+};
+
+export component TabSelector(props: TabSelectorProps) {
+   const tabs = props?.tabs ?? [];
+   const activeTabId = props?.activeTabId;
+
+   function isTabActive(tab: TabItem): boolean {
+      if (tab.isActive !== undefined) {
+         return tab.isActive;
+      }
+
+      if (activeTabId && tab.id) {
+         return tab.id === activeTabId;
+      }
+
+      if (!tab.href) {
+         return false;
+      }
+
+      const path = window.location.pathname;
+
+      if (tab.href === "/") {
+         return path === "/";
+      }
+
+      return path === tab.href || path.startsWith(`${tab.href}/`);
+   }
+
+   function handleTabClick(event: Event, tab: TabItem) {
+      if (tab.onClick) {
+         tab.onClick(event);
+      }
+   }
+
+   <div class="tab-selector">
+      for (let tab of tabs) {
+         if (tab.href) {
+            <a
+               class={`tab-item ${isTabActive(tab) ? "active" : ""}`}
+               href={tab.href}
+               onClick={(event: Event) => handleTabClick(event, tab)}
+            >
+               if (tab.icon) {
+                  <i class={tab.icon} />
+               }
+               {tab.label}
+            </a>
+         } else {
+            <button
+               class={`tab-item ${isTabActive(tab) ? "active" : ""}`}
+               type="button"
+               onClick={(event: Event) => handleTabClick(event, tab)}
+            >
+               if (tab.icon) {
+                  <i class={tab.icon} />
+               }
+               {tab.label}
+            </button>
+         }
+      }
+   </div>
+
+   <style scoped>
+      .tab-selector {
+         position: relative;
+         display: flex;
+         align-items: center;
+         justify-content: space-between;
+         flex: 1;
+         gap: 0.4em;
+         padding: 0.4em 0.4em;
+         min-width: 6em;
+         border-radius: 1000px;
+         background: var(--color-card-bg);
+         backdrop-filter: var(--effect-card);
+         box-shadow: var(--shadow);
+      }
+
+      .tab-item {
+         display: flex;
+         flex-direction: row;
+         justify-content: center;
+         align-items: center;
+         flex: 1;
+         gap: 0.6em;
+         text-decoration: none;
+         font-size: 1.1em;
+         font-weight: 700;
+         padding: 0.6em 0.6em;
+         min-width: 12em;
+         border-radius: 1000px;
+         background: transparent;
+         border: 0;
+         white-space: nowrap;
+         color: var(--color-primary);
+         box-shadow:
+            0 0 0 transparent,
+            0 0 0 transparent;
+         transition:
+            color 0.3s ease,
+            background-color 0.3s ease,
+            box-shadow 0.3s ease;
+      }
+
+      button.tab-item {
+         cursor: pointer;
+         font-family: inherit;
+      }
+
+      .tab-item i {
+         font-size: 1em;
+         scale: 1.2;
+      }
+
+      .tab-item:hover {
+         color: var(--color-primary-light);
+         background: var(--color-card-bg);
+         backdrop-filter: var(--effect-card);
+         box-shadow:
+            0 8px 24px rgba(48, 7, 77, 0.05),
+            0 4px 12px rgba(48, 7, 77, 0.1);
+      }
+
+      .tab-item.active {
+         color: var(--color-primary-light);
+         background: var(--color-card-bg);
+         backdrop-filter: var(--effect-card);
+         box-shadow:
+            0 8px 24px rgba(48, 7, 77, 0.08),
+            0 4px 12px rgba(48, 7, 77, 0.14);
+      }
+
+      @media screen and (max-width: 1080px) {
+         .tab-item {
+            padding: 0.5em 0.5em;
+            min-width: 10em;
+         }
+      }
+
+      @media screen and (max-width: 960px) {
+         .tab-item {
+            flex-direction: column;
+            gap: 0.1em;
+            padding: 0.4em 0.4em;
+            min-width: 8em;
+         }
+
+         .tab-item i {
+            font-size: 1.6em;
+            scale: 1;
+         }
+      }
+   </style>
+}

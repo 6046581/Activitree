@@ -1,6 +1,27 @@
 import { isLoggedIn } from "../auth";
+import { TabSelector } from "../components/TabSelector.ripple";
 
 export component NavBar() {
+   const tabBar = {
+      tabs: [
+         {
+            href: "/activities/discover",
+            label: "Discover",
+            icon: "fas fa-compass",
+         },
+         {
+            href: "/activities/attending",
+            label: "Attending",
+            icon: "fas fa-calendar-check",
+         },
+         {
+            href: "/activities/organizing",
+            label: "Organizing",
+            icon: "fas fa-crown",
+         },
+      ],
+   };
+
    function handleProfileClick(e: Event) {
       if (!isLoggedIn()) {
          e.preventDefault();
@@ -16,20 +37,7 @@ export component NavBar() {
          <img src="/assets/logo.png" alt="Activitree" />
       </a>
       <nav>
-         <div class="nav-tab-bar">
-            <a href="/activities/discover">
-               <i class="fas fa-compass" />
-               {"Discover"}
-            </a>
-            <a href="/activities/attending">
-               <i class="fas fa-calendar-check" />
-               {"Attending"}
-            </a>
-            <a href="/activities/organizing">
-               <i class="fas fa-crown" />
-               {"Organizing"}
-            </a>
-         </div>
+         <TabSelector tabs={tabBar.tabs} />
          <a class="nav-profile" href="/profile" onClick={handleProfileClick}>
             <img src="https://placehold.co/600x400" alt="profile" />
          </a>
@@ -69,58 +77,6 @@ export component NavBar() {
          filter: drop-shadow(var(--card-shadow));
       }
 
-      .nav-tab-bar {
-         position: relative;
-         display: flex;
-         align-items: center;
-         gap: 0.4em;
-         padding: 0.4em 0.4em;
-         height: 100%;
-         border-radius: 1000px;
-         background: var(--color-card-bg);
-         backdrop-filter: var(--effect-card);
-         box-shadow: var(--card-shadow);
-      }
-
-      .nav-tab-bar a {
-         display: flex;
-         flex-direction: row;
-         justify-content: center;
-         align-items: center;
-         gap: 0.6em;
-         text-decoration: none;
-         font-size: 1.1em;
-         font-weight: 700;
-         padding: 0.6em 0.6em;
-         height: 100%;
-         min-width: 12em;
-         border-radius: 1000px;
-         background: transparent;
-         white-space: nowrap;
-         color: var(--color-primary);
-         box-shadow:
-            0 0 0 transparent,
-            0 0 0 transparent;
-         transition:
-            color 0.3s ease,
-            background-color 0.3s ease,
-            box-shadow 0.3s ease;
-      }
-
-      .nav-tab-bar a i {
-         font-size: 1em;
-         scale: 1.2;
-      }
-
-      .nav-tab-bar a:hover {
-         color: var(--color-primary-light);
-         background: var(--color-card-bg);
-         backdrop-filter: var(--effect-card);
-         box-shadow:
-            0 8px 24px rgba(48, 7, 77, 0.05),
-            0 4px 12px rgba(48, 7, 77, 0.1);
-      }
-
       .nav-profile,
       .nav-profile img {
          aspect-ratio: 1 / 1;
@@ -134,28 +90,11 @@ export component NavBar() {
          .nav-bar {
             font-size: 0.9rem;
          }
-
-         .nav-tab-bar a {
-            padding: 0.5em 0.5em;
-            min-width: 10em;
-         }
       }
 
       @media screen and (max-width: 960px) {
          .nav-bar {
             font-size: 0.8rem;
-         }
-
-         .nav-tab-bar a {
-            flex-direction: column;
-            gap: 0.1em;
-            padding: 0.4em 0.4em;
-            min-width: 8em;
-         }
-
-         .nav-tab-bar a i {
-            font-size: 1.6em;
-            scale: 1;
          }
       }
    </style>
