@@ -20,7 +20,6 @@ export component App() {
          <Route path="/" element={HomePage} />
          <Route path="/activities" element={ActivitiesPage} />
          <Route path="/activities/:mode" element={ActivitiesPage} />
-         <Route path="/activities/:mode/:activityId" element={ActivitiesPage} />
          <Route path="/profile" element={ProfilePage} />
          <Route path="/login" element={LoginPage} />
       </Router>

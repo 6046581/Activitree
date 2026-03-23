@@ -30,7 +30,7 @@ export component ProfilePage() {
 
       try {
          const response = await fetch(`/api/index.php?resource=user&parameter=${currentUser.id}`);
-         const result = (await response.json()) as UserResponse;
+         const result = await response.json() as UserResponse;
 
          if (response.ok && result.success && result.user) {
             @username = result.user.username;
