@@ -42,7 +42,6 @@ export component LoginPage() {
          id: "login",
          label: "Log in",
          icon: "fas fa-sign-in-alt",
-         isActive: @selected === "login",
          onClick: () => {
             @selected = "login";
          },
@@ -51,7 +50,6 @@ export component LoginPage() {
          id: "signup",
          label: "Sign up",
          icon: "fas fa-user-plus",
-         isActive: @selected === "signup",
          onClick: () => {
             @selected = "signup";
          },
@@ -232,7 +230,7 @@ export component LoginPage() {
    }
 
    <article class="card login-card">
-      <TabSelector {tabs} />
+      <TabSelector {tabs} activeTabId={@selected} />
       if (@selected === "login") {
          <h2>{"Welcome back"}</h2>
          <p>{"Log in to your account."}</p>
@@ -243,7 +241,7 @@ export component LoginPage() {
 
       if (@selected === "login") {
          <form class="auth-form" onSubmit={handleLoginSubmit}>
-            <label class="field">
+            <label>
                <span>{"Email"}</span>
                <input
                   class="auth-input"
@@ -255,7 +253,7 @@ export component LoginPage() {
                />
             </label>
 
-            <label class="field">
+            <label>
                <span>{"Password"}</span>
                <input
                   type="password"
@@ -266,8 +264,8 @@ export component LoginPage() {
                />
             </label>
 
-            <label class="keep-signed-in">
-               <input type="checkbox" name="keep_signed_in" disabled={@isLoading} checked />
+            <label>
+               <input type="checkbox" name="keep-signed-in" disabled={@isLoading} checked />
                <span>{"Keep me signed in"}</span>
             </label>
 
@@ -285,7 +283,7 @@ export component LoginPage() {
          </form>
       } else {
          <form class="auth-form" onSubmit={handleSignupSubmit}>
-            <label class="field">
+            <label>
                <span>{"Username"}</span>
                <input
                   type="text"
@@ -297,7 +295,7 @@ export component LoginPage() {
                />
             </label>
 
-            <label class="field">
+            <label>
                <span>{"Email"}</span>
                <input
                   type="email"
@@ -308,7 +306,7 @@ export component LoginPage() {
                />
             </label>
 
-            <label class="field">
+            <label>
                <span>{"Password"}</span>
                <input
                   type="password"
@@ -320,7 +318,7 @@ export component LoginPage() {
                />
             </label>
 
-            <label class="field">
+            <label>
                <span>{"Confirm password"}</span>
                <input
                   type="password"
@@ -365,46 +363,11 @@ export component LoginPage() {
          gap: 0.8rem;
       }
 
-      .field {
-         display: flex;
-         flex-direction: column;
-         gap: 0.35rem;
-      }
-
-      .field span {
-         font-size: 0.92rem;
-         font-weight: 700;
-         letter-spacing: 0.01em;
-         color: white;
-         mix-blend-mode: difference;
-      }
-
       .help-text {
          font-size: 0.86rem;
          line-height: 1.35;
          color: white;
          mix-blend-mode: difference;
-      }
-
-      .keep-signed-in {
-         display: flex;
-         align-items: center;
-         gap: 0.5rem;
-         user-select: none;
-      }
-
-      .keep-signed-in span {
-         font-size: 0.92rem;
-         font-weight: 700;
-         letter-spacing: 0.01em;
-         color: white;
-         mix-blend-mode: difference;
-      }
-
-      .keep-signed-in input {
-         width: 1rem;
-         height: 1rem;
-         margin: 0;
       }
 
       @media screen and (max-width: 640px) {

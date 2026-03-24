@@ -1,3 +1,5 @@
+import { track } from "ripple";
+
 type TabItem = {
    id?: string;
    href?: string;
@@ -13,13 +15,18 @@ type TabSelectorProps = {
 };
 
 export component TabSelector(props: TabSelectorProps) {
-   const tabs = props?.tabs ?? [];
-   const activeTabId = props?.activeTabId;
+   let internalActiveTabId = track(props?.activeTabId ?? "");
+
+   function getActiveTabId(): string {
+      return props?.activeTabId ?? @internalActiveTabId;
+   }
 
    function isTabActive(tab: TabItem): boolean {
       if (tab.isActive !== undefined) {
          return tab.isActive;
       }
+
+      const activeTabId = getActiveTabId();
 
       if (activeTabId && tab.id) {
          return tab.id === activeTabId;
@@ -39,17 +46,22 @@ export component TabSelector(props: TabSelectorProps) {
    }
 
    function handleTabClick(event: Event, tab: TabItem) {
+      if (tab.id) {
+         @internalActiveTabId = tab.id;
+      }
+
       if (tab.onClick) {
          tab.onClick(event);
       }
    }
 
    <div class="tab-selector">
-      for (let tab of tabs) {
+      for (let tab of props?.tabs ?? []) {
          if (tab.href) {
             <a
                class={`tab-item ${isTabActive(tab) ? "active" : ""}`}
                href={tab.href}
+               aria-current={isTabActive(tab) ? "page" : false}
                onClick={(event: Event) => handleTabClick(event, tab)}
             >
                if (tab.icon) {
@@ -61,6 +73,7 @@ export component TabSelector(props: TabSelectorProps) {
             <button
                class={`tab-item ${isTabActive(tab) ? "active" : ""}`}
                type="button"
+               aria-pressed={isTabActive(tab)}
                onClick={(event: Event) => handleTabClick(event, tab)}
             >
                if (tab.icon) {
@@ -137,6 +150,8 @@ export component TabSelector(props: TabSelectorProps) {
          color: var(--color-primary-light);
          background: var(--color-card-bg);
          backdrop-filter: var(--effect-card);
+         outline: 2px solid rgba(79, 70, 229, 0.45);
+         outline-offset: -1px;
          box-shadow:
             0 8px 24px rgba(48, 7, 77, 0.08),
             0 4px 12px rgba(48, 7, 77, 0.14);

@@ -1,4 +1,6 @@
 import { track } from "ripple";
+
+import { notyf } from "../notyf";
 import { getCurrentUser, isLoggedIn, logout } from "../auth";
 
 type UserResponse = {
@@ -7,7 +9,6 @@ type UserResponse = {
       id: number;
       username: string;
       email: string;
-      role: "admin" | "user";
       created_at?: string;
    };
 };
@@ -20,8 +21,8 @@ export component ProfilePage() {
    }
 
    const currentUser = getCurrentUser();
-   let username = track(currentUser?.username ?? "Guest");
-   let email = track(currentUser?.email ?? "");
+   let username = track(currentUser?.username);
+   let email = track(currentUser?.email);
 
    async function loadProfile() {
       if (!currentUser?.id) {
@@ -29,7 +30,7 @@ export component ProfilePage() {
       }
 
       try {
-         const response = await fetch(`/api/index.php?resource=user&parameter=${currentUser.id}`);
+         const response = await fetch(`/api/users/${currentUser.id}`);
          const result = await response.json() as UserResponse;
 
          if (response.ok && result.success && result.user) {
@@ -37,7 +38,7 @@ export component ProfilePage() {
             @email = result.user.email;
          }
       } catch {
-         // Keep local profile fallback when API is unavailable.
+         notyf.error("Failed to load profile information.");
       }
    }
 
@@ -46,74 +47,75 @@ export component ProfilePage() {
       window.location.href = "/login";
    }
 
-   redirectIfLoggedOut();
+   // TEMP: uncomment this when auth is implemented
+   // redirectIfLoggedOut();
    loadProfile();
 
+   <article id="user-header">
+      <a id="profile-picture">
+         <img src="https://placehold.co/600x400" alt="profile-picture" />
+         <p>{@username}</p>
+      </a>
+
+      <h2>{"Hiya, " + @username + "!"}</h2>
+   </article>
+
    <article class="card">
-      <section id="profile-user">
-         <a id="profile-picture">
-            <img src="https://placehold.co/600x400" alt="profile-picture" />
-            <p>{@username}</p>
-         </a>
-      </section>
       <section id="profile-form">
          <form action="" method="post">
-            <input
-               class="profile-input"
-               type="text"
-               name="username"
-               id="username"
-               placeholder="Username"
-               value={@username}
-            />
-            <input
-               class="profile-input"
-               type="text"
-               name="fName"
-               id="first-name"
-               placeholder="First Name"
-            />
-            <input
-               class="profile-input"
-               type="text"
-               name="sName"
-               id="surname-name"
-               placeholder="Surname"
-            />
-            <input
-               class="profile-input"
-               type="email"
-               name="email"
-               id="email"
-               placeholder="Email"
-               value={@email}
-            />
-            <input
-               class="profile-input"
-               type="password"
-               name="password"
-               id="password"
-               placeholder="Password"
-               required
-            />
-            <input
-               class="profile-input"
-               type="password"
-               name="change-password"
-               id="change-password"
-               placeholder="Change password"
-            />
-            <button class="submit-input" type="submit">{"Change"}</button>
-            <button class="submit-input" type="button" onClick={handleLogout}>{"Logout"}</button>
+            <label for="username">
+               <span>{"Username"}</span>
+               <input
+                  class="profile-input"
+                  type="text"
+                  name="username"
+                  id="username"
+                  placeholder="Username"
+                  value={@username}
+               />
+            </label>
+            <label for="email">
+               <span>{"Email"}</span>
+               <input
+                  class="profile-input"
+                  type="email"
+                  name="email"
+                  id="email"
+                  placeholder="Email"
+                  value={@email}
+               />
+            </label>
+            <label for="password">
+               <span>{"Password"}</span>
+               <input
+                  class="profile-input"
+                  type="password"
+                  name="password"
+                  id="password"
+                  placeholder="Password"
+                  required
+               />
+            </label>
+
+            <button class="button red" type="button" onClick={handleLogout}>
+               <i class="fas fa-sign-out-alt" />
+               {"Logout"}
+            </button>
          </form>
       </section>
    </article>
 
    <style scoped>
+      #user-header {
+         display: flex;
+         flex-direction: row;
+         gap: 2rem;
+      }
+
       #profile-picture,
       #profile-picture img {
          aspect-ratio: 1/1;
-         height: 10rem;
+         height: 8rem;
          overflow: hidden;
          object-fit: cover;
          border-radius: 1000px;
