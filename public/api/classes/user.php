@@ -19,7 +19,7 @@ class Users
         $this->conn = $database->connect();
     }
 
-    public function getById($id)
+    public function getUserById($id)
     {
         $query = "SELECT id, username, email, role FROM" . $this->table . "WHERE id = :id LIMIT 1";
         $stmt = $this->conn->prepare($query);
@@ -35,9 +35,9 @@ class Users
         $hash = password_hash($password, PASSWORD_BCRYPT);
         $stmt->bindParam(":username", $username);
         $stmt->bindParam("email:", $email);
-        $stmt->bindParam(":password", $password);
+        $stmt->bindParam(":password", $hash);
         $stmt->bindParam(":role", $role);
-        return $stmt->execute;
+        return $stmt->execute();
     }
 
     public function updateUser($id, $username, $email, $role)
@@ -48,7 +48,7 @@ class Users
         $stmt->bindParam(":username", $username);
         $stmt->bindParam(":email", $email);
         $stmt->bindParam(":role", $role);
-        return $stmt->execute;
+        return $stmt->execute();
     }
 
     public function login($email, $password)
