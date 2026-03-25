@@ -1,4 +1,5 @@
-import { track } from "ripple";
+import { effect, track } from "ripple";
+import { navigateTo } from "ripple-router";
 
 import { ActivityTile } from "../components/ActivityTile.ripple";
 import { ActivityPopover } from "../components/ActivityPopover.ripple";
@@ -11,6 +12,35 @@ export component ActivitiesPage(props: Record<string, any>) {
    const params = props?.["params"] ?? {} as ActivityParams;
 
    const mode = params.mode;
+   let selectedActivityId = track(new URLSearchParams(window.location.search).get("id"));
+
+   function openActivity(activityId: string | number) {
+      const id = String(activityId);
+      const url = new URL(window.location.href);
+      url.searchParams.set("id", id);
+      navigateTo(url.pathname, {
+         searchParams: Object.fromEntries(url.searchParams.entries()),
+      });
+      @selectedActivityId = id;
+   }
+
+   function closeActivity() {
+      const url = new URL(window.location.href);
+      url.searchParams.delete("id");
+      navigateTo(url.pathname, {
+         searchParams: Object.fromEntries(url.searchParams.entries()),
+      });
+      @selectedActivityId = null;
+   }
+
+   function syncActivityFromUrl() {
+      @selectedActivityId = new URLSearchParams(window.location.search).get("id");
+   }
+
+   effect(() => {
+      window.addEventListener("popstate", syncActivityFromUrl);
+      return () => window.removeEventListener("popstate", syncActivityFromUrl);
+   });
 
    let users = track([
       {
@@ -246,19 +276,26 @@ export component ActivitiesPage(props: Record<string, any>) {
       },
    ]);
 
-   const selectedActivity = @activities.find(
-      (a) => String(a.id) === new URLSearchParams(window.location.search).get("id"),
+   let selectedActivity = track(
+      () => @activities.find((a) => String(a.id) === @selectedActivityId),
    );
 
-   if (selectedActivity) {
-      const host = @users.find((u) => u.id === selectedActivity.createdBy);
+   if (@selectedActivity) {
+      const currentActivity = @selectedActivity;
+      const host = @users.find((u) => u.id === currentActivity.createdBy);
       const participantIds = @activityParticipants.filter(
-         (p) => p.activityId === selectedActivity.id,
+         (p) => p.activityId === currentActivity.id,
       ).map((p) => p.userId);
       const participants = @users.filter((u) => participantIds.includes(u.id));
-      const location = @locations.find((l) => l.id === selectedActivity.locationId);
+      const location = @locations.find((l) => l.id === currentActivity.locationId);
 
-      <ActivityPopover activity={selectedActivity} {host} {participants} {location} />
+      <ActivityPopover
+         activity={currentActivity}
+         {host}
+         {participants}
+         {location}
+         onClose={closeActivity}
+      />
    }
 
    <section class="activities">
@@ -270,7 +307,7 @@ export component ActivitiesPage(props: Record<string, any>) {
          const participants = @users.filter((u) => participantIds.includes(u.id));
          const location = @locations.find((l) => l.id === activity.locationId);
 
-         <ActivityTile {activity} {host} {participants} {location} />
+         <ActivityTile {activity} {host} {participants} {location} onOpen={openActivity} />
       }
    </section>
 

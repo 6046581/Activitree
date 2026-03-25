@@ -1,4 +1,5 @@
 import { track } from "ripple";
+import { navigateTo } from "ripple-router";
 import { notyf } from "../notyf";
 
 import { login, type AuthUser } from "../auth";
@@ -145,7 +146,7 @@ export component LoginPage() {
             return;
          }
 
-         window.location.href = "/profile";
+         navigateTo("/profile");
       } catch {
          notyf.error("Could not reach the Server. Please try again later.");
       } finally {
@@ -221,7 +222,7 @@ export component LoginPage() {
             return;
          }
 
-         window.location.href = "/profile";
+         navigateTo("/profile");
       } catch {
          notyf.error("Could not reach the Server. Please try again later.");
       } finally {

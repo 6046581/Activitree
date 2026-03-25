@@ -9,13 +9,6 @@ export default defineConfig(({ mode }) => {
       plugins: [ripple()],
       server: {
          port: 3000,
-         proxy: {
-            "/api": {
-               target: "http://localhost",
-               changeOrigin: true,
-               rewrite: (path) => `${apiProxyBase}${path}`,
-            },
-         },
          watch: {
             usePolling: true,
             interval: 100,

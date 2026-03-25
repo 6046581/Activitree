@@ -1,5 +1,6 @@
 import { isLoggedIn } from "../auth";
 import { TabSelector } from "../components/TabSelector.ripple";
+import { navigateTo } from "ripple-router";
 
 export component NavBar() {
    const tabBar = {
@@ -23,17 +24,35 @@ export component NavBar() {
    };
 
    function handleProfileClick(e: Event) {
+      if (e instanceof MouseEvent) {
+         if (e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) {
+            return;
+         }
+      }
+
+      e.preventDefault();
+
       if (!isLoggedIn()) {
-         e.preventDefault();
-         window.location.href = "/login";
+         navigateTo("/login");
          return;
       }
 
-      window.location.href = "/profile";
+      navigateTo("/profile");
+   }
+
+   function handleLogoClick(e: Event) {
+      if (e instanceof MouseEvent) {
+         if (e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) {
+            return;
+         }
+      }
+
+      e.preventDefault();
+      navigateTo("/");
    }
 
    <header class="nav-bar">
-      <a class="nav-logo" href="/">
+      <a class="nav-logo" href="/" onClick={handleLogoClick}>
          <img src="/assets/logo.png" alt="Activitree" />
       </a>
       <nav>

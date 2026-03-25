@@ -1,4 +1,5 @@
-import { track } from "ripple";
+import { effect, track } from "ripple";
+import { navigateTo } from "ripple-router";
 
 type TabItem = {
    id?: string;
@@ -16,6 +17,18 @@ type TabSelectorProps = {
 
 export component TabSelector(props: TabSelectorProps) {
    let internalActiveTabId = track(props?.activeTabId ?? "");
+   let currentPath = track(window.location.pathname);
+   const tabs = props?.tabs ?? [];
+   const tabCount = Math.max(1, tabs.length);
+
+   effect(() => {
+      function onLocationChange() {
+         @currentPath = window.location.pathname;
+      }
+
+      window.addEventListener("popstate", onLocationChange);
+      return () => window.removeEventListener("popstate", onLocationChange);
+   });
 
    function getActiveTabId(): string {
       return props?.activeTabId ?? @internalActiveTabId;
@@ -32,11 +45,15 @@ export component TabSelector(props: TabSelectorProps) {
          return tab.id === activeTabId;
       }
 
+      if (activeTabId && tab.href) {
+         return tab.href === activeTabId;
+      }
+
       if (!tab.href) {
          return false;
       }
 
-      const path = window.location.pathname;
+      const path = @currentPath;
 
       if (tab.href === "/") {
          return path === "/";
@@ -50,13 +67,46 @@ export component TabSelector(props: TabSelectorProps) {
          @internalActiveTabId = tab.id;
       }
 
+      if (!tab.id && tab.href) {
+         @internalActiveTabId = tab.href;
+      }
+
       if (tab.onClick) {
          tab.onClick(event);
       }
+
+      if (!tab.href || event.defaultPrevented) {
+         return;
+      }
+
+      if (event instanceof MouseEvent) {
+         if (event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) {
+            return;
+         }
+      }
+
+      event.preventDefault();
+      navigateTo(tab.href);
    }
 
-   <div class="tab-selector">
-      for (let tab of props?.tabs ?? []) {
+   function getActiveTabIndex(): number {
+      for (let i = 0; i < tabs.length; i++) {
+         const tab = tabs[i];
+
+         if (tab && isTabActive(tab)) {
+            return i;
+         }
+      }
+
+      return 0;
+   }
+
+   <div
+      class="tab-selector"
+      style={`--tab-count:${tabCount}; --active-index:${getActiveTabIndex()};`}
+   >
+      <span class="active-pill" aria-hidden="true" />
+      for (let tab of tabs) {
          if (tab.href) {
             <a
                class={`tab-item ${isTabActive(tab) ? "active" : ""}`}
@@ -87,13 +137,15 @@ export component TabSelector(props: TabSelectorProps) {
 
    <style scoped>
       .tab-selector {
+         --tab-gap: 0.4em;
+         --tab-pad: 0.4em;
          position: relative;
          display: flex;
          align-items: center;
          justify-content: space-between;
          flex: 1;
-         gap: 0.4em;
-         padding: 0.4em 0.4em;
+         gap: var(--tab-gap);
+         padding: var(--tab-pad);
          min-width: 6em;
          border-radius: 1000px;
          background: var(--color-card-bg);
@@ -101,7 +153,29 @@ export component TabSelector(props: TabSelectorProps) {
          box-shadow: var(--shadow);
       }
 
+      .active-pill {
+         position: absolute;
+         left: var(--tab-pad);
+         top: var(--tab-pad);
+         height: calc(100% - (var(--tab-pad) * 2));
+         width: calc(
+            (100% - (var(--tab-pad) * 2) - ((var(--tab-count) - 1) * var(--tab-gap))) / var(--tab-count)
+         );
+         border-radius: 1000px;
+         background: rgba(255, 255, 255, 0.9);
+         box-shadow:
+            0 8px 24px rgba(48, 7, 77, 0.08),
+            0 4px 12px rgba(48, 7, 77, 0.14);
+         pointer-events: none;
+         transform: translateX(calc(var(--active-index) * (100% + var(--tab-gap))));
+         transition:
+            transform 0.28s var(--ease),
+            width 0.28s var(--ease);
+      }
+
       .tab-item {
+         position: relative;
+         z-index: 1;
          display: flex;
          flex-direction: row;
          justify-content: center;
@@ -123,8 +197,7 @@ export component TabSelector(props: TabSelectorProps) {
             0 0 0 transparent;
          transition:
             color 0.3s ease,
-            background-color 0.3s ease,
-            box-shadow 0.3s ease;
+            transform 0.2s ease;
       }
 
       button.tab-item {
@@ -139,22 +212,12 @@ export component TabSelector(props: TabSelectorProps) {
 
       .tab-item:hover {
          color: var(--color-primary-light);
-         background: var(--color-card-bg);
-         backdrop-filter: var(--effect-card);
-         box-shadow:
-            0 8px 24px rgba(48, 7, 77, 0.05),
-            0 4px 12px rgba(48, 7, 77, 0.1);
+         transform: translateY(-0.5px);
       }
 
       .tab-item.active {
          color: var(--color-primary-light);
-         background: var(--color-card-bg);
-         backdrop-filter: var(--effect-card);
-         outline: 2px solid rgba(79, 70, 229, 0.45);
-         outline-offset: -1px;
-         box-shadow:
-            0 8px 24px rgba(48, 7, 77, 0.08),
-            0 4px 12px rgba(48, 7, 77, 0.14);
+         text-shadow: 0 0 16px rgba(79, 70, 229, 0.35);
       }
 
       @media screen and (max-width: 1080px) {
