@@ -1,5 +1,5 @@
 <?php
-class activities
+class Activities
 {
     private $conn;
     private $table = "activities";
