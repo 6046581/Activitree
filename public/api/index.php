@@ -3,9 +3,7 @@ declare(strict_types=1);
 
 header('Content-Type: application/json; charset=utf-8');
 
-require_once __DIR__ . '/classes/database.php';
-require_once __DIR__ . '/classes/user.php';
-require_once __DIR__ . '/classes/Activity.php';
+require_once __DIR__ . '/autoload.php';
 
 function jsonResponse(array $data, int $status = 200): void
 {

@@ -25,7 +25,7 @@ class Activities
 
     public function getActivityById($id, $limit, $offset)
     {
-        $query = "SELECT id, title, description, activity_type, status, activity_date, activity_time, location_id, created_by FROM" . $this->table . "WHERE id = :id LIMIT :limit OFFSET :offset";
+        $query = "SELECT id, title, description, activity_type, status, activity_time, location_id, created_by FROM" . $this->table . "WHERE id = :id LIMIT :limit OFFSET :offset";
         $stmt = $this->conn->prepare($query);
         $stmt->bindParam(":id", $id, PDO::PARAM_INT);
         $stmt->bindParam(":limit", $limit, PDO::PARAM_INT);
@@ -34,32 +34,30 @@ class Activities
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
 
-    public function createActivity($title, $description, $activity_type, $status, $activity_date, $activity_time, $location_id, $created_by)
+    public function createActivity($title, $description, $activity_type, $status, $activity_time, $location_id, $created_by)
     {
-        $query = "INSERT INTO activities (title, description, activity_type, status, activity_date, activity_time, location_id, created_by) VALUES (:title, :description, :activity_type, :status, :activity_date, :activity_time, :location_id, :created_by)";
+        $query = "INSERT INTO activities (title, description, activity_type, status, activity_time, location_id, created_by) VALUES (:title, :description, :activity_type, :status, :activity_time, :location_id, :created_by)";
         $stmt = $this->conn->prepare($query);
         $stmt->bindParam(":title", $title);
         $stmt->bindParam(":description", $description);
         $stmt->bindParam(":description", $description);
         $stmt->bindParam(":activity_type", $activity_type);
         $stmt->bindParam(":status", $status);
-        $stmt->bindParam(":activity_date", $activity_date);
         $stmt->bindParam(":activity_time", $activity_time);
         $stmt->bindParam(":location_id", $location_id);
         $stmt->bindParam(":created_by", $created_by);
         return $stmt->execute();
     }
 
-    public function updateActivities($id, $title, $description, $activity_type, $status, $activity_date, $activity_time, $location_id, $created_by)
+    public function updateActivities($id, $title, $description, $activity_type, $status, $activity_time, $location_id, $created_by)
     {
-        $query = "UPDATE" . $this->table . "SET id = :id, title = :title, description = :description, activity_type = :activity_type, status = :status, activity_date = :activity_date, activity_time = :activity_time, location_id = :location_id, created_by = :created_by";
+        $query = "UPDATE" . $this->table . "SET id = :id, title = :title, description = :description, activity_type = :activity_type, status = :status, activity_time = :activity_time, location_id = :location_id, created_by = :created_by";
         $stmt = $this->conn->prepare($query);
         $stmt->bindParam(":id", $id, PDO::PARAM_INT);
         $stmt->bindParam(":title", $title);
         $stmt->bindParam(":description", $description);
         $stmt->bindParam(":activity_type", $activity_type);
         $stmt->bindParam(":status", $status);
-        $stmt->bindParam(":activity_date", $activity_date);
         $stmt->bindParam(":activity_time", $activity_time);
         $stmt->bindParam(":location_id", $location_id);
         $stmt->bindParam(":created_by", $created_by);
