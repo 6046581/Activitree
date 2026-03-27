@@ -135,7 +135,9 @@ export component TabSelector(props: TabSelectorProps) {
    }
 
    function getContainerClass(): string {
-      return `tab-selector ${hasActiveTab() ? "has-active" : ""} ${@suppressSlideOnShow ? "no-slide" : ""}`;
+      return `tab-selector ${hasActiveTab() ? "has-active" : ""} ${
+         @suppressSlideOnShow ? "no-slide" : ""
+      }`;
    }
 
    function getContainerStyle(): string {
@@ -160,10 +162,7 @@ export component TabSelector(props: TabSelectorProps) {
       @wasActive = active;
    });
 
-   <div
-      class={getContainerClass()}
-      style={getContainerStyle()}
-   >
+   <div class={getContainerClass()} style={getContainerStyle()}>
       <span class="active-pill" aria-hidden="true" />
       for (let tab of tabs) {
          if (tab.href) {
@@ -205,7 +204,6 @@ export component TabSelector(props: TabSelectorProps) {
          flex: 1;
          gap: var(--tab-gap);
          padding: var(--tab-pad);
-         min-width: 6em;
          border-radius: 1000px;
          background: var(--color-card-bg);
          backdrop-filter: var(--effect-card);
@@ -260,33 +258,39 @@ export component TabSelector(props: TabSelectorProps) {
          font-size: 1.1em;
          font-weight: 700;
          padding: 0.6em 0.6em;
-         min-width: 12em;
+         min-width: 10em;
          border-radius: 1000px;
          background: transparent;
          border: 0;
          white-space: nowrap;
          color: var(--color-primary);
+         cursor: pointer;
          box-shadow:
             0 0 0 transparent,
             0 0 0 transparent;
          transition:
             color 0.3s ease,
-            transform 0.2s ease;
-      }
-
-      button.tab-item {
-         cursor: pointer;
-         font-family: inherit;
+            transform 0.2s ease,
+            scale 0.4s var(--ease);
       }
 
       .tab-item i {
          font-size: 1em;
          scale: 1.2;
+         transition: transform 0.6s cubic-bezier(0.22, 1.25, 0.32, 1);
       }
 
       .tab-item:hover {
          color: var(--color-primary-light);
-         transform: translateY(-0.5px);
+         scale: 1.1;
+      }
+
+      .tab-item:hover i {
+         transform: rotate(360deg);
+      }
+
+      .tab-item:active {
+         scale: 0.95;
       }
 
       .tab-item.active {

@@ -54,7 +54,7 @@ export component ProfilePage() {
 
    <article id="user-header">
       <a id="profile-picture">
-         <img src="https://placehold.co/600x400" alt="profile-picture" />
+         <img src="https://gravatar.com/avatar/00000000000000000000000000000000?d=mp&f=y" alt="profile-picture" />
          <p>{@username}</p>
       </a>
 
@@ -110,13 +110,14 @@ export component ProfilePage() {
       #user-header {
          display: flex;
          flex-direction: row;
+         align-items: center;
          gap: 2rem;
       }
 
       #profile-picture,
       #profile-picture img {
          aspect-ratio: 1/1;
-         height: 8rem;
+         height: 6rem;
          overflow: hidden;
          object-fit: cover;
          border-radius: 1000px;
