@@ -18,12 +18,20 @@ type TabSelectorProps = {
 export component TabSelector(props: TabSelectorProps) {
    let internalActiveTabId = track(props?.activeTabId ?? "");
    let currentPath = track(window.location.pathname);
+   let lastActiveTabIndex = track(0);
+   let suppressSlideOnShow = track(false);
+   let wasActive = track(false);
    const tabs = props?.tabs ?? [];
    const tabCount = Math.max(1, tabs.length);
 
    effect(() => {
       function onLocationChange() {
          @currentPath = window.location.pathname;
+
+         // Keep route-based tabs in sync with URL instead of stale internal state.
+         if (isRouteTabId(@internalActiveTabId)) {
+            @internalActiveTabId = "";
+         }
       }
 
       window.addEventListener("popstate", onLocationChange);
@@ -32,6 +40,14 @@ export component TabSelector(props: TabSelectorProps) {
 
    function getActiveTabId(): string {
       return props?.activeTabId ?? @internalActiveTabId;
+   }
+
+   function isRouteTabId(tabId: string): boolean {
+      if (!tabId) {
+         return false;
+      }
+
+      return tabs.some((tab) => tab?.href === tabId);
    }
 
    function isTabActive(tab: TabItem): boolean {
@@ -62,13 +78,17 @@ export component TabSelector(props: TabSelectorProps) {
       return path === tab.href || path.startsWith(`${tab.href}/`);
    }
 
+   function shouldHandleClientNavigation(event: Event): boolean {
+      if (!(event instanceof MouseEvent)) {
+         return true;
+      }
+
+      return !event.metaKey && !event.ctrlKey && !event.shiftKey && !event.altKey;
+   }
+
    function handleTabClick(event: Event, tab: TabItem) {
       if (tab.id) {
          @internalActiveTabId = tab.id;
-      }
-
-      if (!tab.id && tab.href) {
-         @internalActiveTabId = tab.href;
       }
 
       if (tab.onClick) {
@@ -79,17 +99,15 @@ export component TabSelector(props: TabSelectorProps) {
          return;
       }
 
-      if (event instanceof MouseEvent) {
-         if (event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) {
-            return;
-         }
+      if (!shouldHandleClientNavigation(event)) {
+         return;
       }
 
       event.preventDefault();
       navigateTo(tab.href);
    }
 
-   function getActiveTabIndex(): number {
+   function findActiveTabIndex(): number {
       for (let i = 0; i < tabs.length; i++) {
          const tab = tabs[i];
 
@@ -98,12 +116,53 @@ export component TabSelector(props: TabSelectorProps) {
          }
       }
 
-      return 0;
+      return -1;
    }
 
+   function getActiveTabIndex(): number {
+      const activeIndex = findActiveTabIndex();
+
+      if (activeIndex >= 0) {
+         @lastActiveTabIndex = activeIndex;
+         return activeIndex;
+      }
+
+      return Math.min(@lastActiveTabIndex, Math.max(0, tabs.length - 1));
+   }
+
+   function hasActiveTab(): boolean {
+      return findActiveTabIndex() >= 0;
+   }
+
+   function getContainerClass(): string {
+      return `tab-selector ${hasActiveTab() ? "has-active" : ""} ${@suppressSlideOnShow ? "no-slide" : ""}`;
+   }
+
+   function getContainerStyle(): string {
+      return `--tab-count:${tabCount}; --active-index:${getActiveTabIndex()};`;
+   }
+
+   effect(() => {
+      const active = hasActiveTab();
+
+      if (active && !@wasActive) {
+         @suppressSlideOnShow = true;
+
+         const frameId = requestAnimationFrame(() => {
+            @suppressSlideOnShow = false;
+         });
+
+         @wasActive = active;
+         return () => cancelAnimationFrame(frameId);
+      }
+
+      @suppressSlideOnShow = false;
+      @wasActive = active;
+   });
+
    <div
-      class="tab-selector"
-      style={`--tab-count:${tabCount}; --active-index:${getActiveTabIndex()};`}
+      class={getContainerClass()}
+      style={getContainerStyle()}
    >
       <span class="active-pill" aria-hidden="true" />
       for (let tab of tabs) {
@@ -159,7 +218,8 @@ export component TabSelector(props: TabSelectorProps) {
          top: var(--tab-pad);
          height: calc(100% - (var(--tab-pad) * 2));
          width: calc(
-            (100% - (var(--tab-pad) * 2) - ((var(--tab-count) - 1) * var(--tab-gap))) / var(--tab-count)
+            (100% - (var(--tab-pad) * 2) - ((var(--tab-count) - 1) * var(--tab-gap))) /
+               var(--tab-count)
          );
          border-radius: 1000px;
          background: rgba(255, 255, 255, 0.9);
@@ -167,10 +227,24 @@ export component TabSelector(props: TabSelectorProps) {
             0 8px 24px rgba(48, 7, 77, 0.08),
             0 4px 12px rgba(48, 7, 77, 0.14);
          pointer-events: none;
-         transform: translateX(calc(var(--active-index) * (100% + var(--tab-gap))));
+         opacity: 0;
+         translate: calc(var(--active-index) * (100% + var(--tab-gap))) 0;
+         scale: 0.95;
+         transform-origin: center center;
          transition:
-            transform 0.28s var(--ease),
-            width 0.28s var(--ease);
+            translate 0.3s cubic-bezier(0.22, 1.25, 0.32, 1),
+            scale 0.3s var(--ease),
+            width 0.3s ease-out,
+            opacity 0.3s ease;
+      }
+
+      .tab-selector.has-active .active-pill {
+         opacity: 1;
+         scale: 1;
+      }
+
+      .tab-selector.has-active.no-slide .active-pill {
+         transition-property: scale, width, opacity;
       }
 
       .tab-item {

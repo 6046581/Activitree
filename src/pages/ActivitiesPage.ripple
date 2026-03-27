@@ -9,32 +9,53 @@ export component ActivitiesPage(props: Record<string, any>) {
       mode?: string;
    };
 
+   type ActivitySearchParams = {
+      id?: string;
+      time?: string;
+   };
+
    const params = props?.["params"] ?? {} as ActivityParams;
+   const searchParams = props?.["searchParams"] ?? {} as ActivitySearchParams;
 
    const mode = params.mode;
-   let selectedActivityId = track(new URLSearchParams(window.location.search).get("id"));
+   const currentPath = mode ? `/activities/${mode}` : "/activities";
+   const initialSelectedId = searchParams.id ?? new URLSearchParams(window.location.search).get("id");
+   let selectedActivityId = track(initialSelectedId ?? null);
+
+   function getCurrentSearchParams(): ActivitySearchParams {
+      const currentUrl = new URL(window.location.href);
+      return Object.fromEntries(currentUrl.searchParams.entries()) as ActivitySearchParams;
+   }
 
    function openActivity(activityId: string | number) {
       const id = String(activityId);
-      const url = new URL(window.location.href);
-      url.searchParams.set("id", id);
-      navigateTo(url.pathname, {
-         searchParams: Object.fromEntries(url.searchParams.entries()),
+      const currentSearchParams = getCurrentSearchParams();
+
+      navigateTo(currentPath, {
+         searchParams: {
+            ...currentSearchParams,
+            id,
+         },
       });
       @selectedActivityId = id;
    }
 
    function closeActivity() {
-      const url = new URL(window.location.href);
-      url.searchParams.delete("id");
-      navigateTo(url.pathname, {
-         searchParams: Object.fromEntries(url.searchParams.entries()),
+      const nextSearchParams: ActivitySearchParams = {
+         ...getCurrentSearchParams(),
+      };
+
+      delete nextSearchParams.id;
+
+      navigateTo(currentPath, {
+         searchParams: nextSearchParams,
       });
       @selectedActivityId = null;
    }
 
    function syncActivityFromUrl() {
-      @selectedActivityId = new URLSearchParams(window.location.search).get("id");
+      const currentSearchParams = getCurrentSearchParams();
+      @selectedActivityId = currentSearchParams.id ?? null;
    }
 
    effect(() => {

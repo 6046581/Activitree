@@ -17,11 +17,13 @@ export component App() {
       <NavBar />
 
       <Router>
-         <Route path="/" element={HomePage} />
          <Route path="/activities" element={ActivitiesPage} />
          <Route path="/activities/:mode" element={ActivitiesPage} />
          <Route path="/profile" element={ProfilePage} />
          <Route path="/login" element={LoginPage} />
+         // HACK: Trying to use "/" as the path for the home page causes it to duplicate itself on navigation.
+         // Hopefully temporarily workaround but this means any invalid path will also match, so no 404 pages for us I guess.
+         <Route path="**" element={HomePage} />
       </Router>
    </div>
 }
