@@ -206,7 +206,9 @@ img {
 
 .button:hover {
    transform: translateY(-1px);
-   box-shadow: 0 10px 20px rgba(47, 57, 134, 1), 0 6px 12px rgba(47, 57, 134, 0.5);
+   box-shadow:
+      0 10px 20px rgba(47, 57, 134, 1),
+      0 6px 12px rgba(47, 57, 134, 0.5);
 }
 
 .button:hover::after {

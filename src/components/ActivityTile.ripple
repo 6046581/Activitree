@@ -1,3 +1,5 @@
+import { getDateLabel } from "../date";
+
 export component ActivityTile(props: Record<string, any>) {
    const activity = props?.["activity"];
    const host = props?.["host"];
@@ -15,8 +17,8 @@ export component ActivityTile(props: Record<string, any>) {
    // TODO: Fetch real data
    <a class="activity card" href={`?id=${activity?.id}`} onClick={handleOpen}>
       <img
-         // TODO: load
-         src="https://images.unsplash.com/photo-1506744038136-46273834b3fb?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8Mnx8aGlraW5nJTIwaW4lMjB0aGUlMjBtb3VudGFpbnN8ZW58MHx8MHx8fDA%3D&auto=format&fit=crop&w=800&q=60"
+         // TODO: load real image
+         src="/assets/placeholder.jpg"
          alt="Activity Image"
       />
       <h4 class="title">{activity?.title}</h4>
@@ -24,8 +26,7 @@ export component ActivityTile(props: Record<string, any>) {
          <div class="details">
             <p class="icon-text">
                <i class="fas fa-clock" />
-               // TODO: prefer showing date as "Today", "Tomorrow", or weekday if within a week
-               {activity?.date + ", " + activity?.time}
+               {getDateLabel(activity?.date) + ", " + activity?.time}
             </p>
             <p class="icon-text">
                <i class="fas fa-location-dot" />

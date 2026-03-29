@@ -221,6 +221,7 @@ export component TabSelector(props: TabSelectorProps) {
          );
          border-radius: 1000px;
          background: rgba(255, 255, 255, 0.9);
+         border-top: 1px solid white;
          box-shadow:
             0 8px 24px rgba(48, 7, 77, 0.08),
             0 4px 12px rgba(48, 7, 77, 0.14);

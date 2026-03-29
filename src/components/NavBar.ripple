@@ -98,6 +98,11 @@ export component NavBar() {
          height: 100%;
          object-fit: contain;
          filter: drop-shadow(var(--card-shadow));
+         transition: scale 0.4s var(--ease);
+      }
+
+      .nav-logo:active img {
+         scale: 0.95;
       }
 
       .nav-logo-img-small {
@@ -109,6 +114,17 @@ export component NavBar() {
          aspect-ratio: 1 / 1;
          height: 100%;
          border-radius: 1000px;
+         transition:
+            scale 0.4s var(--ease),
+            transform 0.4s var(--ease);
+      }
+
+      .nav-profile:hover {
+         transform: rotate(5deg);
+      }
+
+      .nav-profile:active {
+         scale: 0.9;
       }
 
       .nav-profile img {

@@ -19,7 +19,8 @@ export component ActivitiesPage(props: Record<string, any>) {
 
    const mode = params.mode;
    const currentPath = mode ? `/activities/${mode}` : "/activities";
-   const initialSelectedId = searchParams.id ?? new URLSearchParams(window.location.search).get("id");
+   const initialSelectedId =
+      searchParams.id ?? new URLSearchParams(window.location.search).get("id");
    let selectedActivityId = track(initialSelectedId ?? null);
 
    function getCurrentSearchParams(): ActivitySearchParams {
@@ -63,6 +64,7 @@ export component ActivitiesPage(props: Record<string, any>) {
       return () => window.removeEventListener("popstate", syncActivityFromUrl);
    });
 
+   // TEMP: Buncha hardcoded bs because OUR FRIGGIN API IS NOT DONE YET
    let users = track([
       {
          id: 1,

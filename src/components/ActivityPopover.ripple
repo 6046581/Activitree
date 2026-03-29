@@ -1,5 +1,10 @@
-import { track } from "ripple";
+import { track, effect } from "ripple";
 import { navigateTo } from "ripple-router";
+
+import { fetchWeather, isOutdoorActivity, getWeatherUrl } from "../weather";
+import type { WeatherResult } from "../weather";
+import { getDateLabel, getGoogleCalendarLink, getTimeOfDayImage } from "../date";
+import { getLocationMapUrl, getLocationLabel } from "../location";
 
 export component ActivityPopover(props: Record<string, any>) {
    const activity = props?.["activity"];
@@ -9,6 +14,20 @@ export component ActivityPopover(props: Record<string, any>) {
    const onClose = props?.["onClose"];
 
    let isAttending = track(false);
+
+   // Weather
+   let weather = track<WeatherResult | null>(null);
+   effect(() => {
+      if (isOutdoorActivity(activity, location)) {
+         fetchWeather(location.latitude, location.longitude, activity.date, activity.time).then(
+            (w) => {
+               @weather = w;
+            },
+         );
+      } else {
+         @weather = null;
+      }
+   }, [activity?.type, location?.latitude, location?.longitude, activity?.date, activity?.time]);
 
    function toggleAttendance() {
       // TODO: Actually update attendance via API
@@ -56,45 +75,94 @@ export component ActivityPopover(props: Record<string, any>) {
             <p class="description">{"\"" + activity?.description + "\""}</p>
 
             <section class="details">
-               if (activity.type === "outdoor") {
-                  <a class="info-box weather">
+               // --- Weather Section ---
+               if (isOutdoorActivity(activity, location) && @weather !== null) {
+                  <a
+                     class="info-box weather"
+                     href={getWeatherUrl(location)}
+                     target="_blank"
+                     rel="noopener noreferrer"
+                  >
                      <img
                         class="info-box-background"
-                        // TODO: Weather background based on the weather at the time of the activity (Maybe get from weather API or something)
-                        src="https://images.unsplash.com/photo-1506744038136-46273834b3fb?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8Mnx8aGlraW5nJTIwaW4lMjB0aGUlMjBtb3VudGFpbnN8ZW58MHx8MHx8fDA%3D&auto=format&fit=crop&w=800&q=60"
-                        alt=""
+                        src={@weather.img || "/assets/placeholder.jpg"}
+                        alt="Weather background"
                         aria-hidden="true"
+                        onerror="this.onerror=null;this.src='/assets/placeholder.jpg';"
                      />
-                     <i class="fas fa-cloud-sun" />
+                     <i class={`fas ${@weather.icon}`} />
                      <div>
-                        // TODO: Weather info via API based on location and time of the activity
-                        <h4>{"Sunny, 24°C"}</h4>
-                        <p>{"Slight breeze or something idk"}</p>
+                        <h4>
+                           {@weather.description}
+                           {@weather.temperature !== null && @weather.temperature !== undefined
+                              ? `, ${@weather.temperature}°C`
+                              : ""}
+                        </h4>
+                        <p>
+                           {(@weather.windspeed !== null && @weather.windspeed !== undefined
+                              ? `Wind: ${Math.round(@weather.windspeed)} km/h`
+                              : "") +
+                              (@weather.rainfall !== null && @weather.rainfall !== undefined &&
+                              @weather.rainfall > 0
+                                 ? `, Rain: ${@weather.rainfall} mm`
+                                 : "")}
+                        </p>
                      </div>
                   </a>
                }
-               <a class="info-box date-time">
+               <a
+                  class="info-box date-time"
+                  href={getGoogleCalendarLink(
+                     activity?.title || "Activity",
+                     activity?.description || "",
+                     getLocationLabel(location),
+                     activity?.date,
+                     activity?.time,
+                  )}
+                  target="_blank"
+                  rel="noopener noreferrer"
+               >
                   <img
                      class="info-box-background"
-                     // TODO: Position of the sun in the background based on the time of the activity
-                     src="https://images.unsplash.com/photo-1506744038136-46273834b3fb?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8Mnx8aGlraW5nJTIwaW4lMjB0aGUlMjBtb3VudGFpbnN8ZW58MHx8MHx8fDA%3D&auto=format&fit=crop&w=800&q=60"
-                     alt=""
+                     src={getTimeOfDayImage(
+                        activity?.time ? Number(activity.time.split(":")[0]) : undefined,
+                     )}
+                     alt="Time of day background"
                      aria-hidden="true"
+                     onerror="this.onerror=null;this.src='/assets/placeholder.jpg';"
                   />
                   <i class="fas fa-calendar-alt" />
                   <div>
-                     // TODO: Get weekday from date
-                     <h4>{"WEEKDAY" + ", at " + activity?.time}</h4>
+                     <h4>
+                        {(() => {
+                           if (!activity?.date || !activity?.time) return "";
+                           return `${getDateLabel(activity.date)}, at ${activity.time}`;
+                        })()}
+                     </h4>
                      <p>{activity?.date}</p>
                   </div>
                </a>
-               <a class="info-box location">
+               <a
+                  class="info-box location"
+                  href={getLocationMapUrl(location)}
+                  target="_blank"
+                  rel="noopener noreferrer"
+               >
                   <img
                      class="info-box-background"
-                     // TODO: Map background based on the location of the activity (Get from google maps or API)
-                     src="https://images.unsplash.com/photo-1506744038136-46273834b3fb?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8Mnx8aGlraW5nJTIwaW4lMjB0aGUlMjBtb3VudGFpbnN8ZW58MHx8MHx8fDA%3D&auto=format&fit=crop&w=800&q=60"
-                     alt=""
+                     src={(() => {
+                        const lat = location?.latitude;
+                        const lng = location?.longitude;
+                        if (lat && lng) {
+                           // Wikimedia Static Maps
+                           return `https://maps.wikimedia.org/img/osm-intl,17,${lat},${lng},600x300.png`;
+                        }
+                        // fallback image
+                        return "/assets/placeholder.jpg";
+                     })()}
+                     alt="Map preview"
                      aria-hidden="true"
+                     onerror="this.onerror=null;this.src='/assets/placeholder.jpg';"
                   />
                   <i class="fas fa-map-marker-alt" />
                   <div>
@@ -105,11 +173,7 @@ export component ActivityPopover(props: Record<string, any>) {
             </section>
          </div>
          <div class="aside">
-            <img
-               class="activity-cover"
-               src="https://images.unsplash.com/photo-1506744038136-46273834b3fb?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8Mnx8aGlraW5nJTIwaW4lMjB0aGUlMjBtb3VudGFpbnN8ZW58MHx8MHx8fDA%3D&auto=format&fit=crop&w=800&q=60"
-               alt="Activity Image"
-            />
+            <img class="activity-cover" src="/assets/placeholder.jpg" alt="Activity Image" />
             <section class="attendance" aria-label="Attendance">
                <p class="attendance-title">
                   <i class="fas fa-users" />
@@ -185,13 +249,13 @@ export component ActivityPopover(props: Record<string, any>) {
          cursor: pointer;
          z-index: 20;
          transition:
-            background 0.2s var(--ease),
-            transform 0.2s var(--ease);
+            background 0.4s var(--ease),
+            transform 0.4s var(--ease);
       }
 
       .close-button:hover {
          background: rgba(12, 15, 33, 0.9);
-         transform: scale(1.1);
+         transform: scale(1.1) rotate(90deg);
       }
 
       .close-button:active {
@@ -296,8 +360,8 @@ export component ActivityPopover(props: Record<string, any>) {
       .activity .description {
          display: -webkit-box;
          -webkit-box-orient: vertical;
-         line-clamp: 10;
-         -webkit-line-clamp: 10;
+         line-clamp: 8;
+         -webkit-line-clamp: 8;
          overflow: hidden;
          width: 100%;
       }
@@ -373,6 +437,11 @@ export component ActivityPopover(props: Record<string, any>) {
       .activity .info-box i {
          color: white;
          font-size: 2.5em;
+         transition: scale 0.4s var(--ease);
+      }
+
+      .activity .info-box:hover i {
+         scale: 1.1;
       }
 
       .activity .info-box * {
@@ -382,8 +451,12 @@ export component ActivityPopover(props: Record<string, any>) {
          text-shadow: 1px 1px 4px rgba(0, 0, 0, 1);
       }
 
+      .activity .info-box h4 {
+         font-weight: 800;
+      }
+
       .activity .info-box p {
-         font-weight: 400;
+         font-weight: 600;
       }
 
       .activity .attendance {

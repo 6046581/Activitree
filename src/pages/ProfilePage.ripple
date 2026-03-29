@@ -54,7 +54,10 @@ export component ProfilePage() {
 
    <article id="user-header">
       <a id="profile-picture">
-         <img src="https://gravatar.com/avatar/00000000000000000000000000000000?d=mp&f=y" alt="profile-picture" />
+         <img
+            src="https://gravatar.com/avatar/00000000000000000000000000000000?d=mp&f=y"
+            alt="profile-picture"
+         />
          <p>{@username}</p>
       </a>
 
