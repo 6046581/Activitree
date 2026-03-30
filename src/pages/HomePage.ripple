@@ -1,24 +1,67 @@
+import { navigateTo } from "ripple-router";
+
 export component HomePage() {
-   <article class="card">
-      <p>
-         {"Some text that happens to be"}
-         <b>{" bold"}</b>
-         {" or"}
-         <i>{" italic"}</i>
-      </p>
-
-      <h1>{"Header"}</h1>
-      <h2>{"Header"}</h2>
-      <h3>{"Header"}</h3>
-      <h4>{"Header"}</h4>
-      <h5>{"Header"}</h5>
-      <h6>{"Header"}</h6>
-
-      <div class="button-group">
-         <a href="https://www.ripple-ts.com/" target="_blank" class="button docs">{"Docs"}</a>
-         <a href="https://github.com/Ripple-TS/ripple" target="_blank" class="button github">
-            {"GitHub"}
+   <article id="hero">
+      <h1>
+         {"Event planning,"}
+         <br />
+         {"done "}
+         <span class="special">{"right"}</span>
+      </h1>
+      <section class="buttons">
+         <a href="/activities" class="button white" onclick={(e: MouseEvent) => {
+            e.preventDefault();
+            navigateTo("/activities");
+         }}>
+            {"Explore Activities"}
          </a>
-      </div>
+         <a href="/login" class="link" onclick={(e: MouseEvent) => {
+            e.preventDefault();
+            navigateTo("/login");
+         }}>
+            {"Get Started"}
+         </a>
+      </section>
    </article>
+
+   <style scoped>
+      @import url("https://fonts.googleapis.com/css2?family=Pacifico&display=swap");
+
+      #hero {
+         display: flex;
+         justify-content: center;
+         align-items: center;
+         flex-direction: column;
+         justify-content: center;
+         height: 75vh;
+         font-size: calc(0.25rem + 1.5vw);
+         text-align: center;
+         gap: 3rem;
+         filter: drop-shadow(0px 0px 4px rgba(255, 255, 255, 0.2))
+            drop-shadow(2px 2px 8px var(--color-primary))
+      }
+
+      h1 {
+         font-size: 5em;
+         margin-bottom: 1rem;
+         font-weight: 800;
+         line-height: 1;
+         letter-spacing: -0.04em;
+         text-wrap: nowrap;
+      }
+
+      h1 .special {
+         font-family: "Pacifico", cursive;
+         font-weight: 500;
+         font-size: 1.1em;
+         letter-spacing: 0.01em;
+      }
+
+      .buttons {
+         display: flex;
+         justify-content: center;
+         align-items: center;
+         gap: 1.5em;
+      }
+   </style>
 }
