@@ -11,8 +11,7 @@ export function getLocationMapUrl(
    } = {}
 ): string {
    const { latitude, longitude, name, address } = location;
-   const hasCoordinates =
-      latitude !== undefined && longitude !== undefined && latitude !== null && longitude !== null;
+   const hasCoordinates = latitude !== undefined && longitude !== undefined && latitude !== null && longitude !== null;
    if (hasCoordinates) {
       return `https://www.google.com/maps/dir/?api=1&destination=${encodeURIComponent(`${latitude},${longitude}`)}&travelmode=driving`;
    }

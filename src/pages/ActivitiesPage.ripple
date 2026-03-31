@@ -19,8 +19,7 @@ export component ActivitiesPage(props: Record<string, any>) {
 
    const mode = params.mode;
    const currentPath = mode ? `/activities/${mode}` : "/activities";
-   const initialSelectedId =
-      searchParams.id ?? new URLSearchParams(window.location.search).get("id");
+   const initialSelectedId = searchParams.id ?? new URLSearchParams(window.location.search).get("id");
    let selectedActivityId = track(initialSelectedId ?? null);
 
    function getCurrentSearchParams(): ActivitySearchParams {
@@ -299,34 +298,22 @@ export component ActivitiesPage(props: Record<string, any>) {
       },
    ]);
 
-   let selectedActivity = track(
-      () => @activities.find((a) => String(a.id) === @selectedActivityId),
-   );
+   let selectedActivity = track(() => @activities.find((a) => String(a.id) === @selectedActivityId));
 
    if (@selectedActivity) {
       const currentActivity = @selectedActivity;
       const host = @users.find((u) => u.id === currentActivity.createdBy);
-      const participantIds = @activityParticipants.filter(
-         (p) => p.activityId === currentActivity.id,
-      ).map((p) => p.userId);
+      const participantIds = @activityParticipants.filter((p) => p.activityId === currentActivity.id).map((p) => p.userId);
       const participants = @users.filter((u) => participantIds.includes(u.id));
       const location = @locations.find((l) => l.id === currentActivity.locationId);
 
-      <ActivityPopover
-         activity={currentActivity}
-         {host}
-         {participants}
-         {location}
-         onClose={closeActivity}
-      />
+      <ActivityPopover activity={currentActivity} {host} {participants} {location} onClose={closeActivity} />
    }
 
    <section class="activities">
       for (let activity of @activities) {
          const host = @users.find((u) => u.id === activity.createdBy);
-         const participantIds = @activityParticipants.filter(
-            (p) => p.activityId === activity.id,
-         ).map((p) => p.userId);
+         const participantIds = @activityParticipants.filter((p) => p.activityId === activity.id).map((p) => p.userId);
          const participants = @users.filter((u) => participantIds.includes(u.id));
          const location = @locations.find((l) => l.id === activity.locationId);
 

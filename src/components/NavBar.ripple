@@ -59,10 +59,7 @@ export component NavBar() {
       <nav>
          <TabSelector tabs={tabBar.tabs} />
          <a class="nav-profile" href="/profile" onClick={handleProfileClick}>
-            <img
-               src="https://gravatar.com/avatar/00000000000000000000000000000000?d=mp&f=y"
-               alt="profile"
-            />
+            <img src="https://gravatar.com/avatar/00000000000000000000000000000000?d=mp&f=y" alt="profile" />
          </a>
       </nav>
    </header>

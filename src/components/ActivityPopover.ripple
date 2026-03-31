@@ -19,11 +19,9 @@ export component ActivityPopover(props: Record<string, any>) {
    let weather = track<WeatherResult | null>(null);
    effect(() => {
       if (isOutdoorActivity(activity, location)) {
-         fetchWeather(location.latitude, location.longitude, activity.date, activity.time).then(
-            (w) => {
-               @weather = w;
-            },
-         );
+         fetchWeather(location.latitude, location.longitude, activity.date, activity.time).then((w) => {
+            @weather = w;
+         });
       } else {
          @weather = null;
       }
@@ -57,12 +55,7 @@ export component ActivityPopover(props: Record<string, any>) {
    }
 
    <div class="popover" onClick={closePopover}>
-      <button
-         class="close-button"
-         type="button"
-         aria-label="Close activity details"
-         onClick={closePopover}
-      >
+      <button class="close-button" type="button" aria-label="Close activity details" onClick={closePopover}>
          <i class="fas fa-xmark" />
       </button>
       <article class="activity card" onClick={stopPropagation}>
@@ -77,12 +70,7 @@ export component ActivityPopover(props: Record<string, any>) {
             <section class="details">
                // --- Weather Section ---
                if (isOutdoorActivity(activity, location) && @weather !== null) {
-                  <a
-                     class="info-box weather"
-                     href={getWeatherUrl(location)}
-                     target="_blank"
-                     rel="noopener noreferrer"
-                  >
+                  <a class="info-box weather" href={getWeatherUrl(location)} target="_blank" rel="noopener noreferrer">
                      <img
                         class="info-box-background"
                         src={@weather.img || "/assets/placeholder.jpg"}
@@ -94,18 +82,11 @@ export component ActivityPopover(props: Record<string, any>) {
                      <div>
                         <h4>
                            {@weather.description}
-                           {@weather.temperature !== null && @weather.temperature !== undefined
-                              ? `, ${@weather.temperature}°C`
-                              : ""}
+                           {@weather.temperature !== null && @weather.temperature !== undefined ? `, ${@weather.temperature}°C` : ""}
                         </h4>
                         <p>
-                           {(@weather.windspeed !== null && @weather.windspeed !== undefined
-                              ? `Wind: ${Math.round(@weather.windspeed)} km/h`
-                              : "") +
-                              (@weather.rainfall !== null && @weather.rainfall !== undefined &&
-                              @weather.rainfall > 0
-                                 ? `, Rain: ${@weather.rainfall} mm`
-                                 : "")}
+                           {(@weather.windspeed !== null && @weather.windspeed !== undefined ? `Wind: ${Math.round(@weather.windspeed)} km/h` : "") +
+                              (@weather.rainfall !== null && @weather.rainfall !== undefined && @weather.rainfall > 0 ? `, Rain: ${@weather.rainfall} mm` : "")}
                         </p>
                      </div>
                   </a>
@@ -124,9 +105,7 @@ export component ActivityPopover(props: Record<string, any>) {
                >
                   <img
                      class="info-box-background"
-                     src={getTimeOfDayImage(
-                        activity?.time ? Number(activity.time.split(":")[0]) : undefined,
-                     )}
+                     src={getTimeOfDayImage(activity?.time ? Number(activity.time.split(":")[0]) : undefined)}
                      alt="Time of day background"
                      aria-hidden="true"
                      onerror="this.onerror=null;this.src='/assets/placeholder.jpg';"
@@ -142,12 +121,7 @@ export component ActivityPopover(props: Record<string, any>) {
                      <p>{activity?.date}</p>
                   </div>
                </a>
-               <a
-                  class="info-box location"
-                  href={getLocationMapUrl(location)}
-                  target="_blank"
-                  rel="noopener noreferrer"
-               >
+               <a class="info-box location" href={getLocationMapUrl(location)} target="_blank" rel="noopener noreferrer">
                   <img
                      class="info-box-background"
                      src={(() => {
@@ -183,22 +157,14 @@ export component ActivityPopover(props: Record<string, any>) {
                <div class="attendance-list" role="list">
                   for (let participant of participants) {
                      <article class="participant" role="listitem">
-                        <img
-                           class="participant-avatar"
-                           src={participant.avatar}
-                           alt={`${participant.username} profile`}
-                        />
+                        <img class="participant-avatar" src={participant.avatar} alt={`${participant.username} profile`} />
                         <p class="participant-name">{participant.username}</p>
                      </article>
                   }
                </div>
 
                <div class="button-group bottom">
-                  <button
-                     class={`button ${@isAttending ? "red" : "green"}`}
-                     type="button"
-                     onClick={toggleAttendance}
-                  >
+                  <button class={`button ${@isAttending ? "red" : "green"}`} type="button" onClick={toggleAttendance}>
                      <i class={`fas ${@isAttending ? "fa-user-minus" : "fa-user-plus"}`} />
                      {@isAttending ? "Leave" : "Join"}
                   </button>

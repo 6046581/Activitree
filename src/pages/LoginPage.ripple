@@ -75,11 +75,7 @@ export component LoginPage() {
       return authUser;
    }
 
-   async function loginViaUsersEndpoint(
-      email: string,
-      password: string,
-      keepSignedIn: boolean,
-   ): Promise<boolean> {
+   async function loginViaUsersEndpoint(email: string, password: string, keepSignedIn: boolean): Promise<boolean> {
       const query = new URLSearchParams({ email, password });
       const response = await fetch(`${USERS_ENDPOINT}?${query.toString()}`, {
          method: "GET",
@@ -244,25 +240,12 @@ export component LoginPage() {
          <form class="auth-form" onSubmit={handleLoginSubmit}>
             <label>
                <span>{"Email"}</span>
-               <input
-                  class="auth-input"
-                  type="email"
-                  name="email"
-                  placeholder="you@example.com"
-                  required
-                  disabled={@isLoading}
-               />
+               <input class="auth-input" type="email" name="email" placeholder="you@example.com" required disabled={@isLoading} />
             </label>
 
             <label>
                <span>{"Password"}</span>
-               <input
-                  type="password"
-                  name="password"
-                  placeholder="Enter your password"
-                  required
-                  disabled={@isLoading}
-               />
+               <input type="password" name="password" placeholder="Enter your password" required disabled={@isLoading} />
             </label>
 
             <label>
@@ -286,49 +269,22 @@ export component LoginPage() {
          <form class="auth-form" onSubmit={handleSignupSubmit}>
             <label>
                <span>{"Username"}</span>
-               <input
-                  type="text"
-                  name="username"
-                  placeholder="Choose a username"
-                  minlength="3"
-                  required
-                  disabled={@isLoading}
-               />
+               <input type="text" name="username" placeholder="Choose a username" minlength="3" required disabled={@isLoading} />
             </label>
 
             <label>
                <span>{"Email"}</span>
-               <input
-                  type="email"
-                  name="email"
-                  placeholder="you@example.com"
-                  required
-                  disabled={@isLoading}
-               />
+               <input type="email" name="email" placeholder="you@example.com" required disabled={@isLoading} />
             </label>
 
             <label>
                <span>{"Password"}</span>
-               <input
-                  type="password"
-                  name="password"
-                  placeholder="At least 8 characters"
-                  minlength="8"
-                  required
-                  disabled={@isLoading}
-               />
+               <input type="password" name="password" placeholder="At least 8 characters" minlength="8" required disabled={@isLoading} />
             </label>
 
             <label>
                <span>{"Confirm password"}</span>
-               <input
-                  type="password"
-                  name="confirm_password"
-                  placeholder="Repeat your password"
-                  minlength="8"
-                  required
-                  disabled={@isLoading}
-               />
+               <input type="password" name="confirm_password" placeholder="Repeat your password" minlength="8" required disabled={@isLoading} />
             </label>
 
             if (!@isLoading) {

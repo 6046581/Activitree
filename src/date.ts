@@ -28,8 +28,7 @@ export function getGoogleCalendarLink(
          const start = new Date(year, month - 1, day, hour, minute);
          const end = new Date(start.getTime() + durationHours * 60 * 60 * 1000);
          const pad = (n: number) => n.toString().padStart(2, "0");
-         const fmt = (d: Date) =>
-            `${d.getFullYear()}${pad(d.getMonth() + 1)}${pad(d.getDate())}T${pad(d.getHours())}${pad(d.getMinutes())}00Z`;
+         const fmt = (d: Date) => `${d.getFullYear()}${pad(d.getMonth() + 1)}${pad(d.getDate())}T${pad(d.getHours())}${pad(d.getMinutes())}00Z`;
          return `https://calendar.google.com/calendar/render?action=TEMPLATE&text=${enc(title)}&details=${enc(description)}&location=${enc(locationLabel)}&dates=${fmt(start)}/${fmt(end)}`;
       }
    }

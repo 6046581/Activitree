@@ -2,13 +2,7 @@
  * Returns true if the activity is outdoor and has valid location and time.
  */
 export function isOutdoorActivity(activity: any, location: any): boolean {
-   return (
-      activity?.type === "outdoor" &&
-      location?.latitude != null &&
-      location?.longitude != null &&
-      activity?.date &&
-      activity?.time
-   );
+   return activity?.type === "outdoor" && location?.latitude != null && location?.longitude != null && activity?.date && activity?.time;
 }
 
 /**
@@ -149,12 +143,7 @@ const weatherMap: Record<number, { desc: string; icon: string; img: string }> = 
  * @param time - Time in HH:MM format (24-hour)
  * @returns Promise resolving to WeatherResult containing temperature, windspeed, rainfall, description, icon, image URL, and link to detailed forecast
  */
-export async function fetchWeather(
-   lat: number,
-   lon: number,
-   date: string,
-   time: string
-): Promise<WeatherResult> {
+export async function fetchWeather(lat: number, lon: number, date: string, time: string): Promise<WeatherResult> {
    const url = `https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&hourly=temperature_2m,weathercode,windspeed_10m,precipitation&timezone=auto`;
    const res = await fetch(url);
    const data = await res.json();

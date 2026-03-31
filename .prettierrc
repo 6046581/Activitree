@@ -2,7 +2,10 @@
    "useTabs": false,
    "singleQuote": false,
    "trailingComma": "es5",
-   "printWidth": 100,
+   "printWidth": 160,
    "tabWidth": 3,
-   "plugins": ["@ripple-ts/prettier-plugin"]
+   "endOfLine": "lf",
+   "bracketSameLine": false,
+   "jsxSingleQuote": false,
+   "plugins": ["@ripple-ts/prettier-plugin", "@prettier/plugin-php"]
 }

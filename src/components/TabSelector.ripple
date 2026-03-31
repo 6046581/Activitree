@@ -135,9 +135,7 @@ export component TabSelector(props: TabSelectorProps) {
    }
 
    function getContainerClass(): string {
-      return `tab-selector ${hasActiveTab() ? "has-active" : ""} ${
-         @suppressSlideOnShow ? "no-slide" : ""
-      }`;
+      return `tab-selector ${hasActiveTab() ? "has-active" : ""} ${@suppressSlideOnShow ? "no-slide" : ""}`;
    }
 
    function getContainerStyle(): string {
@@ -214,10 +212,7 @@ export component TabSelector(props: TabSelectorProps) {
          left: var(--tab-pad);
          top: var(--tab-pad);
          height: calc(100% - (var(--tab-pad) * 2));
-         width: calc(
-            (100% - (var(--tab-pad) * 2) - ((var(--tab-count) - 1) * var(--tab-gap))) /
-               var(--tab-count)
-         );
+         width: calc((100% - (var(--tab-pad) * 2) - ((var(--tab-count) - 1) * var(--tab-gap))) / var(--tab-count));
          border-radius: 1000px;
          background: rgba(255, 255, 255, 0.9);
          border-top: 1px solid white;
