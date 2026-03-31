@@ -201,7 +201,6 @@ export component TabSelector(props: TabSelectorProps) {
          display: flex;
          align-items: center;
          justify-content: space-between;
-         flex: 1;
          gap: var(--tab-gap);
          padding: var(--tab-pad);
          border-radius: 1000px;

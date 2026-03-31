@@ -57,7 +57,7 @@ body:has(.popover) {
    }
 }
 
-.app>* {
+.app > * {
    width: 100%;
 }
 
@@ -138,8 +138,7 @@ img {
    position: relative;
    display: flex;
    font-weight: 500;
-   transition:
-      scale 0.4s var(--ease);
+   transition: scale 0.4s var(--ease);
 }
 
 .link:hover {
@@ -198,7 +197,7 @@ img {
       box-shadow 0.2s ease;
 }
 
-.button>* {
+.button > * {
    position: relative;
    z-index: 1;
 }
@@ -309,14 +308,14 @@ img {
    flex: 1;
 }
 
-.fas, .fas::before {
+.fas,
+.fas::before {
    display: flex !important;
    align-items: center !important;
    justify-content: center !important;
    width: 1em !important;
    height: 1em !important;
 }
-
 
 .icon-text {
    display: flex;

@@ -16,18 +16,9 @@ CREATE TABLE users (
     email VARCHAR(150) NOT NULL UNIQUE,
     password VARCHAR(255) NOT NULL,
     role ENUM('admin','user') DEFAULT 'user',
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-);
-
-CREATE TABLE sessions (
-    id INT AUTO_INCREMENT PRIMARY KEY,
-    user_id INT NOT NULL,
-    token VARCHAR(255) NOT NULL UNIQUE,
-    expires_at TIMESTAMP NOT NULL,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    FOREIGN KEY (user_id) REFERENCES users(id)
-        ON DELETE CASCADE
-)
+    token VARCHAR(255) NULL
+);
 
 -- ======================================
 -- LOCATIONS
@@ -110,22 +101,6 @@ CREATE TABLE invitations (
 );
 
 -- ======================================
--- WEATHER (FOR OUTDOOR ACTIVITIES)
--- ======================================
-
-CREATE TABLE weather (
-    id INT AUTO_INCREMENT PRIMARY KEY,
-    activity_id INT NOT NULL,
-    temperature DECIMAL(4,1),
-    weather_description VARCHAR(100),
-    wind_speed DECIMAL(4,1),
-    fetched_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-
-    FOREIGN KEY (activity_id) REFERENCES activities(id)
-        ON DELETE CASCADE
-);
-
--- ======================================
 -- NOTIFICATIONS
 -- ======================================
 
@@ -148,8 +123,6 @@ CREATE TABLE notifications (
 -- SAMPLE DATA
 -- ======================================
 
--- Keep seed data aligned with ActivitiesPage test fixtures.
--- Explicit IDs ensure stable references across users, locations, activities, and participants.
 INSERT INTO users (id, username, email, password, role)
 VALUES
 (1, 'NoomStuff', 'noomstuff@example.com', 'password', 'admin'),

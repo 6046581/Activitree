@@ -9,16 +9,24 @@ export component HomePage() {
          <span class="special">{"right"}</span>
       </h1>
       <section class="buttons">
-         <a href="/activities" class="button white" onclick={(e: MouseEvent) => {
-            e.preventDefault();
-            navigateTo("/activities");
-         }}>
+         <a
+            href="/activities"
+            class="button white"
+            onclick={(e: MouseEvent) => {
+               e.preventDefault();
+               navigateTo("/activities");
+            }}
+         >
             {"Explore Activities"}
          </a>
-         <a href="/login" class="link" onclick={(e: MouseEvent) => {
-            e.preventDefault();
-            navigateTo("/login");
-         }}>
+         <a
+            href="/login"
+            class="link"
+            onclick={(e: MouseEvent) => {
+               e.preventDefault();
+               navigateTo("/login");
+            }}
+         >
             {"Get Started"}
          </a>
       </section>
@@ -38,7 +46,7 @@ export component HomePage() {
          text-align: center;
          gap: 3rem;
          filter: drop-shadow(0px 0px 4px rgba(255, 255, 255, 0.2))
-            drop-shadow(2px 2px 8px var(--color-primary))
+            drop-shadow(2px 2px 8px var(--color-primary));
       }
 
       h1 {
