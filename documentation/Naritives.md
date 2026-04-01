@@ -5,33 +5,33 @@
 
 ---
 
-## 🎯 End Goal
+## End Goal
 
 Has a party planned
 
 ---
 
-## 📘 Description
+## Description
 
 This use case covers how a user and the system interacts while making a party in the app
 
 ---
 
-## 👥 Actors
+## Actors
 
 - Actor 1
    - User
 
 ---
 
-## ✅ Preconditions
+## Preconditions
 
 - Condition 1
    - Need to be logged in
 
 ---
 
-## 🟢 Basic Flow (Happy Path)
+## Basic Flow (Happy Path)
 
 | Step | User Actions                                                                                  | System Actions                                                                                                          |
 | ---- | --------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------- |
@@ -42,7 +42,7 @@ This use case covers how a user and the system interacts while making a party in
 
 ---
 
-## 🟡 Alternate Flow(s)
+## Alternate Flow(s)
 
 ### 1. outdoor
 
@@ -59,7 +59,7 @@ This use case covers how a user and the system interacts while making a party in
 
 ---
 
-## 🔴 Exception Flow(s)
+## Exception Flow(s)
 
 ### 1. Invalid date
 
@@ -69,7 +69,7 @@ This use case covers how a user and the system interacts while making a party in
 
 ---
 
-## 🏁 Post Conditions
+## Post Conditions
 
 Describe the true state of the system after successful completion.
 
@@ -78,233 +78,273 @@ Describe the true state of the system after successful completion.
 - Result 2
    - The event is fully organized
 
-# Use Case 2
+---
+# Use case 2
 
-**Use Case:**  
+**Use Case:** `Joining an activity`  
 **Version No:** 0.1
 
 ---
 
-## 🎯 End Goal
+## End Goal
 
-Describe the final outcome of this use case.
-
----
-
-## 📘 Description
-
-Brief summary of what this use case covers.
+User successfully joins an activity
 
 ---
 
-## 👥 Actors
+## Description
+
+This use case covers how a user joins an existing activity in the app
+
+---
+
+## Actors
 
 - Actor 1
-- Actor 2
-- Actor 3
+    
+    - User
+        
 
 ---
 
-## ✅ Preconditions
+## Preconditions
 
 - Condition 1
+    
+    - Need to be logged in
+        
 - Condition 2
-- Condition 3
+    
+    - Activity must exist
+        
 
 ---
 
-## 🟢 Basic Flow (Happy Path)
+## Basic Flow (Happy Path)
 
-> The optimal or normal ("good day") flow.  
-> No conditional logic.
-
-| Step | User Actions | System Actions |
-| ---- | ------------ | -------------- |
-| 1    |              |                |
-| 2    |              |                |
-| 3    |              |                |
-| 4    |              |                |
+|Step|User Actions|System Actions|
+|---|---|---|
+|1|The user opens the activity overview|The system shows a list of available activities|
+|2|The user selects an activity|The system shows activity details|
+|3|The user clicks on "Join activity"|The system adds the user to the participant list|
+|4||The system updates the number of participants|
 
 ---
 
-## 🟡 Alternate Flow(s)
+## Alternate Flow(s)
 
-| Step | User Actions | System Actions |
-| ---- | ------------ | -------------- |
-| 1    |              |                |
-| 2    |              |                |
+### 1. Activity full
 
----
+|Step|User Actions|System Actions|
+|---|---|---|
+|1|The user tries to join a full activity|The system shows a message that the activity is full|
 
-## 🔴 Exception Flow(s)
+### 2. User cancels joining
 
-Identify system and data error conditions.
-
-| Step | Exception Condition | System Response |
-| ---- | ------------------- | --------------- |
-| 1    |                     |                 |
-| 2    |                     |                 |
+|Step|User Actions|System Actions|
+|---|---|---|
+|1|The user clicks join activity|The system asks for confirmation|
+|2|The user cancels|The system stops the joining process|
 
 ---
 
-## 🏁 Post Conditions
+## Exception Flow(s)
 
-Describe the true state of the system after successful completion.
+### 1. Activity not found
+
+|Step|Exception Condition|System Response|
+|---|---|---|
+|1|The activity does not exist anymore|The system shows an error message|
+
+---
+
+## Post Conditions
 
 - Result 1
+    
+    - User is added to the activity
+        
 - Result 2
-- Result 3
+    
+    - Participant list is updated
 
-# Use Case Specification
+--- 
 
-**Use Case:**  
+# Use case 3
+
+**Use Case:** `Editing an activity`  
 **Version No:** 0.1
 
 ---
 
-## 🎯 End Goal
+## End Goal
 
-Describe the final outcome of this use case.
-
----
-
-## 📘 Description
-
-Brief summary of what this use case covers.
+Activity information is updated
 
 ---
 
-## 👥 Actors
+## Description
+
+This use case covers how a user edits an existing activity
+
+---
+
+## Actors
 
 - Actor 1
+    
+    - User
+        
 - Actor 2
-- Actor 3
+    
+    - System
+        
 
 ---
 
-## ✅ Preconditions
+## Preconditions
 
 - Condition 1
+    
+    - User must be logged in
+        
 - Condition 2
-- Condition 3
+    
+    - User must be the creator of the activity
+        
 
 ---
 
-## 🟢 Basic Flow (Happy Path)
+## Basic Flow (Happy Path)
 
-> The optimal or normal ("good day") flow.  
-> No conditional logic.
-
-| Step | User Actions | System Actions |
-| ---- | ------------ | -------------- |
-| 1    |              |                |
-| 2    |              |                |
-| 3    |              |                |
-| 4    |              |                |
+|Step|User Actions|System Actions|
+|---|---|---|
+|1|The user opens their activity|The system loads the activity information|
+|2|The user clicks on edit activity|The system shows editable fields|
+|3|The user changes the activity details|The system saves changes in local storage|
+|4|The user clicks confirm|The system updates the activity in the database|
 
 ---
 
-## 🟡 Alternate Flow(s)
+## Alternate Flow(s)
 
-| Step | User Actions | System Actions |
-| ---- | ------------ | -------------- |
-| 1    |              |                |
-| 2    |              |                |
+### 1. Changing date
 
----
+|Step|User Actions|System Actions|
+|---|---|---|
+|1|The user changes the date|The system checks staff availability|
+|2||The system assigns new staff if needed|
 
-## 🔴 Exception Flow(s)
+### 2. Cancel editing
 
-Identify system and data error conditions.
-
-| Step | Exception Condition | System Response |
-| ---- | ------------------- | --------------- |
-| 1    |                     |                 |
-| 2    |                     |                 |
+|Step|User Actions|System Actions|
+|---|---|---|
+|1|The user cancels editing|The system asks for confirmation|
+|2|The user confirms|The system discards the changes|
 
 ---
 
-## 🏁 Post Conditions
+## Exception Flow(s)
 
-Describe the true state of the system after successful completion.
+### 1. No permission
+
+|Step|Exception Condition|System Response|
+|---|---|---|
+|1|User is not the creator|The system denies access to edit|
+
+---
+
+## Post Conditions
 
 - Result 1
+    
+    - Activity is updated
+        
 - Result 2
-- Result 3
+    
+    - Database contains new activity information
 
-# Use Case Specification
+---
 
-**Use Case:**  
+# Use case 4
+
+**Use Case:** `Deleting an activity`  
 **Version No:** 0.1
 
 ---
 
-## 🎯 End Goal
+## End Goal
 
-Describe the final outcome of this use case.
-
----
-
-## 📘 Description
-
-Brief summary of what this use case covers.
+Activity is deleted from the system
 
 ---
 
-## 👥 Actors
+## Description
+
+This use case covers how a user deletes an activity from the app
+
+---
+
+## Actors
 
 - Actor 1
-- Actor 2
-- Actor 3
+    
+    - User
+        
 
 ---
 
-## ✅ Preconditions
+## Preconditions
 
 - Condition 1
+    
+    - User must be logged in
+        
 - Condition 2
-- Condition 3
+    
+    - User must be the creator of the activity
+        
 
 ---
 
-## 🟢 Basic Flow (Happy Path)
+## Basic Flow (Happy Path)
 
-> The optimal or normal ("good day") flow.  
-> No conditional logic.
-
-| Step | User Actions | System Actions |
-| ---- | ------------ | -------------- |
-| 1    |              |                |
-| 2    |              |                |
-| 3    |              |                |
-| 4    |              |                |
+|Step|User Actions|System Actions|
+|---|---|---|
+|1|The user opens their activity|The system shows activity details|
+|2|The user clicks delete activity|The system asks for confirmation|
+|3|The user confirms deletion|The system deletes the activity from the database|
+|4||The system removes all participants from the activity|
 
 ---
 
-## 🟡 Alternate Flow(s)
+## Alternate Flow(s)
 
-| Step | User Actions | System Actions |
-| ---- | ------------ | -------------- |
-| 1    |              |                |
-| 2    |              |                |
+### 1. User cancels deletion
 
----
-
-## 🔴 Exception Flow(s)
-
-Identify system and data error conditions.
-
-| Step | Exception Condition | System Response |
-| ---- | ------------------- | --------------- |
-| 1    |                     |                 |
-| 2    |                     |                 |
+|Step|User Actions|System Actions|
+|---|---|---|
+|1|The user clicks delete|The system asks for confirmation|
+|2|The user cancels|The system keeps the activity|
 
 ---
 
-## 🏁 Post Conditions
+## Exception Flow(s)
 
-Describe the true state of the system after successful completion.
+### 1. Activity already deleted
+
+|Step|Exception Condition|System Response|
+|---|---|---|
+|1|Activity not found|The system shows an error message|
+
+---
+
+## Post Conditions
 
 - Result 1
+    
+    - Activity is removed from the system
+        
 - Result 2
-- Result 3
+    
+    - Participants are notified about cancellation
