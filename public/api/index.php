@@ -24,9 +24,16 @@ $routes = [
    // Activities
    "GET /activities" => "ActivitiesController@getAllActivities",
    "GET /activities/{id}" => "ActivitiesController@getActivityById",
+   "GET /activities/{id}/participants" => "ActivitiesController@getActivityParticipants",
+   "POST /activities/{id}/join" => "ActivitiesController@joinActivity",
+   "DELETE /activities/{id}/leave" => "ActivitiesController@leaveActivity",
    "POST /activities" => "ActivitiesController@createActivity",
    "PUT /activities/{id}" => "ActivitiesController@updateActivity",
    "DELETE /activities/{id}" => "ActivitiesController@deleteActivity",
+
+   // Locations
+   "GET /locations" => "LocationsController@getAllLocations",
+   "GET /locations/{id}" => "LocationsController@getLocationById",
 ];
 
 // Try to run the function mapped to the requested route

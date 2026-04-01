@@ -79,6 +79,7 @@ Describe the true state of the system after successful completion.
    - The event is fully organized
 
 ---
+
 # Use case 2
 
 **Use Case:** `Joining an activity`  
@@ -101,33 +102,27 @@ This use case covers how a user joins an existing activity in the app
 ## Actors
 
 - Actor 1
-    
-    - User
-        
+   - User
 
 ---
 
 ## Preconditions
 
 - Condition 1
-    
-    - Need to be logged in
-        
+   - Need to be logged in
 - Condition 2
-    
-    - Activity must exist
-        
+   - Activity must exist
 
 ---
 
 ## Basic Flow (Happy Path)
 
-|Step|User Actions|System Actions|
-|---|---|---|
-|1|The user opens the activity overview|The system shows a list of available activities|
-|2|The user selects an activity|The system shows activity details|
-|3|The user clicks on "Join activity"|The system adds the user to the participant list|
-|4||The system updates the number of participants|
+| Step | User Actions                         | System Actions                                   |
+| ---- | ------------------------------------ | ------------------------------------------------ |
+| 1    | The user opens the activity overview | The system shows a list of available activities  |
+| 2    | The user selects an activity         | The system shows activity details                |
+| 3    | The user clicks on "Join activity"   | The system adds the user to the participant list |
+| 4    |                                      | The system updates the number of participants    |
 
 ---
 
@@ -135,16 +130,16 @@ This use case covers how a user joins an existing activity in the app
 
 ### 1. Activity full
 
-|Step|User Actions|System Actions|
-|---|---|---|
-|1|The user tries to join a full activity|The system shows a message that the activity is full|
+| Step | User Actions                           | System Actions                                       |
+| ---- | -------------------------------------- | ---------------------------------------------------- |
+| 1    | The user tries to join a full activity | The system shows a message that the activity is full |
 
 ### 2. User cancels joining
 
-|Step|User Actions|System Actions|
-|---|---|---|
-|1|The user clicks join activity|The system asks for confirmation|
-|2|The user cancels|The system stops the joining process|
+| Step | User Actions                  | System Actions                       |
+| ---- | ----------------------------- | ------------------------------------ |
+| 1    | The user clicks join activity | The system asks for confirmation     |
+| 2    | The user cancels              | The system stops the joining process |
 
 ---
 
@@ -152,23 +147,20 @@ This use case covers how a user joins an existing activity in the app
 
 ### 1. Activity not found
 
-|Step|Exception Condition|System Response|
-|---|---|---|
-|1|The activity does not exist anymore|The system shows an error message|
+| Step | Exception Condition                 | System Response                   |
+| ---- | ----------------------------------- | --------------------------------- |
+| 1    | The activity does not exist anymore | The system shows an error message |
 
 ---
 
 ## Post Conditions
 
 - Result 1
-    
-    - User is added to the activity
-        
+   - User is added to the activity
 - Result 2
-    
-    - Participant list is updated
+   - Participant list is updated
 
---- 
+---
 
 # Use case 3
 
@@ -192,37 +184,29 @@ This use case covers how a user edits an existing activity
 ## Actors
 
 - Actor 1
-    
-    - User
-        
+   - User
 - Actor 2
-    
-    - System
-        
+   - System
 
 ---
 
 ## Preconditions
 
 - Condition 1
-    
-    - User must be logged in
-        
+   - User must be logged in
 - Condition 2
-    
-    - User must be the creator of the activity
-        
+   - User must be the creator of the activity
 
 ---
 
 ## Basic Flow (Happy Path)
 
-|Step|User Actions|System Actions|
-|---|---|---|
-|1|The user opens their activity|The system loads the activity information|
-|2|The user clicks on edit activity|The system shows editable fields|
-|3|The user changes the activity details|The system saves changes in local storage|
-|4|The user clicks confirm|The system updates the activity in the database|
+| Step | User Actions                          | System Actions                                  |
+| ---- | ------------------------------------- | ----------------------------------------------- |
+| 1    | The user opens their activity         | The system loads the activity information       |
+| 2    | The user clicks on edit activity      | The system shows editable fields                |
+| 3    | The user changes the activity details | The system saves changes in local storage       |
+| 4    | The user clicks confirm               | The system updates the activity in the database |
 
 ---
 
@@ -230,17 +214,17 @@ This use case covers how a user edits an existing activity
 
 ### 1. Changing date
 
-|Step|User Actions|System Actions|
-|---|---|---|
-|1|The user changes the date|The system checks staff availability|
-|2||The system assigns new staff if needed|
+| Step | User Actions              | System Actions                         |
+| ---- | ------------------------- | -------------------------------------- |
+| 1    | The user changes the date | The system checks staff availability   |
+| 2    |                           | The system assigns new staff if needed |
 
 ### 2. Cancel editing
 
-|Step|User Actions|System Actions|
-|---|---|---|
-|1|The user cancels editing|The system asks for confirmation|
-|2|The user confirms|The system discards the changes|
+| Step | User Actions             | System Actions                   |
+| ---- | ------------------------ | -------------------------------- |
+| 1    | The user cancels editing | The system asks for confirmation |
+| 2    | The user confirms        | The system discards the changes  |
 
 ---
 
@@ -248,21 +232,18 @@ This use case covers how a user edits an existing activity
 
 ### 1. No permission
 
-|Step|Exception Condition|System Response|
-|---|---|---|
-|1|User is not the creator|The system denies access to edit|
+| Step | Exception Condition     | System Response                  |
+| ---- | ----------------------- | -------------------------------- |
+| 1    | User is not the creator | The system denies access to edit |
 
 ---
 
 ## Post Conditions
 
 - Result 1
-    
-    - Activity is updated
-        
+   - Activity is updated
 - Result 2
-    
-    - Database contains new activity information
+   - Database contains new activity information
 
 ---
 
@@ -288,33 +269,27 @@ This use case covers how a user deletes an activity from the app
 ## Actors
 
 - Actor 1
-    
-    - User
-        
+   - User
 
 ---
 
 ## Preconditions
 
 - Condition 1
-    
-    - User must be logged in
-        
+   - User must be logged in
 - Condition 2
-    
-    - User must be the creator of the activity
-        
+   - User must be the creator of the activity
 
 ---
 
 ## Basic Flow (Happy Path)
 
-|Step|User Actions|System Actions|
-|---|---|---|
-|1|The user opens their activity|The system shows activity details|
-|2|The user clicks delete activity|The system asks for confirmation|
-|3|The user confirms deletion|The system deletes the activity from the database|
-|4||The system removes all participants from the activity|
+| Step | User Actions                    | System Actions                                        |
+| ---- | ------------------------------- | ----------------------------------------------------- |
+| 1    | The user opens their activity   | The system shows activity details                     |
+| 2    | The user clicks delete activity | The system asks for confirmation                      |
+| 3    | The user confirms deletion      | The system deletes the activity from the database     |
+| 4    |                                 | The system removes all participants from the activity |
 
 ---
 
@@ -322,10 +297,10 @@ This use case covers how a user deletes an activity from the app
 
 ### 1. User cancels deletion
 
-|Step|User Actions|System Actions|
-|---|---|---|
-|1|The user clicks delete|The system asks for confirmation|
-|2|The user cancels|The system keeps the activity|
+| Step | User Actions           | System Actions                   |
+| ---- | ---------------------- | -------------------------------- |
+| 1    | The user clicks delete | The system asks for confirmation |
+| 2    | The user cancels       | The system keeps the activity    |
 
 ---
 
@@ -333,18 +308,15 @@ This use case covers how a user deletes an activity from the app
 
 ### 1. Activity already deleted
 
-|Step|Exception Condition|System Response|
-|---|---|---|
-|1|Activity not found|The system shows an error message|
+| Step | Exception Condition | System Response                   |
+| ---- | ------------------- | --------------------------------- |
+| 1    | Activity not found  | The system shows an error message |
 
 ---
 
 ## Post Conditions
 
 - Result 1
-    
-    - Activity is removed from the system
-        
+   - Activity is removed from the system
 - Result 2
-    
-    - Participants are notified about cancellation
+   - Participants are notified about cancellation

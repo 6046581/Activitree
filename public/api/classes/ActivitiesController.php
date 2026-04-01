@@ -63,6 +63,83 @@ class ActivitiesController
       return ["code" => 201, "data" => ["id" => $created]];
    }
 
+   public function getActivityParticipants($params, $data)
+   {
+      // Check if ID is provided and valid
+      $id = isset($params[0]) ? (int) $params[0] : null;
+      if (!$id) {
+         return ["code" => 400, "data" => ["error" => "Invalid id"]];
+      }
+
+      // Check if activity exists
+      $existing = $this->model->getActivityById($id);
+      if (!$existing) {
+         return ["code" => 404, "data" => ["error" => "Not found"]];
+      }
+
+      // Return participants
+      $rows = $this->model->getActivityParticipants($id);
+
+      return ["code" => 200, "data" => ["data" => $rows]];
+   }
+
+   public function joinActivity($params, $data)
+   {
+      // Check auth
+      $auth = denyUnauthorized();
+
+      // Check if ID is provided and valid
+      $id = isset($params[0]) ? (int) $params[0] : null;
+      if (!$id) {
+         return ["code" => 400, "data" => ["error" => "Invalid id"]];
+      }
+
+      // Check if activity exists
+      $existing = $this->model->getActivityById($id);
+      if (!$existing) {
+         return ["code" => 404, "data" => ["error" => "Not found"]];
+      }
+
+      // Avoid duplicate participation
+      if ($this->model->isUserParticipating($id, $auth["id"])) {
+         return ["code" => 409, "data" => ["error" => "Already joined"]];
+      }
+
+      // Join activity
+      $ok = $this->model->joinActivity($id, $auth["id"], "participant");
+      if (!$ok) {
+         return ["code" => 500, "data" => ["error" => "Failed to join activity"]];
+      }
+
+      return ["code" => 200, "data" => ["ok" => true]];
+   }
+
+   public function leaveActivity($params, $data)
+   {
+      // Check auth
+      $auth = denyUnauthorized();
+
+      // Check if ID is provided and valid
+      $id = isset($params[0]) ? (int) $params[0] : null;
+      if (!$id) {
+         return ["code" => 400, "data" => ["error" => "Invalid id"]];
+      }
+
+      // Check if activity exists
+      $existing = $this->model->getActivityById($id);
+      if (!$existing) {
+         return ["code" => 404, "data" => ["error" => "Not found"]];
+      }
+
+      // Leave activity
+      $left = $this->model->leaveActivity($id, $auth["id"]);
+      if (!$left) {
+         return ["code" => 404, "data" => ["error" => "You are not participating in this activity"]];
+      }
+
+      return ["code" => 200, "data" => ["ok" => true]];
+   }
+
    public function updateActivity($params, $data)
    {
       // Get activity ID from URL and validate

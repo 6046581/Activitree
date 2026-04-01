@@ -1,17 +1,17 @@
-import { track } from "ripple";
+import { effect, track } from "ripple";
 import { navigateTo } from "ripple-router";
 
 import { notyf } from "../notyf";
-import { getCurrentUser, isLoggedIn, logout } from "../auth";
+import { getAuthHeaders, getCurrentUser, isLoggedIn, logout } from "../auth";
 
 type UserResponse = {
-   success: boolean;
-   user?: {
+   data?: {
       id: number;
       username: string;
       email: string;
       created_at?: string;
    };
+   error?: string;
 };
 
 export component ProfilePage() {
@@ -31,13 +31,18 @@ export component ProfilePage() {
       }
 
       try {
-         const response = await fetch(`/api/users/${currentUser.id}`);
+         const response = await fetch(`/api/users/${currentUser.id}`, {
+            headers: getAuthHeaders(),
+         });
          const result = await response.json() as UserResponse;
 
-         if (response.ok && result.success && result.user) {
-            @username = result.user.username;
-            @email = result.user.email;
+         if (response.ok && result.data) {
+            @username = result.data.username;
+            @email = result.data.email;
+            return;
          }
+
+         notyf.error(result.error ?? "Failed to load profile information.");
       } catch {
          notyf.error("Failed to load profile information.");
       }
@@ -50,7 +55,9 @@ export component ProfilePage() {
 
    // TEMP: uncomment this when auth is implemented
    // redirectIfLoggedOut();
-   loadProfile();
+   effect(() => {
+      void loadProfile();
+   }, []);
 
    <article id="user-header">
       <a id="profile-picture">

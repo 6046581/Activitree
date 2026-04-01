@@ -4,6 +4,7 @@ export component ActivityTile(props: Record<string, any>) {
    const activity = props?.["activity"];
    const host = props?.["host"];
    const participants = props?.["participants"] ?? [];
+   const participantCount = Number(props?.["participantCount"] ?? participants.length);
    const location = props?.["location"];
    const onOpen = props?.["onOpen"];
 
@@ -50,7 +51,7 @@ export component ActivityTile(props: Record<string, any>) {
             <p>{"•"}</p>
             <p class="icon-text">
                <i class="fas fa-users" />
-               {`${participants.length} attending`}
+               {`${participantCount} attending`}
             </p>
          </div>
       </div>

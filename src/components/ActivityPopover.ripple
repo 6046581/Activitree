@@ -4,16 +4,90 @@ import { navigateTo } from "ripple-router";
 import { fetchWeather, isOutdoorActivity, getWeatherUrl } from "../weather";
 import type { WeatherResult } from "../weather";
 import { getDateLabel, getGoogleCalendarLink, getTimeOfDayImage } from "../date";
-import { getLocationMapUrl, getLocationLabel } from "../location";
+import { getLocationMapUrl, getLocationLabel, getLocationPreviewUrl } from "../location";
 
 export component ActivityPopover(props: Record<string, any>) {
    const activity = props?.["activity"];
    const host = props?.["host"];
-   const participants = props?.["participants"] ?? [];
+   const currentUserId =
+      props?.["currentUserId"] ? Number(props["currentUserId"]) : null;
+   const currentUsername = String(props?.["currentUsername"] ?? "You");
+   const currentUserEmail = String(props?.["currentUserEmail"] ?? "");
    const location = props?.["location"];
    const onClose = props?.["onClose"];
+   const isAttending = !!props?.["isAttending"];
+   const canToggleAttendance = props?.["canToggleAttendance"] !== false;
+   const onToggleAttendance = props?.["onToggleAttendance"];
 
-   let isAttending = track(false);
+   let attendingState = track(isAttending);
+   let isSubmittingAttendance = track(false);
+   let fetchedParticipants = track<Array<{ id: number; username: string; joinedAt: string; avatar: string }>>([]);
+   let sortedParticipants = track<Array<{ id: number; username: string; joinedAt: string; avatar: string }>>([]);
+   let isLoadingParticipants = track(false);
+
+   effect(() => {
+      @attendingState = isAttending;
+   }, [isAttending]);
+
+   function getAvatarUrl(seed: string) {
+      return `https://www.gravatar.com/avatar/${encodeURIComponent(seed)}?d=identicon&s=80`;
+   }
+
+   function upsertParticipantAtTop(participant: { id: number; username: string; joinedAt: string; avatar: string }) {
+      const filtered = @fetchedParticipants.filter((p) => Number(p.id) !== Number(participant.id));
+      @fetchedParticipants = [participant, ...filtered];
+   }
+
+   function removeParticipantById(id: number) {
+      @fetchedParticipants = @fetchedParticipants.filter((p) => Number(p.id) !== Number(id));
+   }
+
+   async function fetchParticipantsForActivity(activityId: number) {
+      @isLoadingParticipants = true;
+      try {
+         const response = await fetch(`/api/activities/${activityId}/participants`);
+         const payload = await response.json().catch(() => ({}));
+
+         const rows =
+            Array.isArray(payload)
+               ? payload
+               : Array.isArray(payload?.data)
+                  ? payload.data
+                  : Array.isArray(payload?.data?.data)
+                     ? payload.data.data
+                     : [];
+
+         @fetchedParticipants = rows.map((row: Record<string, any>, index: number) => {
+            const parsedId = Number(row?.["id"]);
+            const id = Number.isFinite(parsedId) ? parsedId : index + 1;
+            const username = String(row?.["username"] ?? row?.["name"] ?? "Unknown");
+            const joinedAt = String(row?.["joined_at"] ?? row?.["joinedAt"] ?? "");
+
+            return {
+               id,
+               username,
+               joinedAt,
+               avatar: getAvatarUrl(`${id}-${username}`),
+            };
+         });
+      } catch {
+         @fetchedParticipants = [];
+      } finally {
+         @isLoadingParticipants = false;
+      }
+   }
+
+   effect(() => {
+      const activityId = Number(activity?.id);
+
+      if (!Number.isFinite(activityId) || activityId <= 0) {
+         @fetchedParticipants = [];
+         @isLoadingParticipants = false;
+         return;
+      }
+
+      void fetchParticipantsForActivity(activityId);
+   }, [activity?.id]);
 
    // Weather
    let weather = track<WeatherResult | null>(null);
@@ -27,14 +101,82 @@ export component ActivityPopover(props: Record<string, any>) {
       }
    }, [activity?.type, location?.latitude, location?.longitude, activity?.date, activity?.time]);
 
-   function toggleAttendance() {
-      // TODO: Actually update attendance via API
-      @isAttending = !@isAttending;
+   async function toggleAttendance() {
+      if (!canToggleAttendance || @isSubmittingAttendance || typeof onToggleAttendance !== "function") {
+         return;
+      }
+
+      const previousState = @attendingState;
+      const activityId = Number(activity?.id);
+      @attendingState = !previousState;
+
+      if (currentUserId !== null) {
+         if (!previousState) {
+            upsertParticipantAtTop({
+               id: currentUserId,
+               username: currentUsername,
+               joinedAt: new Date().toISOString(),
+               avatar: getAvatarUrl(`${currentUserId}-${currentUsername || currentUserEmail || "you"}`),
+            });
+         } else {
+            removeParticipantById(currentUserId);
+         }
+      }
+
+      @isSubmittingAttendance = true;
+      try {
+         await onToggleAttendance(activity?.id, previousState);
+         if (Number.isFinite(activityId) && activityId > 0) {
+            void fetchParticipantsForActivity(activityId);
+         }
+      } catch {
+         @attendingState = previousState;
+         if (currentUserId !== null) {
+            if (previousState) {
+               upsertParticipantAtTop({
+                  id: currentUserId,
+                  username: currentUsername,
+                  joinedAt: new Date().toISOString(),
+                  avatar: getAvatarUrl(`${currentUserId}-${currentUsername || currentUserEmail || "you"}`),
+               });
+            } else {
+               removeParticipantById(currentUserId);
+            }
+         }
+      } finally {
+         @isSubmittingAttendance = false;
+      }
    }
+
+   effect(() => {
+      const list = [...@fetchedParticipants];
+
+      list.sort((a, b) => {
+         const aIsCurrent = currentUserId !== null && Number(a?.id) === currentUserId;
+         const bIsCurrent = currentUserId !== null && Number(b?.id) === currentUserId;
+
+         if (aIsCurrent && !bIsCurrent) {
+            return -1;
+         }
+         if (!aIsCurrent && bIsCurrent) {
+            return 1;
+         }
+
+         const aJoined = String(a?.joinedAt ?? "");
+         const bJoined = String(b?.joinedAt ?? "");
+         if (aJoined && bJoined && aJoined !== bJoined) {
+            return aJoined.localeCompare(bJoined);
+         }
+
+         return String(a?.username ?? "").localeCompare(String(b?.username ?? ""));
+      });
+
+      @sortedParticipants = list;
+   }, [fetchedParticipants, currentUserId]);
 
    function inviteOthers() {
       // TODO: Implement invite flow via email
-      window.alert("Invite flow coming soon.");
+      window.alert("Invite flow coming later.");
    }
 
    function closePopover() {
@@ -124,19 +266,11 @@ export component ActivityPopover(props: Record<string, any>) {
                <a class="info-box location" href={getLocationMapUrl(location)} target="_blank" rel="noopener noreferrer">
                   <img
                      class="info-box-background"
-                     src={(() => {
-                        const lat = location?.latitude;
-                        const lng = location?.longitude;
-                        if (lat && lng) {
-                           // Wikimedia Static Maps
-                           return `https://maps.wikimedia.org/img/osm-intl,17,${lat},${lng},600x300.png`;
-                        }
-                        // fallback image
-                        return "/assets/placeholder.jpg";
-                     })()}
+                     src={getLocationPreviewUrl(location)}
+                     data-alt-src={getLocationPreviewUrl(location, "fallback")}
                      alt="Map preview"
                      aria-hidden="true"
-                     onerror="this.onerror=null;this.src='/assets/placeholder.jpg';"
+                     onerror="if (!this.dataset.altTried) { this.dataset.altTried='1'; this.src=this.dataset.altSrc || '/assets/placeholder.jpg'; return; } this.onerror=null; this.src='/assets/placeholder.jpg';"
                   />
                   <i class="fas fa-map-marker-alt" />
                   <div>
@@ -151,22 +285,39 @@ export component ActivityPopover(props: Record<string, any>) {
             <section class="attendance" aria-label="Attendance">
                <p class="attendance-title">
                   <i class="fas fa-users" />
-                  {`${participants.length + (@isAttending ? 1 : 0)} Attending`}
+                  {`${@fetchedParticipants.length} Attending`}
                </p>
 
                <div class="attendance-list" role="list">
-                  for (let participant of participants) {
-                     <article class="participant" role="listitem">
-                        <img class="participant-avatar" src={participant.avatar} alt={`${participant.username} profile`} />
-                        <p class="participant-name">{participant.username}</p>
-                     </article>
+                  if (@sortedParticipants.length === 0) {
+                     if (@isLoadingParticipants) {
+                        <p class="attendance-empty">{"Loading participants..."}</p>
+                     } else {
+                        <p class="attendance-empty">{"No participants yet. Be the first to join!"}</p>
+                     }
+                  } else {
+                     for (let participant of @sortedParticipants) {
+                        <article class="participant" role="listitem">
+                           <img class="participant-avatar" src={participant.avatar} alt={`${participant.username} profile`} />
+                           <p class="participant-name">{participant.username}</p>
+                        </article>
+                     }
                   }
                </div>
 
                <div class="button-group bottom">
-                  <button class={`button ${@isAttending ? "red" : "green"}`} type="button" onClick={toggleAttendance}>
-                     <i class={`fas ${@isAttending ? "fa-user-minus" : "fa-user-plus"}`} />
-                     {@isAttending ? "Leave" : "Join"}
+                  <button
+                     class={`button ${@attendingState ? "red" : "green"}`}
+                     type="button"
+                     onClick={toggleAttendance}
+                     disabled={!canToggleAttendance || @isSubmittingAttendance}
+                  >
+                     <i class={`fas ${@attendingState ? "fa-user-minus" : "fa-user-plus"}`} />
+                     {@isSubmittingAttendance
+                        ? "Saving..."
+                        : @attendingState
+                           ? "Leave"
+                           : "Join"}
                   </button>
                   <button class="button" type="button" onClick={inviteOthers}>
                      <i class="fas fa-paper-plane" />
@@ -486,6 +637,11 @@ export component ActivityPopover(props: Record<string, any>) {
       .activity .participant-name {
          font-weight: 600;
          line-height: 1.2;
+      }
+
+      .activity .attendance-empty {
+         margin: 0;
+         opacity: 0.75;
       }
 
       @keyframes popover-backdrop-in {

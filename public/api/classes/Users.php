@@ -23,7 +23,9 @@ class Users
    {
       $query = "SELECT * FROM " . $this->table . " WHERE email = :email LIMIT 1";
       $stmt = $this->conn->prepare($query);
+
       $stmt->bindParam(":email", $email);
+
       $stmt->execute();
 
       $user = $stmt->fetch(PDO::FETCH_ASSOC);
@@ -39,7 +41,9 @@ class Users
    {
       $query = "SELECT id, username, email, role FROM " . $this->table . " WHERE id = :id LIMIT 1";
       $stmt = $this->conn->prepare($query);
+
       $stmt->bindParam(":id", $id, PDO::PARAM_INT);
+
       $stmt->execute();
       return $stmt->fetch(PDO::FETCH_ASSOC);
    }
@@ -48,8 +52,10 @@ class Users
    {
       $query = "SELECT id, username, email, role, created_at FROM " . $this->table . " ORDER BY id ASC LIMIT :limit OFFSET :offset";
       $stmt = $this->conn->prepare($query);
+
       $stmt->bindValue(":limit", (int) $limit, PDO::PARAM_INT);
       $stmt->bindValue(":offset", (int) $offset, PDO::PARAM_INT);
+
       $stmt->execute();
       return $stmt->fetchAll(PDO::FETCH_ASSOC);
    }
@@ -58,14 +64,17 @@ class Users
    {
       $query = "INSERT INTO " . $this->table . " (username, email, password, role) VALUES (:username, :email, :password, :role)";
       $stmt = $this->conn->prepare($query);
+
       $hash = password_hash($password, PASSWORD_BCRYPT);
       $stmt->bindValue(":username", $username);
       $stmt->bindValue(":email", $email);
       $stmt->bindValue(":password", $hash);
       $stmt->bindValue(":role", $role);
+
       if ($stmt->execute()) {
          return (int) $this->conn->lastInsertId();
       }
+
       return false;
    }
 
@@ -73,9 +82,11 @@ class Users
    {
       $query = "UPDATE " . $this->table . " SET username = :username, email = :email WHERE id = :id";
       $stmt = $this->conn->prepare($query);
+
       $stmt->bindParam(":id", $id, PDO::PARAM_INT);
       $stmt->bindParam(":username", $username);
       $stmt->bindParam(":email", $email);
+
       return $stmt->execute();
    }
 
@@ -83,9 +94,11 @@ class Users
    {
       $query = "UPDATE " . $this->table . " SET password = :password WHERE id = :id";
       $stmt = $this->conn->prepare($query);
+
       $hash = password_hash($password, PASSWORD_BCRYPT);
       $stmt->bindParam(":id", $id, PDO::PARAM_INT);
       $stmt->bindParam(":password", $hash);
+
       return $stmt->execute();
    }
 
@@ -93,8 +106,10 @@ class Users
    {
       $query = "UPDATE " . $this->table . " SET token = :token WHERE id = :id";
       $stmt = $this->conn->prepare($query);
+
       $stmt->bindValue(":token", $token);
       $stmt->bindValue(":id", $id, PDO::PARAM_INT);
+
       return $stmt->execute();
    }
 
@@ -103,9 +118,12 @@ class Users
       if (!$token) {
          return null;
       }
+
       $query = "SELECT id, username, email, role FROM " . $this->table . " WHERE token = :token LIMIT 1";
       $stmt = $this->conn->prepare($query);
+
       $stmt->bindValue(":token", $token);
+
       $stmt->execute();
       return $stmt->fetch(PDO::FETCH_ASSOC);
    }
@@ -114,7 +132,9 @@ class Users
    {
       $query = "DELETE FROM " . $this->table . " WHERE id = :id";
       $stmt = $this->conn->prepare($query);
+
       $stmt->bindParam(":id", $id, PDO::PARAM_INT);
+
       return $stmt->execute();
    }
 }
