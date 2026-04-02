@@ -53,8 +53,8 @@ export component ProfilePage() {
       navigateTo("/login");
    }
 
-   // TEMP: uncomment this when auth is implemented
-   // redirectIfLoggedOut();
+   redirectIfLoggedOut();
+
    effect(() => {
       void loadProfile();
    }, []);

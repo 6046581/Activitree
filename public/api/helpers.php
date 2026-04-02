@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Sends a JSON response with the specified data and HTTP status code.
  *

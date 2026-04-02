@@ -1,0 +1,55 @@
+type SignupFormViewProps = {
+   isLoading?: boolean;
+   onSubmit?: (event: Event) => void;
+};
+
+export component SignupFormView(props: SignupFormViewProps) {
+   const isLoading = Boolean(props?.isLoading);
+   function noopSubmit(_event: Event): void {
+      // this bs is needed cuz just making it do nothing causes any formatter to break the onSubmit assignment for some reason
+   }
+   const onSubmit = props?.onSubmit ?? noopSubmit;
+
+   <form class="auth-form" {onSubmit}>
+      <label>
+         <span>{"Username"}</span>
+         <input type="text" name="username" placeholder="Choose a username" minlength="3" required disabled={isLoading} />
+      </label>
+
+      <label>
+         <span>{"Email"}</span>
+         <input type="email" name="email" placeholder="you@example.com" required disabled={isLoading} />
+      </label>
+
+      <label>
+         <span>{"Password"}</span>
+         <input type="password" name="password" placeholder="At least 8 characters" minlength="8" required disabled={isLoading} />
+      </label>
+
+      <label>
+         <span>{"Confirm password"}</span>
+         <input type="password" name="confirm_password" placeholder="Repeat your password" minlength="8" required disabled={isLoading} />
+      </label>
+
+      if (!isLoading) {
+         <button class="button bottom" type="submit">
+            <i class="fas fa-user-plus" />
+            {"Create account"}
+         </button>
+      } else {
+         <button class="button bottom" type="submit" disabled>
+            <i class="fas fa-spinner fa-spin" />
+            {"Creating account..."}
+         </button>
+      }
+   </form>
+
+   <style scoped>
+      .auth-form {
+         flex: 1;
+         display: flex;
+         flex-direction: column;
+         gap: 0.8rem;
+      }
+   </style>
+}

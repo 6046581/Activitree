@@ -15,7 +15,6 @@ export component ActivityTile(props: Record<string, any>) {
       }
    }
 
-   // TODO: Fetch real data
    <a class="activity card" href={`?id=${activity?.id}`} onClick={handleOpen}>
       <img
          // TODO: load real image
