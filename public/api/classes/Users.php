@@ -19,7 +19,7 @@ class Users
       $this->conn = $database->connect();
    }
 
-   public function login($email, $password)
+   public function loginUser($email, $password)
    {
       $query = "SELECT * FROM " . $this->table . " WHERE email = :email LIMIT 1";
       $stmt = $this->conn->prepare($query);
@@ -34,6 +34,23 @@ class Users
          unset($user["password"]);
          return $user;
       }
+      return false;
+   }
+
+   public function signupUser($username, $email, $password)
+   {
+      $query = "INSERT INTO " . $this->table . " (username, email, password, role) VALUES (:username, :email, :password)";
+      $stmt = $this->conn->prepare($query);
+
+      $hash = password_hash($password, PASSWORD_BCRYPT);
+      $stmt->bindValue(":username", $username);
+      $stmt->bindValue(":email", $email);
+      $stmt->bindValue(":password", $hash);
+
+      if ($stmt->execute()) {
+         return (int) $this->conn->lastInsertId();
+      }
+
       return false;
    }
 
@@ -58,24 +75,6 @@ class Users
 
       $stmt->execute();
       return $stmt->fetchAll(PDO::FETCH_ASSOC);
-   }
-
-   public function createUser($username, $email, $password, $role = "user")
-   {
-      $query = "INSERT INTO " . $this->table . " (username, email, password, role) VALUES (:username, :email, :password, :role)";
-      $stmt = $this->conn->prepare($query);
-
-      $hash = password_hash($password, PASSWORD_BCRYPT);
-      $stmt->bindValue(":username", $username);
-      $stmt->bindValue(":email", $email);
-      $stmt->bindValue(":password", $hash);
-      $stmt->bindValue(":role", $role);
-
-      if ($stmt->execute()) {
-         return (int) $this->conn->lastInsertId();
-      }
-
-      return false;
    }
 
    public function updateUser($id, $username, $email)

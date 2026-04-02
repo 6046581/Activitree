@@ -14,10 +14,10 @@ header("Content-Type: application/json; charset=utf-8");
 $routes = [
    // Users
    "POST /users/login" => "UsersController@login",
-   "POST /users/logout" => "UsersController@logout",
+   "POST /users/logout" => "UsersController@logoutUser",
+   "POST /users/signup" => "UsersController@signupUser",
    "GET /users" => "UsersController@getAllUsers",
    "GET /users/{id}" => "UsersController@getUserById",
-   "POST /users" => "UsersController@createUser",
    "PUT /users/{id}" => "UsersController@updateUser",
    "DELETE /users/{id}" => "UsersController@deleteUser",
 

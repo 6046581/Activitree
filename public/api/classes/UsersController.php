@@ -18,7 +18,7 @@ class UsersController
       }
 
       // Attempt login
-      $user = $this->model->login($email, $password);
+      $user = $this->model->loginUser($email, $password);
       if (!$user) {
          return ["code" => 401, "data" => ["error" => "Invalid credentials"]];
       }
@@ -32,7 +32,7 @@ class UsersController
       return ["code" => 200, "data" => ["user" => $user, "token" => $token]];
    }
 
-   public function logout($params, $data)
+   public function logoutUser($params, $data)
    {
       // Check auth
       $auth = denyUnauthorized();
@@ -41,6 +41,28 @@ class UsersController
       $this->model->setToken($auth["id"], null);
 
       return ["code" => 200, "data" => ["ok" => true]];
+   }
+
+   public function signupUser($params, $data)
+   {
+      // Get input data
+      $username = $data["username"] ?? null;
+      $email = $data["email"] ?? null;
+      $password = $data["password"] ?? null;
+      $role = $data["role"] ?? "user";
+
+      // Validate required fields
+      if (!$username || !$email || !$password) {
+         return ["code" => 400, "data" => ["error" => "username,email,password required"]];
+      }
+
+      // Create user
+      $created = $this->model->signupUser($username, $email, $password);
+      if (!$created) {
+         return ["code" => 500, "data" => ["error" => "Failed to create user"]];
+      }
+
+      return ["code" => 201, "data" => ["id" => $created]];
    }
 
    public function getAllUsers($params, $data)
@@ -81,28 +103,6 @@ class UsersController
       }
 
       return ["code" => 200, "data" => ["data" => $row]];
-   }
-
-   public function createUser($params, $data)
-   {
-      // Get input data
-      $username = $data["username"] ?? null;
-      $email = $data["email"] ?? null;
-      $password = $data["password"] ?? null;
-      $role = $data["role"] ?? "user";
-
-      // Validate required fields
-      if (!$username || !$email || !$password) {
-         return ["code" => 400, "data" => ["error" => "username,email,password required"]];
-      }
-
-      // Create user
-      $created = $this->model->createUser($username, $email, $password, $role);
-      if (!$created) {
-         return ["code" => 500, "data" => ["error" => "Failed to create user"]];
-      }
-
-      return ["code" => 201, "data" => ["id" => $created]];
    }
 
    public function updateUser($params, $data)

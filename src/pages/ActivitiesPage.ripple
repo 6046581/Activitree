@@ -96,9 +96,8 @@ function splitActivityTime(activityTime: string): { date: string; time: string }
 
 function mapActivity(row: ApiActivity): UiActivity {
    const { date, time } = splitActivityTime(String(row.activity_time ?? ""));
-   const participantIds = Array.isArray(row.participant_ids)
-      ? row.participant_ids.map((id) => Number(id)).filter((id) => Number.isFinite(id))
-      : [];
+   const participantIds =
+      Array.isArray(row.participant_ids) ? row.participant_ids.map((id) => Number(id)).filter((id) => Number.isFinite(id)) : [];
 
    return {
       id: Number(row.id),
@@ -183,7 +182,8 @@ export component ActivitiesPage(props: Record<string, any>) {
    const initialSelectedId = searchParams.id ?? new URLSearchParams(window.location.search).get("id");
 
    const currentUser = getCurrentUser();
-   const currentUserId = currentUser?.id == null ? null : Number(currentUser.id);
+   const currentUserId =
+      currentUser?.id == null ? null : Number(currentUser.id);
    const currentUsername = String(currentUser?.username ?? "You");
    const currentUserEmail = String(currentUser?.email ?? "");
 
@@ -206,10 +206,12 @@ export component ActivitiesPage(props: Record<string, any>) {
 
    function openActivity(activityId: string | number) {
       const id = String(activityId);
-      navigateWithSearchParams({
-         ...getCurrentSearchParams(),
-         id,
-      });
+      navigateWithSearchParams(
+         {
+            ...getCurrentSearchParams(),
+            id,
+         },
+      );
       @selectedActivityId = id;
    }
 
@@ -425,9 +427,9 @@ export component ActivitiesPage(props: Record<string, any>) {
          participants={@selectedParticipants}
          participantCount={currentActivity.participantIds.length}
          {@isParticipantsLoading}
-         currentUserId={currentUserId}
+         {currentUserId}
          {currentUsername}
-         currentUserEmail={currentUserEmail}
+         {currentUserEmail}
          {location}
          {isAttending}
          canToggleAttendance={currentUserId != null}

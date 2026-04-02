@@ -49,15 +49,15 @@ export function getLocationPreviewUrl(
       return "/assets/placeholder.jpg";
    }
 
-    if (variant === "primary") {
+   if (variant === "primary") {
       const center = `${latitude},${longitude}`;
       // Centered static map + marker keeps the target location visually exact.
       return `https://staticmap.openstreetmap.de/staticmap.php?center=${center}&zoom=16&size=1200x600&markers=${center},red-pushpin`;
-    }
+   }
 
    const zoom = 14;
    const safeLat = Math.min(85.05112878, Math.max(-85.05112878, latitude));
-   const safeLng = ((longitude + 180) % 360 + 360) % 360 - 180;
+   const safeLng = ((((longitude + 180) % 360) + 360) % 360) - 180;
    const tilesPerAxis = 2 ** zoom;
 
    const x = Math.floor(((safeLng + 180) / 360) * tilesPerAxis);

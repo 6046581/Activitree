@@ -112,12 +112,14 @@ export component ActivityPopover(props: Record<string, any>) {
 
       if (currentUserId !== null) {
          if (!previousState) {
-            upsertParticipantAtTop({
-               id: currentUserId,
-               username: currentUsername,
-               joinedAt: new Date().toISOString(),
-               avatar: getAvatarUrl(`${currentUserId}-${currentUsername || currentUserEmail || "you"}`),
-            });
+            upsertParticipantAtTop(
+               {
+                  id: currentUserId,
+                  username: currentUsername,
+                  joinedAt: new Date().toISOString(),
+                  avatar: getAvatarUrl(`${currentUserId}-${currentUsername || currentUserEmail || "you"}`),
+               },
+            );
          } else {
             removeParticipantById(currentUserId);
          }
@@ -133,12 +135,14 @@ export component ActivityPopover(props: Record<string, any>) {
          @attendingState = previousState;
          if (currentUserId !== null) {
             if (previousState) {
-               upsertParticipantAtTop({
-                  id: currentUserId,
-                  username: currentUsername,
-                  joinedAt: new Date().toISOString(),
-                  avatar: getAvatarUrl(`${currentUserId}-${currentUsername || currentUserEmail || "you"}`),
-               });
+               upsertParticipantAtTop(
+                  {
+                     id: currentUserId,
+                     username: currentUsername,
+                     joinedAt: new Date().toISOString(),
+                     avatar: getAvatarUrl(`${currentUserId}-${currentUsername || currentUserEmail || "you"}`),
+                  },
+               );
             } else {
                removeParticipantById(currentUserId);
             }

@@ -169,6 +169,7 @@ img {
 
 .link:disabled {
    opacity: 0.6;
+   filter: grayscale(0.6);
    cursor: not-allowed;
    scale: 1;
 }
@@ -293,6 +294,7 @@ img {
 
 .button:disabled {
    opacity: 0.6;
+   filter: grayscale(0.6);
    cursor: not-allowed;
    scale: 1;
 }
