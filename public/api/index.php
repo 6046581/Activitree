@@ -13,7 +13,7 @@ header("Content-Type: application/json; charset=utf-8");
 // The router will instantiate the controller and call the method, passing URL parameters and parsed JSON body as arguments.
 $routes = [
    // Users
-   "POST /users/login" => "UsersController@login",
+   "POST /users/login" => "UsersController@loginUser",
    "POST /users/logout" => "UsersController@logoutUser",
    "POST /users/signup" => "UsersController@signupUser",
    "GET /users" => "UsersController@getAllUsers",

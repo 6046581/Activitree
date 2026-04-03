@@ -2,7 +2,7 @@ import { track } from "ripple";
 import { navigateTo } from "ripple-router";
 import { notyf } from "../notyf";
 
-import { login, type AuthUser } from "../auth";
+import { apiPostJson, login, logout, type AuthUser } from "../auth";
 import { TabSelector } from "../components/TabSelector.ripple";
 
 import { LoginFormView } from "../views/LoginFormView.ripple";
@@ -17,6 +17,11 @@ type ApiUser = {
 };
 
 type LoginResponse = {
+   data?: {
+      token?: string;
+      user?: ApiUser;
+      error?: string;
+   };
    success?: boolean;
    token?: string;
    user?: ApiUser;
@@ -26,6 +31,10 @@ type LoginResponse = {
 };
 
 type SignupResponse = {
+   data?: {
+      id?: number;
+      error?: string;
+   };
    success?: boolean;
    token?: string;
    user?: ApiUser;
@@ -76,27 +85,36 @@ export component LoginPage() {
       return authUser;
    }
 
+   function unwrapApiData<T>(payload: T & { data?: T }): T {
+      return (payload?.data ?? payload) as T;
+   }
+
+    function getApiErrorMessage(
+      payload: { error?: string; message?: string } | undefined,
+      result: { error?: string; message?: string } | undefined,
+      fallback: string,
+   ): string {
+      return payload?.error ?? payload?.message ?? result?.error ?? result?.message ?? fallback;
+   }
+
    async function loginViaUsersEndpoint(email: string, password: string, keepSignedIn: boolean): Promise<boolean> {
-      const response = await fetch(LOGIN_ENDPOINT, {
-         method: "POST",
-         headers: {
-            "Content-Type": "application/json",
-         },
-         body: JSON.stringify({ email, password }),
-      });
+      const response = await apiPostJson(LOGIN_ENDPOINT, { email, password }, false);
 
       const result = await response.json().catch(() => ({})) as LoginResponse;
+      const payload = unwrapApiData(result);
 
       if (!response.ok) {
-         const message = result?.error ?? "Login failed. Please try again.";
+         logout();
+         const message = getApiErrorMessage(payload, result, "Login failed. Please try again.");
          notyf.error(message);
          return false;
       }
 
-      const user = result.user;
-      const token = result.token;
+      const user = payload.user;
+      const token = payload.token;
 
       if (!user || !token) {
+         logout();
          notyf.error("Invalid login response from server.");
          return false;
       }
@@ -189,21 +207,15 @@ export component LoginPage() {
             username,
             email,
             password,
-            confirmPassword,
          };
 
-         const response = await fetch(SIGNUP_ENDPOINT, {
-            method: "POST",
-            headers: {
-               "Content-Type": "application/json",
-            },
-            body: JSON.stringify(payload),
-         });
+         const response = await apiPostJson(SIGNUP_ENDPOINT, payload, false);
 
-         const result = await response.json().catch(() => ({})) as Partial<SignupResponse>;
+         const result = await response.json().catch(() => ({})) as SignupResponse;
+         const responsePayload = unwrapApiData(result);
 
          if (!response.ok || result.success === false) {
-            notyf.error(result.error ?? "Sign up failed. Please try again.");
+            notyf.error(getApiErrorMessage(responsePayload, result, "Sign up failed. Please try again."));
             return;
          }
 

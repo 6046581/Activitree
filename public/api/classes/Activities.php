@@ -69,7 +69,7 @@ class Activities
 
    public function getActivityParticipants($activityId)
    {
-      $query = "SELECT u.id, u.username, u.email, u.role, ap.role AS activity_role, ap.joined_at
+      $query = "SELECT u.id, u.username, u.role, ap.role AS activity_role, ap.joined_at
           FROM activity_participants ap
           INNER JOIN users u ON u.id = ap.user_id
           WHERE ap.activity_id = :activity_id

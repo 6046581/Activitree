@@ -2,50 +2,21 @@ import { effect, track } from "ripple";
 import { navigateTo } from "ripple-router";
 
 import { notyf } from "../notyf";
-import { getAuthHeaders, getCurrentUser, isLoggedIn, logout } from "../auth";
-
-type UserResponse = {
-   data?: {
-      id: number;
-      username: string;
-      email: string;
-      created_at?: string;
-   };
-   error?: string;
-};
+import { logout, requireAuthenticatedUser } from "../auth";
 
 export component ProfilePage() {
-   function redirectIfLoggedOut() {
-      if (!isLoggedIn()) {
+   let username = track("");
+   let email = track("");
+
+   async function loadVerifiedProfile() {
+      const user = await requireAuthenticatedUser();
+      if (!user) {
          navigateTo("/login");
-      }
-   }
-
-   const currentUser = getCurrentUser();
-   let username = track(currentUser?.username);
-   let email = track(currentUser?.email);
-
-   async function loadProfile() {
-      if (!currentUser?.id) {
          return;
       }
 
-      try {
-         const response = await fetch(`/api/users/${currentUser.id}`, {
-            headers: getAuthHeaders(),
-         });
-         const result = await response.json() as UserResponse;
-
-         if (response.ok && result.data) {
-            @username = result.data.username;
-            @email = result.data.email;
-            return;
-         }
-
-         notyf.error(result.error ?? "Failed to load profile information.");
-      } catch {
-         notyf.error("Failed to load profile information.");
-      }
+      @username = user.username;
+      @email = user.email;
    }
 
    function handleLogout() {
@@ -53,10 +24,8 @@ export component ProfilePage() {
       navigateTo("/login");
    }
 
-   redirectIfLoggedOut();
-
    effect(() => {
-      void loadProfile();
+      void loadVerifiedProfile();
    }, []);
 
    <article id="user-header">

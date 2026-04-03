@@ -3,7 +3,7 @@ import { notyf } from "./notyf";
 const USER_STORAGE_KEY = "user";
 const TOKEN_STORAGE_KEY = "token";
 const TOKEN_COOKIE_KEY = "activitree_token";
-const TOKEN_COOKIE_MAX_AGE_SECONDS = 60 * 60 * 24 * 30;
+const TOKEN_COOKIE_MAX_AGE_SECONDS = 60 * 60 * 24 * 30; // 30 days
 
 export type AuthUser = {
    id: number;
@@ -49,7 +49,7 @@ function getCookie(name: string): string | null {
 }
 
 export function isLoggedIn(): boolean {
-   return !!getToken();
+   return !!getToken() && !!getCurrentUser()?.id;
 }
 
 export function login(token: string, user?: AuthUser, remember = true) {
@@ -115,4 +115,104 @@ export function getAuthHeaders(extraHeaders: Record<string, string> = {}): Recor
    }
 
    return headers;
+}
+
+function upsertStoredUser(user: AuthUser) {
+   const hasLocal = !!localStorage.getItem(USER_STORAGE_KEY);
+   const hasSession = !!sessionStorage.getItem(USER_STORAGE_KEY);
+
+   if (hasLocal) {
+      localStorage.setItem(USER_STORAGE_KEY, JSON.stringify(user));
+      return;
+   }
+
+   if (hasSession) {
+      sessionStorage.setItem(USER_STORAGE_KEY, JSON.stringify(user));
+      return;
+   }
+
+   localStorage.setItem(USER_STORAGE_KEY, JSON.stringify(user));
+}
+
+type ApiRequestOptions = {
+   method?: string;
+   body?: BodyInit | null;
+   headers?: Record<string, string>;
+   includeAuth?: boolean;
+};
+
+export async function apiRequest(url: string, options: ApiRequestOptions = {}): Promise<Response> {
+   const { method = "GET", body = null, headers = {}, includeAuth = true } = options;
+   const resolvedHeaders = includeAuth ? getAuthHeaders(headers) : headers;
+
+   return fetch(url, {
+      method,
+      headers: resolvedHeaders,
+      body,
+   });
+}
+
+export async function apiPostJson(url: string, payload: unknown, includeAuth = false): Promise<Response> {
+   return apiRequest(url, {
+      method: "POST",
+      includeAuth,
+      headers: {
+         "Content-Type": "application/json",
+      },
+      body: JSON.stringify(payload),
+   });
+}
+
+type ProfileResponse = {
+   data?: {
+      id?: number;
+      username?: string;
+      email?: string;
+      created_at?: string;
+   };
+};
+
+export async function requireAuthenticatedUser(): Promise<AuthUser | null> {
+   const token = getToken();
+   const storedUser = getCurrentUser();
+
+   if (!token || !storedUser?.id) {
+      logout();
+      return null;
+   }
+
+   try {
+      const response = await apiRequest(`/api/users/${storedUser.id}`, {
+         includeAuth: true,
+      });
+
+      if (!response.ok) {
+         logout();
+         return null;
+      }
+
+      const result = await response.json().catch(() => ({})) as ProfileResponse;
+      const row = result?.data;
+
+      if (!row?.id || !row?.username || !row?.email) {
+         logout();
+         return null;
+      }
+
+      const verifiedUser: AuthUser = {
+         id: Number(row.id),
+         username: String(row.username),
+         email: String(row.email),
+      };
+
+      if (typeof row.created_at === "string") {
+         verifiedUser.created_at = row.created_at;
+      }
+
+      upsertStoredUser(verifiedUser);
+      return verifiedUser;
+   } catch {
+      logout();
+      return null;
+   }
 }

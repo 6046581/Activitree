@@ -8,7 +8,7 @@ class UsersController
       $this->model = new Users();
    }
 
-   public function login($params, $data)
+   public function loginUser($params, $data)
    {
       // Get input data
       $email = $data["email"] ?? null;
@@ -49,11 +49,18 @@ class UsersController
       $username = $data["username"] ?? null;
       $email = $data["email"] ?? null;
       $password = $data["password"] ?? null;
-      $role = $data["role"] ?? "user";
 
       // Validate required fields
       if (!$username || !$email || !$password) {
          return ["code" => 400, "data" => ["error" => "username,email,password required"]];
+      }
+
+      if ($this->model->usernameExists($username)) {
+         return ["code" => 409, "data" => ["error" => "Username already in use"]];
+      }
+
+      if ($this->model->emailExists($email)) {
+         return ["code" => 409, "data" => ["error" => "Email already in use"]];
       }
 
       // Create user

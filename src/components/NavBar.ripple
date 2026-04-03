@@ -1,4 +1,4 @@
-import { isLoggedIn } from "../auth";
+import { isLoggedIn, requireAuthenticatedUser } from "../auth";
 import { TabSelector } from "../components/TabSelector.ripple";
 import { navigateTo } from "ripple-router";
 
@@ -23,7 +23,7 @@ export component NavBar() {
       ],
    };
 
-   function handleProfileClick(e: Event) {
+   async function handleProfileClick(e: Event) {
       if (e instanceof MouseEvent) {
          if (e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) {
             return;
@@ -33,6 +33,12 @@ export component NavBar() {
       e.preventDefault();
 
       if (!isLoggedIn()) {
+         navigateTo("/login");
+         return;
+      }
+
+      const user = await requireAuthenticatedUser();
+      if (!user) {
          navigateTo("/login");
          return;
       }

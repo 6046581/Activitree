@@ -8,7 +8,6 @@ class Users
    public $username;
    public $email;
    public $password;
-   public $role;
 
    public function __construct($database = null)
    {
@@ -39,7 +38,7 @@ class Users
 
    public function signupUser($username, $email, $password)
    {
-      $query = "INSERT INTO " . $this->table . " (username, email, password, role) VALUES (:username, :email, :password)";
+      $query = "INSERT INTO " . $this->table . " (username, email, password) VALUES (:username, :email, :password)";
       $stmt = $this->conn->prepare($query);
 
       $hash = password_hash($password, PASSWORD_BCRYPT);
@@ -54,9 +53,31 @@ class Users
       return false;
    }
 
+   public function usernameExists($username)
+   {
+      $query = "SELECT 1 FROM " . $this->table . " WHERE username = :username LIMIT 1";
+      $stmt = $this->conn->prepare($query);
+
+      $stmt->bindValue(":username", $username);
+      $stmt->execute();
+
+      return (bool) $stmt->fetchColumn();
+   }
+
+   public function emailExists($email)
+   {
+      $query = "SELECT 1 FROM " . $this->table . " WHERE email = :email LIMIT 1";
+      $stmt = $this->conn->prepare($query);
+
+      $stmt->bindValue(":email", $email);
+      $stmt->execute();
+
+      return (bool) $stmt->fetchColumn();
+   }
+
    public function getUserById($id)
    {
-      $query = "SELECT id, username, email, role FROM " . $this->table . " WHERE id = :id LIMIT 1";
+      $query = "SELECT id, username, email FROM " . $this->table . " WHERE id = :id LIMIT 1";
       $stmt = $this->conn->prepare($query);
 
       $stmt->bindParam(":id", $id, PDO::PARAM_INT);
@@ -67,7 +88,7 @@ class Users
 
    public function getAllUsers($limit = 100, $offset = 0)
    {
-      $query = "SELECT id, username, email, role, created_at FROM " . $this->table . " ORDER BY id ASC LIMIT :limit OFFSET :offset";
+      $query = "SELECT id, username, created_at FROM " . $this->table . " ORDER BY id ASC LIMIT :limit OFFSET :offset";
       $stmt = $this->conn->prepare($query);
 
       $stmt->bindValue(":limit", (int) $limit, PDO::PARAM_INT);
