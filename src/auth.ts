@@ -191,7 +191,7 @@ export async function requireAuthenticatedUser(): Promise<AuthUser | null> {
          return null;
       }
 
-      const result = await response.json().catch(() => ({})) as ProfileResponse;
+      const result = (await response.json().catch(() => ({}))) as ProfileResponse;
       const row = result?.data;
 
       if (!row?.id || !row?.username || !row?.email) {

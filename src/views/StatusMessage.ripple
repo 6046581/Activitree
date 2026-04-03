@@ -1,0 +1,44 @@
+export component StatusMessage(props: Record<string, any>) {
+   let loading = Boolean(props?.["loading"] ?? true);
+
+   const icon = String(props?.["icon"] ?? "fas fa-check");
+   const title = String(props?.["title"] ?? "Done!");
+   const label = String(props?.["label"] ?? "");
+
+   <article class="message" role="status">
+      if (loading) {
+         <i class="fas fa-spinner fa-spin" aria-hidden="true" />
+         <p>{"Loading..."}</p>
+      } else {
+         <i class={icon} aria-hidden="true" />
+         <h4>{title}</h4>
+         <p>{label}</p>
+      }
+   </article>
+
+   <style scoped>
+      .message {
+         display: flex;
+         flex-direction: column;
+         justify-content: center;
+         align-items: center;
+         gap: 1.6rem;
+         width: 100%;
+         height: 60vh;
+      }
+
+      .message i {
+         font-size: 3rem;
+      }
+
+      .message h4 {
+         font-size: 1.8rem;
+         margin: 0;
+      }
+
+      .message p {
+         font-size: 1.1rem;
+         margin: 0;
+      }
+   </style>
+}

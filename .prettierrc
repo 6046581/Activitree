@@ -4,7 +4,7 @@
    "trailingComma": "es5",
    "printWidth": 160,
    "tabWidth": 3,
-   "endOfLine": "lf",
+   "endOfLine": "crlf",
    "bracketSameLine": false,
    "jsxSingleQuote": false,
    "plugins": ["@ripple-ts/prettier-plugin", "@prettier/plugin-php"]

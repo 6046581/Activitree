@@ -204,6 +204,7 @@ export component ActivityPopover(props: Record<string, any>) {
       <button class="close-button" type="button" aria-label="Close activity details" onClick={closePopover}>
          <i class="fas fa-xmark" />
       </button>
+
       <article class="activity card" onClick={stopPropagation}>
          <div class="content">
             <section>

@@ -86,10 +86,10 @@ export component LoginPage() {
    }
 
    function unwrapApiData<T>(payload: T & { data?: T }): T {
-      return (payload?.data ?? payload) as T;
+      return payload?.data ?? payload as T;
    }
 
-    function getApiErrorMessage(
+   function getApiErrorMessage(
       payload: { error?: string; message?: string } | undefined,
       result: { error?: string; message?: string } | undefined,
       fallback: string,

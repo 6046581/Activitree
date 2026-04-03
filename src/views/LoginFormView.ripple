@@ -6,7 +6,7 @@ type LoginFormViewProps = {
 export component LoginFormView(props: LoginFormViewProps) {
    const isLoading = Boolean(props?.isLoading);
    function noopSubmit(_event: Event): void {
-      // this bs is needed cuz just making it do nothing causes any formatter to break the onSubmit assignment for some reason
+      // this bs is needed cuz just making it do nothing causes the formatter to break the onSubmit assignment for some reason
    }
    const onSubmit = props?.onSubmit ?? noopSubmit;
 
