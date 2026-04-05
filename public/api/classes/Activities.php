@@ -26,7 +26,7 @@ class Activities
    public function getAllActivities($limit = 100, $offset = 0)
    {
       $query =
-         "SELECT a.id, a.title, a.description, a.activity_type, a.status, a.activity_time, a.location_id, a.created_by, u.username AS created_by_username
+         "SELECT a.id, a.title, a.description, a.activity_type, a.status, a.activity_time, a.location_id, a.photo_path, a.created_by, u.username AS created_by_username
           FROM " .
          $this->table .
          " a
@@ -46,7 +46,7 @@ class Activities
    public function getActivityById($id)
    {
       $query =
-         "SELECT a.id, a.title, a.description, a.activity_type, a.status, a.activity_time, a.location_id, a.created_by, u.username AS created_by_username
+          "SELECT a.id, a.title, a.description, a.activity_type, a.status, a.activity_time, a.location_id, a.photo_path, a.created_by, u.username AS created_by_username
              FROM " .
          $this->table .
          " a
@@ -192,6 +192,17 @@ class Activities
       $stmt = $this->conn->prepare($query);
 
       $stmt->bindParam(":user_id", $user_id, PDO::PARAM_INT);
+
+      return $stmt->execute();
+   }
+
+   public function updateActivityPhotoPath($id, $photoPath)
+   {
+      $query = "UPDATE " . $this->table . " SET photo_path = :photo_path WHERE id = :id";
+      $stmt = $this->conn->prepare($query);
+
+      $stmt->bindValue(":id", $id, PDO::PARAM_INT);
+      $stmt->bindValue(":photo_path", $photoPath);
 
       return $stmt->execute();
    }

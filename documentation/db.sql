@@ -15,6 +15,7 @@ CREATE TABLE users (
     username VARCHAR(100) NOT NULL,
     email VARCHAR(150) NOT NULL UNIQUE,
     password VARCHAR(255) NOT NULL,
+    profile_picture_path VARCHAR(255) NULL,
     role ENUM('admin','user') DEFAULT 'user',
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     token VARCHAR(255) NULL
@@ -54,6 +55,7 @@ CREATE TABLE activities (
     activity_type ENUM('indoor','outdoor') NOT NULL,
     status ENUM('planned','cancelled','completed') DEFAULT 'planned',
     activity_time TIMESTAMP NOT NULL,
+    photo_path VARCHAR(255) NULL,
     location_id INT,
     created_by INT,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,

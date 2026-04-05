@@ -2,11 +2,16 @@ import { effect, track } from "ripple";
 import { navigateTo } from "ripple-router";
 
 import { notyf } from "../notyf";
-import { logout, requireAuthenticatedUser } from "../auth";
+import { getAuthHeaders, logout, requireAuthenticatedUser } from "../auth";
+
+const DEFAULT_PROFILE_IMAGE = "https://gravatar.com/avatar/00000000000000000000000000000000?d=mp&f=y";
 
 export component ProfilePage() {
+   let userId = track<number | null>(null);
    let username = track("");
    let email = track("");
+   let profilePictureUrl = track(DEFAULT_PROFILE_IMAGE);
+   let isUploadingProfilePicture = track(false);
 
    async function loadVerifiedProfile() {
       const user = await requireAuthenticatedUser();
@@ -15,8 +20,53 @@ export component ProfilePage() {
          return;
       }
 
+      @userId = Number(user.id);
       @username = user.username;
       @email = user.email;
+      @profilePictureUrl = user.profile_picture_url && user.profile_picture_url.trim().length > 0 ? user.profile_picture_url : DEFAULT_PROFILE_IMAGE;
+   }
+
+   async function handleProfilePictureUpload(event: Event) {
+      const target = event.target;
+      if (!(target instanceof HTMLInputElement) || !target.files || target.files.length === 0) {
+         return;
+      }
+
+      const file = target.files[0];
+      const id = @userId;
+      if (!file || id == null || @isUploadingProfilePicture) {
+         return;
+      }
+
+      @isUploadingProfilePicture = true;
+      try {
+         const formData = new FormData();
+         formData.append("file", file);
+
+         const response = await fetch(`/api/users/${id}/profile-picture`, {
+            method: "POST",
+            headers: getAuthHeaders(),
+            body: formData,
+         });
+
+         const json = await response.json().catch(() => ({})) as Record<string, any>;
+         if (!response.ok) {
+            const errorValue = json?.["error"];
+            const message = typeof errorValue === "string" && errorValue.trim().length > 0 ? errorValue : "Failed to upload profile picture.";
+            notyf.error(message);
+            return;
+         }
+
+         const uploadedUrlValue = json?.["profile_picture_url"];
+         const uploadedUrl = typeof uploadedUrlValue === "string" ? uploadedUrlValue.trim() : "";
+         @profilePictureUrl = uploadedUrl || DEFAULT_PROFILE_IMAGE;
+         notyf.success("Profile picture updated.");
+      } catch {
+         notyf.error("Could not reach the API. Please try again later.");
+      } finally {
+         @isUploadingProfilePicture = false;
+         target.value = "";
+      }
    }
 
    function handleLogout() {
@@ -30,7 +80,7 @@ export component ProfilePage() {
 
    <article id="user-header">
       <a id="profile-picture">
-         <img src="https://gravatar.com/avatar/00000000000000000000000000000000?d=mp&f=y" alt="profile-picture" />
+         <img src={@profilePictureUrl} alt="profile-picture" onerror={`this.onerror=null;this.src='${DEFAULT_PROFILE_IMAGE}';`} />
          <p>{@username}</p>
       </a>
 
@@ -52,6 +102,23 @@ export component ProfilePage() {
                <span>{"Password"}</span>
                <input class="profile-input" type="password" name="password" id="password" placeholder="Password" required />
             </label>
+
+            <label for="profile-picture-upload">
+               <span>{"Profile picture"}</span>
+               <input
+                  class="profile-input"
+                  type="file"
+                  name="profile-picture-upload"
+                  id="profile-picture-upload"
+                  accept="image/png,image/jpeg,image/webp,image/gif"
+                  disabled={@isUploadingProfilePicture}
+                  onChange={handleProfilePictureUpload}
+               />
+            </label>
+
+            if (@isUploadingProfilePicture) {
+               <p>{"Uploading profile picture..."}</p>
+            }
 
             <button class="button red" type="button" onClick={handleLogout}>
                <i class="fas fa-sign-out-alt" />

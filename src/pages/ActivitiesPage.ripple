@@ -6,7 +6,7 @@ import { getAuthHeaders, getCurrentUser, isLoggedIn } from "../auth";
 import { ActivityTile } from "../components/ActivityTile.ripple";
 import { ActivityPopover } from "../components/ActivityPopover.ripple";
 import { CreateActivityPopover } from "../components/CreateActivityPopover.ripple";
-import type { CreateActivityPayload } from "../components/CreateActivityPopover.ripple";
+import type { CreateActivityPayload, CreateActivityRequest } from "../components/CreateActivityPopover.ripple";
 import { StatusMessage } from "../views/StatusMessage.ripple";
 import {
    buildAvatarUrl,
@@ -249,12 +249,15 @@ export component ActivitiesPage(props: Record<string, any>) {
       }
    }
 
-   async function createActivity(payload: CreateActivityPayload) {
+   async function createActivity(request: CreateActivityRequest) {
       if (currentUserId == null) {
          notyf.error("Log in to create activities.");
          navigateTo("/login");
          return;
       }
+
+      const payload: CreateActivityPayload = request.payload;
+      const photoFile = request.photoFile;
 
       try {
          const response = await fetch("/api/activities", {
@@ -275,6 +278,22 @@ export component ActivitiesPage(props: Record<string, any>) {
 
          const created = await parseApiData<{ id?: number }>(response);
          const createdId = Number(created?.id);
+
+         if (photoFile && Number.isFinite(createdId) && createdId > 0) {
+            const formData = new FormData();
+            formData.append("file", photoFile);
+
+            const uploadResponse = await fetch(`/api/activities/${createdId}/photo`, {
+               method: "POST",
+               headers: getAuthHeaders(),
+               body: formData,
+            });
+
+            if (!uploadResponse.ok) {
+               const message = await parseApiError(uploadResponse, "Activity created, but photo upload failed.");
+               notyf.error(message);
+            }
+         }
 
          await loadInitialData();
 

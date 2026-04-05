@@ -60,6 +60,8 @@ List users.
 
 Returned fields: `id`, `username`, `email`, `role`, `created_at`
 
+Also includes: `profile_picture_path`, `profile_picture_url`
+
 ### `GET /users/{id}`
 
 Return one user.
@@ -69,6 +71,8 @@ Return one user.
 - Response: `200` with `{ "data": { ... } }`
 
 Returned fields: `id`, `username`, `email`, `role`
+
+Also includes: `profile_picture_path`, `profile_picture_url`
 
 ### `PUT /users/{id}`
 
@@ -87,6 +91,18 @@ Delete a user account.
 - Access: admin or the user themself
 - Success: `200` with `{ "ok": true }`
 
+### `POST /users/{id}/profile-picture`
+
+Upload or replace a profile picture for a user.
+
+- Auth: required
+- Access: admin or the user themself
+- Content type: `multipart/form-data`
+- File field name: `file` (or `profile_picture`)
+- Allowed image types: JPG, PNG, WEBP, GIF
+- Max file size: 8 MB
+- Success: `200` with `{ "ok": true, "profile_picture_path": "uploads/profile_pictures/...", "profile_picture_url": "..." }`
+
 ### Activities
 
 ### `GET /activities`
@@ -96,6 +112,8 @@ List activities ordered by `activity_time`.
 - Response: `200` with `{ "data": [ ... ] }`
 
 Returned fields: `id`, `title`, `description`, `activity_type`, `status`, `activity_time`, `location_id`, `created_by`, `created_by_username`, `participant_ids`
+
+Also includes: `photo_path`, `photo_url`
 
 ### `GET /activities/{id}`
 
@@ -154,6 +172,18 @@ Delete an activity.
 - Access: admin or the activity creator
 - Success: `200` with `{ "ok": true }`
 - Failure: `404` if the activity does not exist or the user is not allowed to delete it
+
+### `POST /activities/{id}/photo`
+
+Upload or replace a photo for an activity.
+
+- Auth: required
+- Access: admin or the activity creator
+- Content type: `multipart/form-data`
+- File field name: `file` (or `photo`)
+- Allowed image types: JPG, PNG, WEBP, GIF
+- Max file size: 8 MB
+- Success: `200` with `{ "ok": true, "photo_path": "uploads/activity_photos/...", "photo_url": "..." }`
 
 ### Locations
 

@@ -16,6 +16,10 @@ class ActivitiesController
 
       // Return activities
       $rows = $this->model->getAllActivities($limit, $offset);
+      foreach ($rows as &$row) {
+         $row["photo_url"] = !empty($row["photo_path"]) ? buildPublicFileUrl($row["photo_path"]) : null;
+      }
+      unset($row);
       return ["code" => 200, "data" => ["data" => $rows]];
    }
 
@@ -32,6 +36,8 @@ class ActivitiesController
       if (!$row) {
          return ["code" => 404, "data" => ["error" => "Not found"]];
       }
+
+      $row["photo_url"] = !empty($row["photo_path"]) ? buildPublicFileUrl($row["photo_path"]) : null;
 
       return ["code" => 200, "data" => ["data" => $row]];
    }
@@ -197,5 +203,53 @@ class ActivitiesController
       }
 
       return ["code" => 404, "data" => ["error" => "Not found or not allowed"]];
+   }
+
+   public function uploadActivityPhoto($params, $data)
+   {
+      $id = isset($params[0]) ? (int) $params[0] : null;
+      if (!$id) {
+         return ["code" => 400, "data" => ["error" => "Invalid id"]];
+      }
+
+      $auth = denyUnauthorized();
+
+      $existing = $this->model->getActivityById($id);
+      if (!$existing) {
+         return ["code" => 404, "data" => ["error" => "Not found"]];
+      }
+
+      if (($auth["role"] ?? "") !== "admin" && (int) $existing["created_by"] !== (int) $auth["id"]) {
+         return ["code" => 403, "data" => ["error" => "Forbidden"]];
+      }
+
+      $upload = $_FILES["file"] ?? ($_FILES["photo"] ?? null);
+      if (!$upload) {
+         return ["code" => 400, "data" => ["error" => "Missing upload file (use field 'file' or 'photo')"]];
+      }
+
+      $saved = storeUploadedImage($upload, "activity_photos", "activity_" . $id);
+      if (!($saved["ok"] ?? false)) {
+         return ["code" => 400, "data" => ["error" => $saved["error"] ?? "Upload failed"]];
+      }
+
+      $updated = $this->model->updateActivityPhotoPath($id, $saved["path"]);
+      if (!$updated) {
+         deleteUploadedFile($saved["path"]);
+         return ["code" => 500, "data" => ["error" => "Failed to save activity photo path"]];
+      }
+
+      if (!empty($existing["photo_path"])) {
+         deleteUploadedFile($existing["photo_path"]);
+      }
+
+      return [
+         "code" => 200,
+         "data" => [
+            "ok" => true,
+            "photo_path" => $saved["path"],
+            "photo_url" => $saved["url"],
+         ],
+      ];
    }
 }

@@ -15,11 +15,13 @@ export component ActivityTile(props: Record<string, any>) {
       }
    }
 
+   const activityImage = String(activity?.photoUrl ?? "").trim() || "/assets/placeholder.jpg";
+
    <a class="activity card" href={`?id=${activity?.id}`} onClick={handleOpen}>
       <img
-         // TODO: load real image
-         src="/assets/placeholder.jpg"
+         src={activityImage}
          alt="Activity Image"
+         onerror="this.onerror=null;this.src='/assets/placeholder.jpg';"
       />
       <h4 class="title">{activity?.title}</h4>
       <div class="content">

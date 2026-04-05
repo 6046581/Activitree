@@ -19,6 +19,7 @@ export component ActivityPopover(props: Record<string, any>) {
    const isAttending = !!props?.["isAttending"];
    const canToggleAttendance = props?.["canToggleAttendance"] !== false;
    const onToggleAttendance = props?.["onToggleAttendance"];
+   const activityImage = String(activity?.photoUrl ?? "").trim() || "/assets/placeholder.jpg";
 
    let attendingState = track(isAttending);
    let isSubmittingAttendance = track(false);
@@ -279,7 +280,7 @@ export component ActivityPopover(props: Record<string, any>) {
             </section>
          </div>
          <div class="aside">
-            <img class="activity-cover" src="/assets/placeholder.jpg" alt="Activity Image" />
+            <img class="activity-cover" src={activityImage} alt="Activity Image" onerror="this.onerror=null;this.src='/assets/placeholder.jpg';" />
             <section class="attendance" aria-label="Attendance">
                <p class="attendance-title">
                   <i class="fas fa-users" />

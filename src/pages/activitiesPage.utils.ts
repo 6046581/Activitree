@@ -17,6 +17,8 @@ export type ApiActivity = {
    status: "planned" | "cancelled" | "completed";
    activity_time: string;
    location_id: number | null;
+   photo_path?: string | null;
+   photo_url?: string | null;
    created_by: number;
    created_by_username?: string | null;
    participant_ids?: number[];
@@ -48,6 +50,8 @@ export type UiActivity = {
    date: string;
    time: string;
    locationId: number | null;
+   photoPath: string | null;
+   photoUrl: string | null;
    createdBy: number;
    createdByUsername: string;
    participantIds: number[];
@@ -95,6 +99,8 @@ export function mapActivity(row: ApiActivity): UiActivity {
       date,
       time,
       locationId: row.location_id == null ? null : Number(row.location_id),
+      photoPath: row.photo_path == null ? null : String(row.photo_path),
+      photoUrl: row.photo_url == null ? null : String(row.photo_url),
       createdBy: Number(row.created_by),
       createdByUsername: String(row.created_by_username ?? "Unknown host"),
       participantIds,

@@ -19,10 +19,15 @@ export type CreateActivityPayload = {
    location_id: number | null;
 };
 
+export type CreateActivityRequest = {
+   payload: CreateActivityPayload;
+   photoFile: File | null;
+};
+
 type CreateActivityPopoverProps = {
    locations?: LocationOption[];
    onClose?: () => void;
-   onCreate?: (payload: CreateActivityPayload) => Promise<void> | void;
+   onCreate?: (request: CreateActivityRequest) => Promise<void> | void;
 };
 
 function getDefaultDate() {
@@ -45,6 +50,8 @@ export component CreateActivityPopover(props: CreateActivityPopoverProps) {
    let date = track(getDefaultDate());
    let time = track("18:00");
    let locationId = track("");
+   let photoFile = track<File | null>(null);
+   let photoPreviewUrl = track("/assets/placeholder.jpg");
    let isSubmitting = track(false);
 
    let selectedLocation = track(() => locations.find((entry) => String(entry.id) === @locationId) ?? null);
@@ -60,6 +67,25 @@ export component CreateActivityPopover(props: CreateActivityPopoverProps) {
       if (target instanceof HTMLInputElement || target instanceof HTMLTextAreaElement || target instanceof HTMLSelectElement) {
          setValue(target.value);
       }
+   }
+
+   function handlePhotoInput(event: Event) {
+      const target = event.target;
+      if (!(target instanceof HTMLInputElement) || !target.files || target.files.length === 0) {
+         @photoFile = null;
+         @photoPreviewUrl = "/assets/placeholder.jpg";
+         return;
+      }
+
+      const selected = target.files[0] ?? null;
+      @photoFile = selected;
+
+      if (!selected) {
+         @photoPreviewUrl = "/assets/placeholder.jpg";
+         return;
+      }
+
+      @photoPreviewUrl = URL.createObjectURL(selected);
    }
 
    async function submitForm(event: Event) {
@@ -90,7 +116,10 @@ export component CreateActivityPopover(props: CreateActivityPopoverProps) {
             location_id: parsedLocationId,
          };
 
-         await onCreate(payload);
+         await onCreate({
+            payload,
+            photoFile: @photoFile,
+         });
       } finally {
          @isSubmitting = false;
       }
@@ -183,6 +212,16 @@ export component CreateActivityPopover(props: CreateActivityPopoverProps) {
                </div>
 
                <label>
+                  <span>{"Activity photo"}</span>
+                  <input
+                     type="file"
+                     accept="image/png,image/jpeg,image/webp,image/gif"
+                     disabled={@isSubmitting}
+                     onChange={handlePhotoInput}
+                  />
+               </label>
+
+               <label>
                   <span>{"Location"}</span>
                   <select
                      value={@locationId}
@@ -212,7 +251,7 @@ export component CreateActivityPopover(props: CreateActivityPopoverProps) {
             <aside class="preview" aria-label="Activity preview">
                <h5>{"Preview"}</h5>
                <article class="preview-card">
-                  <img src="/assets/placeholder.jpg" alt="Activity cover placeholder" />
+                  <img src={@photoPreviewUrl} alt="Activity cover preview" />
 
                   <div class="preview-text">
                      <p class="preview-title">{@title.trim() || "Untitled activity"}</p>

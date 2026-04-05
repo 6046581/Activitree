@@ -77,7 +77,7 @@ class Users
 
    public function getUserById($id)
    {
-      $query = "SELECT id, username, email FROM " . $this->table . " WHERE id = :id LIMIT 1";
+      $query = "SELECT id, username, email, profile_picture_path FROM " . $this->table . " WHERE id = :id LIMIT 1";
       $stmt = $this->conn->prepare($query);
 
       $stmt->bindParam(":id", $id, PDO::PARAM_INT);
@@ -88,7 +88,7 @@ class Users
 
    public function getAllUsers($limit = 100, $offset = 0)
    {
-      $query = "SELECT id, username, created_at FROM " . $this->table . " ORDER BY id ASC LIMIT :limit OFFSET :offset";
+      $query = "SELECT id, username, created_at, profile_picture_path FROM " . $this->table . " ORDER BY id ASC LIMIT :limit OFFSET :offset";
       $stmt = $this->conn->prepare($query);
 
       $stmt->bindValue(":limit", (int) $limit, PDO::PARAM_INT);
@@ -122,6 +122,17 @@ class Users
       return $stmt->execute();
    }
 
+   public function updateProfilePicturePath($id, $profilePicturePath)
+   {
+      $query = "UPDATE " . $this->table . " SET profile_picture_path = :profile_picture_path WHERE id = :id";
+      $stmt = $this->conn->prepare($query);
+
+      $stmt->bindValue(":id", $id, PDO::PARAM_INT);
+      $stmt->bindValue(":profile_picture_path", $profilePicturePath);
+
+      return $stmt->execute();
+   }
+
    public function setToken($id, $token)
    {
       $query = "UPDATE " . $this->table . " SET token = :token WHERE id = :id";
@@ -139,7 +150,7 @@ class Users
          return null;
       }
 
-      $query = "SELECT id, username, email, role FROM " . $this->table . " WHERE token = :token LIMIT 1";
+      $query = "SELECT id, username, email, role, profile_picture_path FROM " . $this->table . " WHERE token = :token LIMIT 1";
       $stmt = $this->conn->prepare($query);
 
       $stmt->bindValue(":token", $token);
