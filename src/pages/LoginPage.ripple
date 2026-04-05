@@ -5,8 +5,8 @@ import { notyf } from "../notyf";
 import { apiPostJson, login, logout, type AuthUser } from "../auth";
 import { TabSelector } from "../components/TabSelector.ripple";
 
-import { LoginFormView } from "../views/LoginFormView.ripple";
-import { SignupFormView } from "../views/SignupFormView.ripple";
+import { LoginForm } from "../views/LoginForm.ripple";
+import { SignupForm } from "../views/SignupForm.ripple";
 
 type ApiUser = {
    id: number;
@@ -246,9 +246,9 @@ export component LoginPage() {
       }
 
       if (@selected === "login") {
-         <LoginFormView {@isLoading} onSubmit={handleLoginSubmit} />
+         <LoginForm {@isLoading} onSubmit={handleLoginSubmit} />
       } else {
-         <SignupFormView {@isLoading} onSubmit={handleSignupSubmit} />
+         <SignupForm {@isLoading} onSubmit={handleSignupSubmit} />
       }
    </article>
 

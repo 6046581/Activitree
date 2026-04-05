@@ -1,0 +1,386 @@
+import { track } from "ripple";
+import { Popover } from "./Popover.ripple";
+
+type ActivityType = "indoor" | "outdoor";
+type ActivityStatus = "planned" | "cancelled" | "completed";
+
+type LocationOption = {
+   id: number;
+   name: string;
+   address: string;
+};
+
+export type CreateActivityPayload = {
+   title: string;
+   description: string;
+   activity_type: ActivityType;
+   status: ActivityStatus;
+   activity_time: string;
+   location_id: number | null;
+};
+
+type CreateActivityPopoverProps = {
+   locations?: LocationOption[];
+   onClose?: () => void;
+   onCreate?: (payload: CreateActivityPayload) => Promise<void> | void;
+};
+
+function getDefaultDate() {
+   const now = new Date();
+   const year = now.getFullYear();
+   const month = String(now.getMonth() + 1).padStart(2, "0");
+   const day = String(now.getDate()).padStart(2, "0");
+   return `${year}-${month}-${day}`;
+}
+
+export component CreateActivityPopover(props: CreateActivityPopoverProps) {
+   const locations = Array.isArray(props?.locations) ? props.locations : [];
+   const onClose = props?.onClose;
+   const onCreate = props?.onCreate;
+
+   let title = track("");
+   let description = track("");
+   let activityType = track<ActivityType>("outdoor");
+   let status = track<ActivityStatus>("planned");
+   let date = track(getDefaultDate());
+   let time = track("18:00");
+   let locationId = track("");
+   let isSubmitting = track(false);
+
+   let selectedLocation = track(() => locations.find((entry) => String(entry.id) === @locationId) ?? null);
+
+   function closePopover() {
+      if (typeof onClose === "function") {
+         onClose();
+      }
+   }
+
+   function updateInputValue(event: Event, setValue: (value: string) => void) {
+      const target = event.target;
+      if (target instanceof HTMLInputElement || target instanceof HTMLTextAreaElement || target instanceof HTMLSelectElement) {
+         setValue(target.value);
+      }
+   }
+
+   async function submitForm(event: Event) {
+      event.preventDefault();
+
+      if (typeof onCreate !== "function" || @isSubmitting) {
+         return;
+      }
+
+      const cleanTitle = @title.trim();
+      if (!cleanTitle || !@date || !@time) {
+         return;
+      }
+
+      const parsedLocationId = @locationId ? Number(@locationId) : null;
+      if (@locationId && (parsedLocationId === null || !Number.isFinite(parsedLocationId) || parsedLocationId <= 0)) {
+         return;
+      }
+
+      @isSubmitting = true;
+      try {
+         const payload: CreateActivityPayload = {
+            title: cleanTitle,
+            description: @description.trim(),
+            activity_type: @activityType,
+            status: @status,
+            activity_time: `${@date} ${@time}:00`,
+            location_id: parsedLocationId,
+         };
+
+         await onCreate(payload);
+      } finally {
+         @isSubmitting = false;
+      }
+   }
+
+   <Popover onClose={closePopover} closeAriaLabel="Close create activity">
+      <article class="create-activity card create-activity-popover-card">
+         <section class="header">
+            <p class="eyebrow">{"Create Activity"}</p>
+            <h4>{@title.trim() || "Untitled activity"}</h4>
+            <p class="subtext">{"Fill out the key fields people will see in the activity feed."}</p>
+         </section>
+
+         <div class="body">
+            <form class="create-form" onSubmit={submitForm}>
+               <label>
+                  <span>{"Title"}</span>
+                  <input
+                     type="text"
+                     value={@title}
+                     placeholder="What are you planning?"
+                     maxlength="100"
+                     required
+                     disabled={@isSubmitting}
+                     onInput={(event: Event) => updateInputValue(event, (value) => (@title = value))}
+                  />
+               </label>
+
+               <label>
+                  <span>{"Description"}</span>
+                  <textarea
+                     rows={4}
+                     value={@description}
+                     placeholder="What should people bring and expect?"
+                     maxlength="480"
+                     disabled={@isSubmitting}
+                     onInput={(event: Event) => updateInputValue(event, (value) => (@description = value))}
+                  />
+               </label>
+
+               <div class="field-grid">
+                  <label>
+                     <span>{"Type"}</span>
+                     <select
+                        value={@activityType}
+                        disabled={@isSubmitting}
+                        onInput={(event: Event) => updateInputValue(event, (value) => (@activityType = value as ActivityType))}
+                     >
+                        <option value="outdoor">{"Outdoor"}</option>
+                        <option value="indoor">{"Indoor"}</option>
+                     </select>
+                  </label>
+
+                  <label>
+                     <span>{"Status"}</span>
+                     <select
+                        value={@status}
+                        disabled={@isSubmitting}
+                        onInput={(event: Event) => updateInputValue(event, (value) => (@status = value as ActivityStatus))}
+                     >
+                        <option value="planned">{"Planned"}</option>
+                        <option value="cancelled">{"Cancelled"}</option>
+                        <option value="completed">{"Completed"}</option>
+                     </select>
+                  </label>
+               </div>
+
+               <div class="field-grid">
+                  <label>
+                     <span>{"Date"}</span>
+                     <input
+                        type="date"
+                        value={@date}
+                        required
+                        disabled={@isSubmitting}
+                        onInput={(event: Event) => updateInputValue(event, (value) => (@date = value))}
+                     />
+                  </label>
+
+                  <label>
+                     <span>{"Time"}</span>
+                     <input
+                        type="time"
+                        value={@time}
+                        required
+                        disabled={@isSubmitting}
+                        onInput={(event: Event) => updateInputValue(event, (value) => (@time = value))}
+                     />
+                  </label>
+               </div>
+
+               <label>
+                  <span>{"Location"}</span>
+                  <select
+                     value={@locationId}
+                     disabled={@isSubmitting || locations.length === 0}
+                     onInput={(event: Event) => updateInputValue(event, (value) => (@locationId = value))}
+                  >
+                     <option value="">{"No location selected"}</option>
+                     for (let location of locations) {
+                        <option value={String(location.id)}>{location.name + " - " + location.address}</option>
+                     }
+                  </select>
+               </label>
+
+               <div class="button-group bottom">
+                  <a class="button green" type="submit" disabled={@isSubmitting}>
+                     if (@isSubmitting) {
+                        <i class="fas fa-spinner fa-spin" />
+                        {"Creating..."}
+                     } else {
+                        <i class="fas fa-upload" />
+                        {"Create Activity"}
+                     }
+                  </a>
+               </div>
+            </form>
+
+            <aside class="preview" aria-label="Activity preview">
+               <h5>{"Preview"}</h5>
+               <article class="preview-card">
+                  <img src="/assets/placeholder.jpg" alt="Activity cover placeholder" />
+
+                  <div class="preview-text">
+                     <p class="preview-title">{@title.trim() || "Untitled activity"}</p>
+                     <p class="preview-description">{@description.trim() || "No description yet."}</p>
+                  </div>
+
+                  <div class="preview-meta">
+                     <p class="icon-text">
+                        <i class="fas fa-clock" />
+                        {(@date || "Date") + " " + (@time || "Time")}
+                     </p>
+                     <p class="icon-text">
+                        <i class={`fas ${@activityType === "outdoor" ? "fa-tree" : "fa-house"}`} />
+                        {@activityType === "outdoor" ? "Outdoor" : "Indoor"}
+                     </p>
+                     <p class="icon-text">
+                        <i class="fas fa-location-dot" />
+                        {@selectedLocation ? @selectedLocation.address : "No location selected"}
+                     </p>
+                  </div>
+               </article>
+            </aside>
+         </div>
+      </article>
+   </Popover>
+
+   <style scoped>
+      :global(.create-activity-popover-card) {
+         width: min(72rem, 100%);
+         max-height: 100%;
+         overflow: auto;
+         display: flex;
+         flex-direction: column;
+         gap: 1.25rem;
+         animation: popover-card-in 0.6s var(--ease) both;
+      }
+
+      :global(.create-activity-popover-card .header) {
+         display: flex;
+         flex-direction: column;
+         gap: 0.4rem;
+      }
+
+      :global(.create-activity-popover-card .eyebrow) {
+         font-size: 0.85rem;
+         letter-spacing: 0.08em;
+         text-transform: uppercase;
+         font-weight: 700;
+      }
+
+      :global(.create-activity-popover-card .subtext) {
+         opacity: 0.85;
+      }
+
+      :global(.create-activity-popover-card .body) {
+         display: grid;
+         grid-template-columns: minmax(0, 1.3fr) minmax(0, 1fr);
+         gap: 1rem;
+      }
+
+      :global(.create-activity-popover-card .create-form) {
+         display: flex;
+         flex-direction: column;
+         gap: 0.8rem;
+      }
+
+      :global(.create-activity-popover-card .field-grid) {
+         display: grid;
+         grid-template-columns: repeat(2, minmax(0, 1fr));
+         gap: 0.8rem;
+      }
+
+      :global(.create-activity-popover-card textarea),
+      :global(.create-activity-popover-card select) {
+         background-color: #ffffff;
+         border: none;
+         border-radius: 1rem;
+         padding: 0.75rem 1rem;
+         font-size: 14px;
+         width: 100%;
+         outline: none;
+      }
+
+      :global(.create-activity-popover-card textarea) {
+         resize: vertical;
+         min-height: 5rem;
+      }
+
+      :global(.create-activity-popover-card textarea:focus),
+      :global(.create-activity-popover-card select:focus) {
+         box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.15);
+      }
+
+      :global(.create-activity-popover-card .preview) {
+         background: rgba(255, 255, 255, 0.4);
+         border-radius: 1rem;
+         padding: 0.8rem;
+         box-shadow: var(--shadow);
+         display: flex;
+         flex-direction: column;
+         gap: 0.6rem;
+      }
+
+      :global(.create-activity-popover-card .preview-card) {
+         display: flex;
+         flex-direction: column;
+         gap: 0.75rem;
+      }
+
+      :global(.create-activity-popover-card .preview-card img) {
+         width: 100%;
+         aspect-ratio: 16 / 9;
+         object-fit: cover;
+         box-shadow: var(--shadow);
+      }
+
+      :global(.create-activity-popover-card .preview-text) {
+         display: flex;
+         flex-direction: column;
+         gap: 0.35rem;
+      }
+
+      :global(.create-activity-popover-card .preview-title) {
+         font-weight: 700;
+      }
+
+      :global(.create-activity-popover-card .preview-description) {
+         opacity: 0.85;
+         font-size: 1rem;
+         line-clamp: 4;
+         -webkit-line-clamp: 4;
+         -webkit-box-orient: vertical;
+         display: -webkit-box;
+         overflow: hidden;
+      }
+
+      :global(.create-activity-popover-card .preview-meta) {
+         display: flex;
+         flex-direction: column;
+         gap: 0.4rem;
+      }
+
+      :global(.create-activity-popover-card .preview-meta .icon-text) {
+         font-size: 0.95rem;
+      }
+
+      @keyframes popover-card-in {
+         from {
+            opacity: 0;
+            transform: translateY(1.25rem) scale(0.97);
+         }
+
+         to {
+            opacity: 1;
+            transform: translateY(0) scale(1);
+         }
+      }
+
+      @media screen and (max-width: 980px) {
+         :global(.create-activity-popover-card .body) {
+            grid-template-columns: 1fr;
+         }
+      }
+
+      @media screen and (max-width: 640px) {
+         :global(.create-activity-popover-card .field-grid) {
+            grid-template-columns: 1fr;
+         }
+      }
+   </style>
+}

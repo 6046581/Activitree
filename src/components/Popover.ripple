@@ -1,0 +1,109 @@
+import type { Component } from "ripple";
+
+type PopoverProps = {
+   onClose?: () => void;
+   closeAriaLabel?: string;
+   children: Component;
+};
+
+export component Popover(props: PopoverProps) {
+   const { children } = props;
+   const onClose = props?.onClose;
+   const closeAriaLabel = String(props?.closeAriaLabel ?? "Close popover");
+
+   function closePopover() {
+      if (typeof onClose === "function") {
+         onClose();
+      }
+   }
+
+   function stopPropagation(event: Event) {
+      event.stopPropagation();
+   }
+
+   <div class="popover" onClick={closePopover}>
+      <button class="close-button" type="button" aria-label={closeAriaLabel} onClick={closePopover}>
+         <i class="fas fa-xmark" />
+      </button>
+
+      <div class="popover-panel" onClick={stopPropagation}>
+         <children />
+      </div>
+   </div>
+
+   <style scoped>
+      .popover {
+         position: fixed;
+         top: 0;
+         left: 0;
+         display: flex;
+         justify-content: center;
+         align-items: center;
+         width: 100%;
+         height: 100%;
+         max-width: 100%;
+         max-height: 100%;
+         background-color: rgba(4, 9, 20, 0.6);
+         backdrop-filter: blur(6px);
+         overflow: hidden;
+         z-index: 9999;
+         animation: popover-backdrop-in 0.6s var(--ease) both;
+      }
+
+      .popover-panel {
+         width: 100%;
+         height: 100%;
+         display: flex;
+         justify-content: center;
+         align-items: center;
+         padding: 2.5rem;
+      }
+
+      .close-button {
+         position: absolute;
+         top: 0.75rem;
+         right: 0.75rem;
+         display: inline-flex;
+         justify-content: center;
+         align-items: center;
+         width: 3rem;
+         height: 3rem;
+         font-size: 1.5rem;
+         border: 0;
+         border-radius: 1000px;
+         background: rgba(22, 26, 54, 0.8);
+         color: white;
+         box-shadow: var(--shadow);
+         cursor: pointer;
+         z-index: 20;
+         transition:
+            background 0.4s var(--ease),
+            transform 0.4s var(--ease);
+      }
+
+      .close-button:hover {
+         background: rgba(12, 15, 33, 0.9);
+         transform: scale(1.1) rotate(90deg);
+      }
+
+      .close-button:active {
+         transform: scale(0.9);
+      }
+
+      @keyframes popover-backdrop-in {
+         from {
+            opacity: 0;
+         }
+
+         to {
+            opacity: 1;
+         }
+      }
+
+      @media screen and (max-width: 900px) {
+         .popover-panel {
+            padding: 1.25rem;
+         }
+      }
+   </style>
+}

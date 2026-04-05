@@ -57,7 +57,7 @@ body:has(.popover) {
    }
 }
 
-.app > * {
+.app>* {
    width: 100%;
 }
 
@@ -181,7 +181,7 @@ img {
    display: flex;
    justify-content: center;
    align-items: center;
-   gap: 0.75em;
+   gap: 0.8em;
    color: #f2f4f8;
    text-decoration: none;
    font-size: 1em;
@@ -198,7 +198,7 @@ img {
       box-shadow 0.2s ease;
 }
 
-.button > * {
+.button>* {
    position: relative;
    z-index: 1;
 }
@@ -212,6 +212,26 @@ img {
    border-radius: inherit;
    z-index: -1;
    transition: background 0.4s var(--ease);
+}
+
+.button.icon-button {
+   padding: 0.65em;
+   aspect-ratio: 1 / 1;
+   height: 1rem;
+}
+
+.button .fas {
+   font-size: 1em;
+   scale: 1.1;
+   transition: transform 0.6s cubic-bezier(0.22, 1.25, 0.32, 1);
+}
+
+.button.icon-button .fas {
+   scale: 1.25 !important;
+}
+
+.button:hover .fas {
+   transform: rotate(360deg);
 }
 
 .button.white {
@@ -343,10 +363,13 @@ form {
    width: 100%;
 }
 
-input {
+input,
+textarea,
+select {
+   font-family: inherit;
    background-color: #ffffff;
    border: none;
-   border-radius: 1000px;
+   border-radius: 1em;
    padding: 0.75rem 1.2rem;
    margin-bottom: 0.6rem;
    font-size: 14px;
@@ -358,9 +381,76 @@ input {
       box-shadow 0.2s ease;
 }
 
-input:focus {
+input {
+   border-radius: 1000px;
+}
+
+textarea {
+   resize: vertical;
+   min-height: 5rem;
+   max-height: 15rem;
+}
+
+select {
+   cursor: pointer;
+   appearance: none;
+   -webkit-appearance: none;
+   -moz-appearance: none;
+   color-scheme: light;
+   color: var(--color-card-text);
+   font-weight: 600;
+   padding-right: 2.8rem;
+   background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20' fill='none'%3E%3Cpath d='M5.5 7.5L10 12.5L14.5 7.5' stroke='%232f3986' stroke-width='2.2' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+   background-repeat: no-repeat;
+   background-size: 1rem 1rem;
+   background-position: right 1rem center;
+}
+
+select::-ms-expand {
+   display: none;
+}
+
+select option,
+select optgroup {
+   font-family: inherit;
+   background-color: #f8f9ff !important;
+   color: var(--color-card-text) !important;
+   border: none !important;
+   border-radius: 0.5rem !important;
+}
+
+select option {
+   font-weight: 600;
+   padding: 0.55rem 0.75rem;
+}
+
+select option:hover,
+select option:focus {
+   background-color: #eef1ff !important;
+   color: var(--color-primary) !important;
+}
+
+select option:checked {
+   background-color: #e2e7ff !important;
+   color: var(--color-primary) !important;
+}
+
+select:disabled {
+   background-image: none;
+}
+
+input:focus,
+textarea:focus,
+select:focus {
    border-color: #4f46e5;
    box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.15);
+}
+
+input:disabled,
+textarea:disabled,
+select:disabled {
+   opacity: 0.7;
+   cursor: not-allowed;
 }
 
 form label {

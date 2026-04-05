@@ -1,3 +1,4 @@
+import { effect } from "ripple";
 import { Router, Route } from "ripple-router";
 
 // Pages
@@ -11,19 +12,36 @@ import { NavBar } from "./components/NavBar.ripple";
 import { Wallpaper } from "./components/Wallpaper.ripple";
 
 export component App() {
+   effect(() => {
+      let previousPathname = window.location.pathname;
+
+      function handlePopState() {
+         const currentPathname = window.location.pathname;
+
+         // HACK: force a full reload when the route path changes to prevent many many many display issues. Ripple-router is such a pain.
+         if (currentPathname !== previousPathname) {
+            window.location.reload();
+            return;
+         }
+
+         previousPathname = currentPathname;
+      }
+
+      window.addEventListener("popstate", handlePopState);
+      return () => window.removeEventListener("popstate", handlePopState);
+   }, []);
+
    <Wallpaper />
 
    <div class="app">
       <NavBar />
 
       <Router>
+         <Route path="/" element={HomePage} />
          <Route path="/activities" element={ActivitiesPage} />
          <Route path="/activities/:mode" element={ActivitiesPage} />
          <Route path="/profile" element={ProfilePage} />
          <Route path="/login" element={LoginPage} />
-         // HACK: Trying to use "/" as the path for the home page causes it to duplicate itself on navigation.
-         // Hopefully temporarily workaround but this means any invalid path will also match, so no 404 pages for us I guess.
-         <Route path="**" element={HomePage} />
       </Router>
    </div>
 }

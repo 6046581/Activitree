@@ -27,7 +27,7 @@ export component StatusMessage(props: Record<string, any>) {
          height: 60vh;
       }
 
-      .message i {
+      .message .fas {
          font-size: 3rem;
       }
 

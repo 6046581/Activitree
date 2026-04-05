@@ -5,6 +5,7 @@ import { fetchWeather, isOutdoorActivity, getWeatherUrl } from "../weather";
 import type { WeatherResult } from "../weather";
 import { getDateLabel, getGoogleCalendarLink, getTimeOfDayImage } from "../date";
 import { getLocationMapUrl, getLocationLabel, getLocationPreviewUrl } from "../location";
+import { Popover } from "./Popover.ripple";
 
 export component ActivityPopover(props: Record<string, any>) {
    const activity = props?.["activity"];
@@ -196,16 +197,8 @@ export component ActivityPopover(props: Record<string, any>) {
       });
    }
 
-   function stopPropagation(event: Event) {
-      event.stopPropagation();
-   }
-
-   <div class="popover" onClick={closePopover}>
-      <button class="close-button" type="button" aria-label="Close activity details" onClick={closePopover}>
-         <i class="fas fa-xmark" />
-      </button>
-
-      <article class="activity card" onClick={stopPropagation}>
+   <Popover onClose={closePopover} closeAriaLabel="Close activity details">
+      <article class="activity card activity-popover-card">
          <div class="content">
             <section>
                <p class="hosting">{host?.username + " is hosting:"}</p>
@@ -332,59 +325,10 @@ export component ActivityPopover(props: Record<string, any>) {
             </section>
          </div>
       </article>
-   </div>
+   </Popover>
 
    <style scoped>
-      .popover {
-         position: fixed;
-         top: 0;
-         left: 0;
-         display: flex;
-         justify-content: center;
-         align-items: center;
-         width: 100%;
-         height: 100%;
-         max-width: 100%;
-         max-height: 100%;
-         background-color: rgba(4, 9, 20, 0.6);
-         backdrop-filter: blur(6px);
-         overflow: hidden;
-         z-index: 9999;
-         animation: popover-backdrop-in 0.6s var(--ease) both;
-      }
-
-      .close-button {
-         position: absolute;
-         top: 0.75rem;
-         right: 0.75rem;
-         display: inline-flex;
-         justify-content: center;
-         align-items: center;
-         width: 3rem;
-         height: 3rem;
-         font-size: 1.5rem;
-         border: 0;
-         border-radius: 1000px;
-         background: rgba(22, 26, 54, 0.8);
-         color: white;
-         box-shadow: var(--shadow);
-         cursor: pointer;
-         z-index: 20;
-         transition:
-            background 0.4s var(--ease),
-            transform 0.4s var(--ease);
-      }
-
-      .close-button:hover {
-         background: rgba(12, 15, 33, 0.9);
-         transform: scale(1.1) rotate(90deg);
-      }
-
-      .close-button:active {
-         transform: scale(0.9);
-      }
-
-      .activity {
+      :global(.activity-popover-card) {
          position: relative;
          font-size: 1.4rem;
          display: flex;
@@ -399,13 +343,13 @@ export component ActivityPopover(props: Record<string, any>) {
       }
 
       @media screen and (min-width: 1280px) {
-         .activity {
+         :global(.activity-popover-card) {
             font-size: 1.6rem;
          }
       }
 
       @media screen and (max-width: 1080px) {
-         .activity {
+         :global(.activity-popover-card) {
             font-size: 1.3rem;
             padding: 1.25rem 1.5rem;
             gap: 1.5rem;
@@ -413,7 +357,7 @@ export component ActivityPopover(props: Record<string, any>) {
       }
 
       @media screen and (max-width: 960px) {
-         .activity {
+         :global(.activity-popover-card) {
             font-size: 1.2rem;
             padding: 1rem 1.25rem;
             gap: 1.25rem;
@@ -421,33 +365,33 @@ export component ActivityPopover(props: Record<string, any>) {
       }
 
       @media screen and (max-width: 900px) {
-         .activity {
+         :global(.activity-popover-card) {
             flex-direction: column;
             aspect-ratio: unset;
             overflow-y: auto;
          }
 
-         .activity .aside {
+         :global(.activity-popover-card .aside) {
             margin-top: 0;
          }
 
-         .activity .activity-cover {
+         :global(.activity-popover-card .activity-cover) {
             aspect-ratio: 16 / 8;
          }
 
-         .activity .attendance {
+         :global(.activity-popover-card .attendance) {
             max-height: 22rem;
          }
       }
 
-      .activity .content {
+      :global(.activity-popover-card .content) {
          display: flex;
          flex-direction: column;
          gap: 1rem;
          flex: 1.5;
       }
 
-      .activity .aside {
+      :global(.activity-popover-card .aside) {
          display: flex;
          flex-direction: column;
          flex: 1;
@@ -455,12 +399,12 @@ export component ActivityPopover(props: Record<string, any>) {
          gap: 1rem;
       }
 
-      .activity .hosting {
+      :global(.activity-popover-card .hosting) {
          font-size: 0.75em;
          margin: 0;
       }
 
-      .activity .activity-cover {
+      :global(.activity-popover-card .activity-cover) {
          width: 100%;
          aspect-ratio: 4/3;
          object-fit: cover;
@@ -469,7 +413,7 @@ export component ActivityPopover(props: Record<string, any>) {
          box-shadow: var(--shadow);
       }
 
-      .activity .title {
+      :global(.activity-popover-card .title) {
          position: relative;
          display: -webkit-box;
          -webkit-box-orient: vertical;
@@ -479,7 +423,7 @@ export component ActivityPopover(props: Record<string, any>) {
          width: 100%;
       }
 
-      .activity .description {
+      :global(.activity-popover-card .description) {
          display: -webkit-box;
          -webkit-box-orient: vertical;
          line-clamp: 8;
@@ -488,14 +432,14 @@ export component ActivityPopover(props: Record<string, any>) {
          width: 100%;
       }
 
-      .activity .details {
+      :global(.activity-popover-card .details) {
          margin-top: auto;
          display: flex;
          flex-direction: column;
          gap: 0.6rem;
       }
 
-      .activity .info-box {
+      :global(.activity-popover-card .info-box) {
          position: relative;
          display: flex;
          flex-direction: row;
@@ -513,7 +457,7 @@ export component ActivityPopover(props: Record<string, any>) {
          box-shadow: var(--shadow);
       }
 
-      .activity .info-box .info-box-background {
+      :global(.activity-popover-card .info-box .info-box-background) {
          position: absolute;
          inset: 0;
          width: 100%;
@@ -526,12 +470,12 @@ export component ActivityPopover(props: Record<string, any>) {
             filter 0.6s var(--ease);
       }
 
-      .activity .info-box:hover .info-box-background {
+         :global(.activity-popover-card .info-box:hover .info-box-background) {
          transform: scale(1.05);
          filter: brightness(0.9);
       }
 
-      .activity .info-box::before {
+         :global(.activity-popover-card .info-box::before) {
          content: "";
          position: absolute;
          top: 0%;
@@ -546,42 +490,42 @@ export component ActivityPopover(props: Record<string, any>) {
          transition: width 0.6s var(--ease);
       }
 
-      .activity .info-box:hover::before {
+      :global(.activity-popover-card .info-box:hover::before) {
          width: 55%;
       }
 
-      .activity .info-box > i,
-      .activity .info-box > div {
+      :global(.activity-popover-card .info-box > i),
+      :global(.activity-popover-card .info-box > div) {
          position: relative;
          z-index: 2;
       }
 
-      .activity .info-box i {
+      :global(.activity-popover-card .info-box i) {
          color: white;
          font-size: 2.5em;
          transition: scale 0.4s var(--ease);
       }
 
-      .activity .info-box:hover i {
+      :global(.activity-popover-card .info-box:hover i) {
          scale: 1.1;
       }
 
-      .activity .info-box * {
+      :global(.activity-popover-card .info-box *) {
          color: white;
          mix-blend-mode: normal;
          margin: 0;
          text-shadow: 1px 1px 4px rgba(0, 0, 0, 1);
       }
 
-      .activity .info-box h4 {
+      :global(.activity-popover-card .info-box h4) {
          font-weight: 800;
       }
 
-      .activity .info-box p {
+      :global(.activity-popover-card .info-box p) {
          font-weight: 600;
       }
 
-      .activity .attendance {
+      :global(.activity-popover-card .attendance) {
          display: flex;
          flex-direction: column;
          border-radius: 1rem;
@@ -594,7 +538,7 @@ export component ActivityPopover(props: Record<string, any>) {
          box-shadow: var(--shadow);
       }
 
-      .activity .attendance-title {
+      :global(.activity-popover-card .attendance-title) {
          display: flex;
          justify-content: center;
          align-items: center;
@@ -604,7 +548,7 @@ export component ActivityPopover(props: Record<string, any>) {
          white-space: nowrap;
       }
 
-      .activity .attendance-list {
+      :global(.activity-popover-card .attendance-list) {
          display: flex;
          flex-direction: column;
          gap: 0.8rem;
@@ -613,16 +557,16 @@ export component ActivityPopover(props: Record<string, any>) {
          padding-right: 0.2rem;
       }
 
-      .activity .attendance-list::-webkit-scrollbar {
+      :global(.activity-popover-card .attendance-list::-webkit-scrollbar) {
          width: 0.25rem;
       }
 
-      .activity .attendance-list::-webkit-scrollbar-thumb {
+      :global(.activity-popover-card .attendance-list::-webkit-scrollbar-thumb) {
          border-radius: 1000px;
          background-color: rgba(0, 0, 0, 0.2);
       }
 
-      .activity .participant {
+      :global(.activity-popover-card .participant) {
          display: flex;
          align-items: center;
          gap: 0.6rem;
@@ -630,7 +574,7 @@ export component ActivityPopover(props: Record<string, any>) {
          padding: 0 0.6rem;
       }
 
-      .activity .participant-avatar {
+      :global(.activity-popover-card .participant-avatar) {
          width: 2.4em;
          height: 2.4em;
          aspect-ratio: 1 / 1;
@@ -639,24 +583,14 @@ export component ActivityPopover(props: Record<string, any>) {
          box-shadow: var(--shadow);
       }
 
-      .activity .participant-name {
+      :global(.activity-popover-card .participant-name) {
          font-weight: 600;
          line-height: 1.2;
       }
 
-      .activity .attendance-empty {
+      :global(.activity-popover-card .attendance-empty) {
          margin: 0;
          opacity: 0.75;
-      }
-
-      @keyframes popover-backdrop-in {
-         from {
-            opacity: 0;
-         }
-
-         to {
-            opacity: 1;
-         }
       }
 
       @keyframes popover-card-in {

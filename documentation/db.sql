@@ -66,7 +66,7 @@ CREATE TABLE activities (
 );
 
 -- ======================================
--- ACTIVITY PARTICIPANTS (MANY TO MANY)
+-- ACTIVITY PARTICIPANTS
 -- ======================================
 
 CREATE TABLE activity_participants (
@@ -86,7 +86,7 @@ CREATE TABLE activity_participants (
 );
 
 -- ======================================
--- INVITATIONS (FOR GUESTS)
+-- INVITATIONS
 -- ======================================
 
 CREATE TABLE invitations (

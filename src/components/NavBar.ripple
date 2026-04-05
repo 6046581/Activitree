@@ -57,13 +57,38 @@ export component NavBar() {
       navigateTo("/");
    }
 
+   function handleCreateClick(e: Event) {
+      if (e instanceof MouseEvent) {
+         if (e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) {
+            return;
+         }
+      }
+
+      e.preventDefault();
+
+      const currentUrl = new URL(window.location.href);
+      const targetPath = currentUrl.pathname.startsWith("/activities") ? currentUrl.pathname : "/activities/discover";
+      const nextSearchParams = Object.fromEntries(currentUrl.searchParams.entries());
+      delete nextSearchParams["id"];
+      nextSearchParams["create"] = "1";
+
+      navigateTo(targetPath, {
+         searchParams: nextSearchParams,
+      });
+   }
+
    <header class="nav-bar">
       <a class="nav-logo" href="/" onClick={handleLogoClick}>
          <img class="nav-logo-img" src="/assets/logo.png" alt="Activitree Logo" />
          <img class="nav-logo-img-small" src="/assets/logo-small.png" alt="Activitree Logo" />
       </a>
       <nav>
+         <a class="button white icon-button nav-create" href="/activities/discover?create=1" onClick={handleCreateClick}>
+            <i class="fas fa-plus" />
+         </a>
+
          <TabSelector tabs={tabBar.tabs} />
+
          <a class="nav-profile" href="/profile" onClick={handleProfileClick}>
             <img src="https://gravatar.com/avatar/00000000000000000000000000000000?d=mp&f=y" alt="profile" />
          </a>
@@ -92,6 +117,10 @@ export component NavBar() {
          height: 100%;
       }
 
+      .nav-bar nav > * {
+         height: 100%;
+      }
+
       .nav-logo {
          height: 100%;
          object-fit: contain;
@@ -110,6 +139,10 @@ export component NavBar() {
 
       .nav-logo-img-small {
          display: none;
+      }
+
+      .nav-create {
+         height: 3em !important;
       }
 
       .nav-profile {

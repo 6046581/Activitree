@@ -248,7 +248,7 @@ export component TabSelector(props: TabSelectorProps) {
          justify-content: center;
          align-items: center;
          flex: 1;
-         gap: 0.6em;
+         gap: 0.75rem;
          text-decoration: none;
          font-size: 1.1em;
          font-weight: 700;
@@ -268,20 +268,9 @@ export component TabSelector(props: TabSelectorProps) {
             transform 0.2s ease,
             scale 0.4s var(--ease);
       }
-
-      .tab-item i {
-         font-size: 1em;
-         scale: 1.2;
-         transition: transform 0.6s cubic-bezier(0.22, 1.25, 0.32, 1);
-      }
-
       .tab-item:hover {
          color: var(--color-primary-light);
          scale: 1.1;
-      }
-
-      .tab-item:hover i {
-         transform: rotate(360deg);
       }
 
       .tab-item:active {
@@ -293,6 +282,15 @@ export component TabSelector(props: TabSelectorProps) {
          text-shadow: 0 0 16px rgba(79, 70, 229, 0.35);
       }
 
+      .tab-item .fas {
+         font-size: 1em;
+         scale: 1.2;
+         transition: transform 0.6s cubic-bezier(0.22, 1.25, 0.32, 1);
+      }
+
+      .tab-item:hover .fas {
+         transform: rotate(360deg);
+      }
       @media screen and (max-width: 1080px) {
          .tab-item {
             padding: 0.5em 0.5em;
@@ -308,7 +306,7 @@ export component TabSelector(props: TabSelectorProps) {
             min-width: 8em;
          }
 
-         .tab-item i {
+         .tab-item .fas {
             font-size: 1.6em;
             scale: 1;
          }

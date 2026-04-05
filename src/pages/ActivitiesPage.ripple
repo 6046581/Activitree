@@ -5,181 +5,42 @@ import { notyf } from "../notyf";
 import { getAuthHeaders, getCurrentUser } from "../auth";
 import { ActivityTile } from "../components/ActivityTile.ripple";
 import { ActivityPopover } from "../components/ActivityPopover.ripple";
-import { LoadingSpinner } from "../components/LoadingSpinner.ripple";
+import { CreateActivityPopover } from "../components/CreateActivityPopover.ripple";
+import type { CreateActivityPayload } from "../components/CreateActivityPopover.ripple";
+import { StatusMessage } from "../views/StatusMessage.ripple";
+import {
+   buildAvatarUrl,
+   extractRows,
+   filterActivitiesByMode,
+   mapActivity,
+   mapLocation,
+   mapParticipant,
+   parseApiData,
+   parseApiError,
+} from "./activitiesPage.utils";
+import type {
+   ActivitySearchParams,
+   ApiResponse,
+   ApiActivity,
+   ApiLocation,
+   ApiParticipant,
+   UiActivity,
+   UiLocation,
+   UiParticipant,
+} from "./activitiesPage.utils";
 
 type ActivityParams = {
    mode?: string;
 };
 
-type ActivitySearchParams = {
-   id?: string;
-   time?: string;
-};
-
-type ApiResponse<T> = {
-   data?: T;
-   error?: string;
-};
-
-type ApiActivity = {
-   id: number;
-   title: string;
-   description?: string;
-   activity_type: "indoor" | "outdoor";
-   status: "planned" | "cancelled" | "completed";
-   activity_time: string;
-   location_id: number | null;
-   created_by: number;
-   created_by_username?: string | null;
-   participant_ids?: number[];
-};
-
-type ApiLocation = {
-   id: number;
-   latitude: number;
-   longitude: number;
-   city?: string | null;
-   street?: string | null;
-   house_number?: string | null;
-   formatted_address?: string | null;
-};
-
-type ApiParticipant = {
-   id: number;
-   username: string;
-   email: string;
-   joined_at?: string;
-};
-
-type UiActivity = {
-   id: number;
-   title: string;
-   description: string;
-   type: "indoor" | "outdoor";
-   status: "planned" | "cancelled" | "completed";
-   date: string;
-   time: string;
-   locationId: number | null;
-   createdBy: number;
-   createdByUsername: string;
-   participantIds: number[];
-};
-
-type UiLocation = {
-   id: number;
-   name: string;
-   address: string;
-   latitude: number;
-   longitude: number;
-};
-
-type UiParticipant = {
-   id: number;
-   username: string;
-   email: string;
-   avatar: string;
-   joinedAt: string;
-};
-
-function buildAvatarUrl(id: number, username: string): string {
-   return `https://i.pravatar.cc/120?u=${encodeURIComponent(`${id}-${username}`)}`;
-}
-
-function splitActivityTime(activityTime: string): { date: string; time: string } {
-   const normalized = activityTime.replace("T", " ").trim();
-   const [datePart = "", timePart = ""] = normalized.split(" ");
-   return {
-      date: datePart,
-      time: timePart.slice(0, 5),
-   };
-}
-
-function mapActivity(row: ApiActivity): UiActivity {
-   const { date, time } = splitActivityTime(String(row.activity_time ?? ""));
-   const participantIds =
-      Array.isArray(row.participant_ids) ? row.participant_ids.map((id) => Number(id)).filter((id) => Number.isFinite(id)) : [];
-
-   return {
-      id: Number(row.id),
-      title: String(row.title ?? "Untitled activity"),
-      description: String(row.description ?? ""),
-      type: row.activity_type,
-      status: row.status,
-      date,
-      time,
-      locationId: row.location_id == null ? null : Number(row.location_id),
-      createdBy: Number(row.created_by),
-      createdByUsername: String(row.created_by_username ?? "Unknown host"),
-      participantIds,
-   };
-}
-
-function mapLocation(row: ApiLocation): UiLocation {
-   const streetLine = [row.street, row.house_number].filter(Boolean).join(" ").trim();
-   const address = String(row.formatted_address ?? "").trim() || streetLine || String(row.city ?? "").trim() || "Unknown location";
-   const name = String(row.city ?? "").trim() || address;
-
-   return {
-      id: Number(row.id),
-      name,
-      address,
-      latitude: Number(row.latitude),
-      longitude: Number(row.longitude),
-   };
-}
-
-async function parseApiData<T>(response: Response): Promise<T> {
-   const json: unknown = await response.json().catch(() => ({}));
-   if (json !== null && typeof json === "object") {
-      const payload = json as ApiResponse<T>;
-      if (payload.data !== undefined) {
-         return payload.data as T;
-      }
-   }
-   return json as T;
-}
-
-function extractRows<T>(payload: ApiResponse<T[]> | T[]): T[] {
-   if (Array.isArray(payload)) {
-      return payload;
-   }
-
-   return Array.isArray(payload?.data) ? payload.data : [];
-}
-
-function mapParticipant(row: ApiParticipant): UiParticipant {
-   const id = Number(row.id);
-   const username = String(row.username ?? "Unknown");
-
-   return {
-      id,
-      username,
-      email: String(row.email ?? ""),
-      avatar: buildAvatarUrl(id, username),
-      joinedAt: String(row.joined_at ?? ""),
-   };
-}
-
-async function parseApiError(response: Response, fallbackMessage: string): Promise<string> {
-   try {
-      const json = await response.json() as ApiResponse<unknown>;
-      if (json && typeof json.error === "string" && json.error.trim().length > 0) {
-         return json.error;
-      }
-   } catch {
-      // Ignore JSON parsing errors and use fallback message.
-   }
-
-   return fallbackMessage;
-}
-
 export component ActivitiesPage(props: Record<string, any>) {
-   const params = props?.["params"] ?? {} as ActivityParams;
    const searchParams = props?.["searchParams"] ?? {} as ActivitySearchParams;
+   let mode = track(() => String((props?.["params"] ?? {} as ActivityParams)?.mode ?? "").toLowerCase());
+   let currentPath = track(() => (@mode ? `/activities/${@mode}` : "/activities"));
 
-   const mode = params.mode;
-   const currentPath = mode ? `/activities/${mode}` : "/activities";
-   const initialSelectedId = searchParams.id ?? new URLSearchParams(window.location.search).get("id");
+   const initialSearchParams = new URLSearchParams(window.location.search);
+   const initialSelectedId = searchParams.id ?? initialSearchParams.get("id");
+   const initialCreateFlag = searchParams.create ?? initialSearchParams.get("create");
 
    const currentUser = getCurrentUser();
    const currentUserId =
@@ -188,6 +49,7 @@ export component ActivitiesPage(props: Record<string, any>) {
    const currentUserEmail = String(currentUser?.email ?? "");
 
    let selectedActivityId = track(initialSelectedId ?? null);
+   let isCreatePopoverOpen = track(initialCreateFlag === "1");
    let isLoading = track(true);
    let activities = track<UiActivity[]>([]);
    let locations = track<UiLocation[]>([]);
@@ -199,20 +61,22 @@ export component ActivitiesPage(props: Record<string, any>) {
    }
 
    function navigateWithSearchParams(nextSearchParams: ActivitySearchParams) {
-      navigateTo(currentPath, {
+      navigateTo(@currentPath, {
          searchParams: nextSearchParams,
       });
    }
 
    function openActivity(activityId: string | number) {
       const id = String(activityId);
+      const { create: _ignoredCreate, ...nextSearchParams } = getCurrentSearchParams();
       navigateWithSearchParams(
          {
-            ...getCurrentSearchParams(),
+            ...nextSearchParams,
             id,
          },
       );
       @selectedActivityId = id;
+      @isCreatePopoverOpen = false;
    }
 
    function closeActivity() {
@@ -222,32 +86,20 @@ export component ActivitiesPage(props: Record<string, any>) {
       @selectedParticipants = [];
    }
 
-   function syncActivityFromUrl() {
-      @selectedActivityId = getCurrentSearchParams().id ?? null;
+   function closeCreatePopover() {
+      const { create: _ignoredCreate, ...nextSearchParams } = getCurrentSearchParams();
+      navigateWithSearchParams(nextSearchParams);
+      @isCreatePopoverOpen = false;
+   }
+
+   function syncPopoverStateFromUrl() {
+      const currentSearchParams = getCurrentSearchParams();
+      @selectedActivityId = currentSearchParams.id ?? null;
+      @isCreatePopoverOpen = currentSearchParams.create === "1";
    }
 
    function getVisibleActivities(): UiActivity[] {
-      const normalizedMode = mode?.toLowerCase();
-
-      if (!normalizedMode || normalizedMode === "discover") {
-         return @activities;
-      }
-
-      if (normalizedMode === "attending") {
-         if (currentUserId == null) {
-            return [];
-         }
-         return @activities.filter((activity) => activity.participantIds.includes(currentUserId));
-      }
-
-      if (normalizedMode === "organizing") {
-         if (currentUserId == null) {
-            return [];
-         }
-         return @activities.filter((activity) => activity.createdBy === currentUserId);
-      }
-
-      return @activities.filter((activity) => activity.type === normalizedMode || activity.status === normalizedMode);
+      return filterActivitiesByMode(@activities, @mode, currentUserId);
    }
 
    function getLocationById(id: number | null): UiLocation | undefined {
@@ -302,7 +154,7 @@ export component ActivitiesPage(props: Record<string, any>) {
          }
 
          const payload = await response.json().catch(() => ({})) as ApiResponse<ApiParticipant[]> | ApiParticipant[];
-         @selectedParticipants = extractRows(payload).map(mapParticipant);
+         @selectedParticipants = extractRows<ApiParticipant>(payload).map(mapParticipant);
       } catch {
          @selectedParticipants = [];
          notyf.error("Failed to load participants.");
@@ -385,9 +237,56 @@ export component ActivitiesPage(props: Record<string, any>) {
       }
    }
 
+   async function createActivity(payload: CreateActivityPayload) {
+      if (currentUserId == null) {
+         notyf.error("Log in to create activities.");
+         navigateTo("/login");
+         return;
+      }
+
+      try {
+         const response = await fetch("/api/activities", {
+            method: "POST",
+            headers: getAuthHeaders(
+               {
+                  "Content-Type": "application/json",
+               },
+            ),
+            body: JSON.stringify(payload),
+         });
+
+         if (!response.ok) {
+            const message = await parseApiError(response, "Failed to create activity.");
+            notyf.error(message);
+            return;
+         }
+
+         const created = await parseApiData<{ id?: number }>(response);
+         const createdId = Number(created?.id);
+
+         await loadInitialData();
+
+         const { create: _ignoredCreate, ...nextSearchParams } = getCurrentSearchParams();
+         const nextParams: ActivitySearchParams = {
+            ...nextSearchParams,
+         };
+
+         if (Number.isFinite(createdId) && createdId > 0) {
+            nextParams.id = String(createdId);
+            @selectedActivityId = String(createdId);
+         }
+
+         navigateWithSearchParams(nextParams);
+         @isCreatePopoverOpen = false;
+         notyf.success("Activity created.");
+      } catch {
+         notyf.error("Could not reach the API. Please try again later.");
+      }
+   }
+
    effect(() => {
-      window.addEventListener("popstate", syncActivityFromUrl);
-      return () => window.removeEventListener("popstate", syncActivityFromUrl);
+      window.addEventListener("popstate", syncPopoverStateFromUrl);
+      return () => window.removeEventListener("popstate", syncPopoverStateFromUrl);
    }, []);
 
    effect(() => {
@@ -412,7 +311,11 @@ export component ActivitiesPage(props: Record<string, any>) {
 
    let selectedActivity = track(() => @activities.find((activity) => String(activity.id) === @selectedActivityId));
 
-   if (@selectedActivity) {
+   if (@isCreatePopoverOpen) {
+      <CreateActivityPopover {@locations} onClose={closeCreatePopover} onCreate={createActivity} />
+   }
+
+   if (!@isCreatePopoverOpen && @selectedActivity) {
       const currentActivity = @selectedActivity;
       const host = {
          id: currentActivity.createdBy,
@@ -440,7 +343,7 @@ export component ActivitiesPage(props: Record<string, any>) {
 
    <section class="activities">
       if (@isLoading) {
-         <LoadingSpinner label="Loading activities..." />
+         <StatusMessage label="Loading activities..." />
       } else {
          const visibleActivities = getVisibleActivities();
 
