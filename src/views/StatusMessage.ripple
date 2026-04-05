@@ -1,8 +1,8 @@
 export component StatusMessage(props: Record<string, any>) {
-   let loading = Boolean(props?.["loading"] ?? true);
+   let loading = Boolean(props?.["loading"] ?? false);
 
    const icon = String(props?.["icon"] ?? "fas fa-check");
-   const title = String(props?.["title"] ?? "Done!");
+   const title = String(props?.["title"] ?? "");
    const label = String(props?.["label"] ?? "");
 
    <article class="message" role="status">
@@ -11,8 +11,10 @@ export component StatusMessage(props: Record<string, any>) {
          <p>{"Loading..."}</p>
       } else {
          <i class={icon} aria-hidden="true" />
-         <h4>{title}</h4>
-         <p>{label}</p>
+         <div>
+            <h4>{title}</h4>
+            <p>{label}</p>
+         </div>
       }
    </article>
 
@@ -22,9 +24,11 @@ export component StatusMessage(props: Record<string, any>) {
          flex-direction: column;
          justify-content: center;
          align-items: center;
-         gap: 1.6rem;
+         gap: 1.2rem;
          width: 100%;
-         height: 60vh;
+         height: 70vh;
+         text-align: center;
+         text-shadow: var(--shadow);
       }
 
       .message .fas {

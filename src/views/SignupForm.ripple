@@ -13,7 +13,7 @@ export component SignupForm(props: SignupFormProps) {
    <form class="auth-form" {onSubmit}>
       <label>
          <span>{"Username"}</span>
-         <input type="text" name="username" placeholder="Choose a username" minlength="3" required disabled={isLoading} />
+         <input type="text" name="username" placeholder="What should we call you?" minlength="3" required disabled={isLoading} />
       </label>
 
       <label>
@@ -29,6 +29,11 @@ export component SignupForm(props: SignupFormProps) {
       <label>
          <span>{"Confirm password"}</span>
          <input type="password" name="confirm_password" placeholder="Repeat your password" minlength="8" required disabled={isLoading} />
+      </label>
+
+      <label class="keep-signed-in">
+         <input type="checkbox" name="keep_signed_in" />
+         <span>{"Keep me signed in"}</span>
       </label>
 
       if (!isLoading) {
@@ -50,6 +55,21 @@ export component SignupForm(props: SignupFormProps) {
          display: flex;
          flex-direction: column;
          gap: 0.8rem;
+      }
+      .keep-signed-in {
+         display: flex;
+         align-items: center;
+         gap: 0.5em;
+         font-size: 0.95em;
+         margin-top: 0.2em;
+         margin-bottom: 0.5em;
+         user-select: none;
+      }
+      .keep-signed-in input[type="checkbox"] {
+         accent-color: var(--color-primary, #2f3986);
+         width: 1.1em;
+         height: 1.1em;
+         margin-right: 0.4em;
       }
    </style>
 }

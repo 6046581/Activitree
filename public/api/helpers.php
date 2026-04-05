@@ -21,10 +21,19 @@ function sendJson($data, $code = 200)
 function getRequestToken()
 {
    $authHeader = $_SERVER["HTTP_AUTHORIZATION"] ?? ($_SERVER["REDIRECT_HTTP_AUTHORIZATION"] ?? null);
+
+   if (!$authHeader) {
+      $authHeader = getenv("HTTP_AUTHORIZATION") ?: null;
+   }
+
    if (!$authHeader && function_exists("apache_request_headers")) {
       $hdrs = apache_request_headers();
-      if (!empty($hdrs["Authorization"])) {
-         $authHeader = $hdrs["Authorization"];
+
+      foreach ($hdrs as $name => $value) {
+         if (strtolower($name) === "authorization" && !empty($value)) {
+            $authHeader = $value;
+            break;
+         }
       }
    }
 

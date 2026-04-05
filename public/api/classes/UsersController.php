@@ -25,7 +25,10 @@ class UsersController
 
       // Generate token and save it
       $token = bin2hex(random_bytes(16));
-      $this->model->setToken($user["id"], $token);
+      $saved = $this->model->setToken($user["id"], $token);
+      if (!$saved) {
+         return ["code" => 500, "data" => ["error" => "Failed to persist login token"]];
+      }
 
       // Return user data and token (excluding password)
       unset($user["password"]);

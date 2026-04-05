@@ -2,7 +2,7 @@ import { effect, track } from "ripple";
 import { navigateTo } from "ripple-router";
 
 import { notyf } from "../notyf";
-import { getAuthHeaders, getCurrentUser } from "../auth";
+import { getAuthHeaders, getCurrentUser, isLoggedIn } from "../auth";
 import { ActivityTile } from "../components/ActivityTile.ripple";
 import { ActivityPopover } from "../components/ActivityPopover.ripple";
 import { CreateActivityPopover } from "../components/CreateActivityPopover.ripple";
@@ -90,6 +90,18 @@ export component ActivitiesPage(props: Record<string, any>) {
       const { create: _ignoredCreate, ...nextSearchParams } = getCurrentSearchParams();
       navigateWithSearchParams(nextSearchParams);
       @isCreatePopoverOpen = false;
+   }
+
+   function openCreatePopover() {
+      const { id: _ignoredId, ...nextSearchParams } = getCurrentSearchParams();
+      navigateWithSearchParams(
+         {
+            ...nextSearchParams,
+            create: "1",
+         },
+      );
+      @selectedActivityId = null;
+      @isCreatePopoverOpen = true;
    }
 
    function syncPopoverStateFromUrl() {
@@ -341,25 +353,49 @@ export component ActivitiesPage(props: Record<string, any>) {
       />
    }
 
-   <section class="activities">
-      if (@isLoading) {
-         <StatusMessage label="Loading activities..." />
-      } else {
-         const visibleActivities = getVisibleActivities();
-
-         if (visibleActivities.length === 0) {
-            <p class="empty-state">{"No activities to display."}</p>
+   <section class="activities-page">
+      <section class="activities">
+         if (@isLoading) {
+            <StatusMessage loading="true" />
          } else {
-            for (let activity of visibleActivities) {
-               const host = {
-                  id: activity.createdBy,
-                  username: activity.createdByUsername,
-               };
-               const location = getLocationById(activity.locationId);
+            const visibleActivities = getVisibleActivities();
 
-               <ActivityTile {activity} {host} participants={[]} participantCount={activity.participantIds.length} {location} onOpen={openActivity} />
+            if (visibleActivities.length === 0) {
+               if (@mode === "discover") {
+                  <StatusMessage icon="fas fa-search" title="Oops, all empty!" label="No activities found." />
+               } else if (@mode === "attending") {
+                  if (isLoggedIn()) {
+                     <StatusMessage icon="fas fa-calendar-check" title="All caught up!" label="You are not attending any activities right now." />
+                  } else {
+                     <StatusMessage icon="fas fa-calendar-check" title="Joined activities will appear here!" label="Log in and join an activity to get started." />
+                  }
+               } else if (@mode === "organizing") {
+                  if (isLoggedIn()) {
+                     <StatusMessage icon="fas fa-calendar-plus" title="Not organizing anything yet!" label="Create an activity to get started." />
+                  } else {
+                     <StatusMessage icon="fas fa-crown" title="Created activities will appear here!" label="Log in and create an activity to get started." />
+                  }
+               } else {
+                  <StatusMessage icon="fas fa-search" title="Nothing here!" label="No activities found." />
+               }
+            } else {
+               for (let activity of visibleActivities) {
+                  const host = {
+                     id: activity.createdBy,
+                     username: activity.createdByUsername,
+                  };
+                  const location = getLocationById(activity.locationId);
+
+                  <ActivityTile {activity} {host} participants={[]} participantCount={activity.participantIds.length} {location} onOpen={openActivity} />
+               }
             }
          }
+      </section>
+
+      if (isLoggedIn()) {
+         <button class="button white icon-button activities-create" type="button" onClick={openCreatePopover} aria-label="Create activity">
+            <i class="fas fa-plus" />
+         </button>
       }
    </section>
 
@@ -368,6 +404,27 @@ export component ActivitiesPage(props: Record<string, any>) {
          display: grid;
          grid-template-columns: repeat(auto-fit, minmax(500px, 1fr));
          gap: 2rem;
+      }
+
+      .activities-create {
+         position: fixed;
+         right: 2rem;
+         bottom: 2rem;
+         margin: 0;
+         width: 3rem;
+         height: 3rem;
+         z-index: 30;
+      }
+
+      @media screen and (max-width: 720px) {
+         .activities {
+            grid-template-columns: 1fr;
+         }
+
+         .activities-create {
+            right: 1rem;
+            bottom: max(1rem, env(safe-area-inset-bottom));
+         }
       }
 
       .activities .muted {

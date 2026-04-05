@@ -48,6 +48,7 @@ body:has(.popover) {
    letter-spacing: 0.25px;
    margin: 0 2rem;
    padding-top: 7.5rem;
+   padding-bottom: 2.5rem;
    gap: 2rem;
 }
 
@@ -230,7 +231,7 @@ img {
    scale: 1.25 !important;
 }
 
-.button:hover .fas {
+.button:not(:disabled):hover .fas {
    transform: rotate(360deg);
 }
 
@@ -273,7 +274,7 @@ img {
       transform 0.4s var(--ease);
 }
 
-.button:hover {
+.button:not(:disabled):hover {
    z-index: 1;
    scale: 1.03;
    box-shadow:
@@ -301,7 +302,7 @@ img {
    background: rgb(138, 0, 71);
 }
 
-.button:hover::before {
+.button:not(:disabled):hover::before {
    width: calc(100% + 1rem);
    height: calc(100% + 1rem);
    opacity: 0.5;

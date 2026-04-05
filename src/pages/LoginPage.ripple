@@ -44,7 +44,6 @@ type SignupResponse = {
 };
 
 export component LoginPage() {
-   const USERS_ENDPOINT = "/api/users";
    const LOGIN_ENDPOINT = "/api/users/login";
    const SIGNUP_ENDPOINT = "/api/users/signup";
 
@@ -184,6 +183,7 @@ export component LoginPage() {
       const email = String(formData.get("email") ?? "").trim();
       const password = String(formData.get("password") ?? "");
       const confirmPassword = String(formData.get("confirm_password") ?? "");
+      const keepSignedIn = formData.get("keep_signed_in") === "on";
 
       if (!username || !email || !password || !confirmPassword) {
          notyf.error("All fields are required.");
@@ -219,7 +219,7 @@ export component LoginPage() {
             return;
          }
 
-         const didLogin = await loginViaUsersEndpoint(email, password, true);
+         const didLogin = await loginViaUsersEndpoint(email, password, keepSignedIn);
 
          if (!didLogin) {
             notyf.success(result.message ?? "Account created. Please log in.");

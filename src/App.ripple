@@ -19,7 +19,7 @@ export component App() {
          const currentPathname = window.location.pathname;
 
          // HACK: force a full reload when the route path changes to prevent many many many display issues. Ripple-router is such a pain.
-         if (currentPathname !== previousPathname) {
+         if (true && currentPathname !== previousPathname) {
             window.location.reload();
             return;
          }
@@ -31,9 +31,9 @@ export component App() {
       return () => window.removeEventListener("popstate", handlePopState);
    }, []);
 
-   <Wallpaper />
-
+   
    <div class="app">
+      <Wallpaper />
       <NavBar />
 
       <Router>

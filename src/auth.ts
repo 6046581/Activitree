@@ -2,7 +2,7 @@ import { notyf } from "./notyf";
 
 const USER_STORAGE_KEY = "user";
 const TOKEN_STORAGE_KEY = "token";
-const TOKEN_COOKIE_KEY = "activitree_token";
+const TOKEN_COOKIE_KEY = "token";
 const TOKEN_COOKIE_MAX_AGE_SECONDS = 60 * 60 * 24 * 30; // 30 days
 
 export type AuthUser = {
@@ -57,10 +57,11 @@ export function login(token: string, user?: AuthUser, remember = true) {
    clearStoredValue(USER_STORAGE_KEY);
    clearCookie(TOKEN_COOKIE_KEY);
 
+   const storage = getStorage(remember);
+   storage.setItem(TOKEN_STORAGE_KEY, token);
+
    if (remember) {
       setCookie(TOKEN_COOKIE_KEY, token, TOKEN_COOKIE_MAX_AGE_SECONDS);
-   } else {
-      sessionStorage.setItem(TOKEN_STORAGE_KEY, token);
    }
 
    if (user) {
@@ -78,9 +79,9 @@ export function logout() {
 }
 
 export function getToken(): string | null {
-   const sessionToken = sessionStorage.getItem(TOKEN_STORAGE_KEY);
-   if (sessionToken) {
-      return sessionToken;
+   const storedToken = readStoredValue(TOKEN_STORAGE_KEY);
+   if (storedToken) {
+      return storedToken;
    }
 
    const cookieToken = getCookie(TOKEN_COOKIE_KEY);
@@ -149,6 +150,7 @@ export async function apiRequest(url: string, options: ApiRequestOptions = {}): 
       method,
       headers: resolvedHeaders,
       body,
+      credentials: "same-origin",
    });
 }
 
@@ -169,6 +171,12 @@ type ProfileResponse = {
       username?: string;
       email?: string;
       created_at?: string;
+      data?: {
+         id?: number;
+         username?: string;
+         email?: string;
+         created_at?: string;
+      };
    };
 };
 
@@ -187,12 +195,14 @@ export async function requireAuthenticatedUser(): Promise<AuthUser | null> {
       });
 
       if (!response.ok) {
-         logout();
+         if (response.status === 401 || response.status === 403) {
+            logout();
+         }
          return null;
       }
 
       const result = (await response.json().catch(() => ({}))) as ProfileResponse;
-      const row = result?.data;
+      const row = result?.data?.data ?? result?.data;
 
       if (!row?.id || !row?.username || !row?.email) {
          logout();
@@ -212,7 +222,6 @@ export async function requireAuthenticatedUser(): Promise<AuthUser | null> {
       upsertStoredUser(verifiedUser);
       return verifiedUser;
    } catch {
-      logout();
       return null;
    }
 }
