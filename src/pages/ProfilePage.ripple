@@ -109,13 +109,13 @@ export component ProfilePage() {
       <a id="avatar">
          <img src={@avatarUrl} alt="avatar" onerror={`this.onerror=null;this.src='${DEFAULT_PROFILE_IMAGE}';`} />
          <p>{@username}</p>
-         </a>
-         <h2>{"Hiya, " + @username + "!"}</h2>
-         
-         <a id="logout-button" class="button red" type="button" onClick={handleLogout}>
+      </a>
+      <h2>{"Hiya, " + @username + "!"}</h2>
+
+      <a id="logout-button" class="button red" type="button" onClick={handleLogout}>
          {"Logout"}
          <i class="fas fa-sign-out-alt" />
-         </a>
+      </a>
    </article>
 
    <article class="card">
