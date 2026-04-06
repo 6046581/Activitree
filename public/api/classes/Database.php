@@ -2,11 +2,25 @@
 
 class Database
 {
-   private $conn;
+   private static $instance = null;
+   private $conn = null;
 
-   public function connect()
+   private function __construct() {}
+
+   public static function getInstance()
    {
-      $this->conn = null;
+      if (self::$instance === null) {
+         self::$instance = new self();
+      }
+
+      return self::$instance;
+   }
+
+   public function getConnection()
+   {
+      if ($this->conn instanceof PDO) {
+         return $this->conn;
+      }
 
       $host = getenv("DB_HOST") ?: "db";
       $port = getenv("DB_PORT") ?: "3306";
@@ -25,5 +39,10 @@ class Database
       }
 
       return $this->conn;
+   }
+
+   public function connect()
+   {
+      return $this->getConnection();
    }
 }

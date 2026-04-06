@@ -1,7 +1,6 @@
 <?php
-class Activities
+class Activities extends AbstractModel
 {
-   private $conn;
    private $table = "activities";
 
    public $id;
@@ -16,11 +15,7 @@ class Activities
 
    public function __construct($database = null)
    {
-      if ($database === null) {
-         $database = new Database();
-      }
-
-      $this->conn = $database->connect();
+      parent::__construct($database);
    }
 
    public function getAllActivities($limit = 100, $offset = 0)

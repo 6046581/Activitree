@@ -1,7 +1,6 @@
 <?php
-class Users
+class Users extends AbstractModel
 {
-   private $conn;
    private $table = "users";
 
    public $id;
@@ -11,11 +10,7 @@ class Users
 
    public function __construct($database = null)
    {
-      if ($database === null) {
-         $database = new Database();
-      }
-
-      $this->conn = $database->connect();
+      parent::__construct($database);
    }
 
    public function loginUser($email, $password)
