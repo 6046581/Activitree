@@ -86,6 +86,10 @@ class UsersController
 
       // Return users
       $rows = $this->model->getAllUsers($limit, $offset);
+      foreach ($rows as &$row) {
+         $row["avatar_url"] = !empty($row["avatar_path"]) ? buildPublicFileUrl($row["avatar_path"]) : null;
+      }
+      unset($row);
 
       return ["code" => 200, "data" => ["data" => $rows]];
    }
@@ -111,6 +115,8 @@ class UsersController
       if (!$row) {
          return ["code" => 404, "data" => ["error" => "Not found"]];
       }
+
+      $row["avatar_url"] = !empty($row["avatar_path"]) ? buildPublicFileUrl($row["avatar_path"]) : null;
 
       return ["code" => 200, "data" => ["data" => $row]];
    }
@@ -216,5 +222,53 @@ class UsersController
       }
 
       return ["code" => 200, "data" => ["ok" => true]];
+   }
+
+   public function uploadAvatar($params, $data)
+   {
+      $auth = denyUnauthorized();
+
+      $id = isset($params[0]) ? (int) $params[0] : null;
+      if (!$id) {
+         return ["code" => 400, "data" => ["error" => "Invalid id"]];
+      }
+
+      if (($auth["role"] ?? "") !== "admin" && (int) $auth["id"] !== $id) {
+         return ["code" => 403, "data" => ["error" => "Forbidden"]];
+      }
+
+      $existing = $this->model->getUserById($id);
+      if (!$existing) {
+         return ["code" => 404, "data" => ["error" => "Not found"]];
+      }
+
+      $upload = $_FILES["file"] ?? ($_FILES["avatar"] ?? ($_FILES["avatar"] ?? null));
+      if (!$upload) {
+         return ["code" => 400, "data" => ["error" => "Missing upload file (use field 'file', 'avatar', or 'avatar')"]];
+      }
+
+      $saved = storeUploadedImage($upload, "avatars", "user_" . $id);
+      if (!($saved["ok"] ?? false)) {
+         return ["code" => 400, "data" => ["error" => $saved["error"] ?? "Upload failed"]];
+      }
+
+      $updated = $this->model->updateAvatarPath($id, $saved["path"]);
+      if (!$updated) {
+         deleteUploadedFile($saved["path"]);
+         return ["code" => 500, "data" => ["error" => "Failed to save avatar path"]];
+      }
+
+      if (!empty($existing["avatar_path"])) {
+         deleteUploadedFile($existing["avatar_path"]);
+      }
+
+      return [
+         "code" => 200,
+         "data" => [
+            "ok" => true,
+            "avatar_path" => $saved["path"],
+            "avatar_url" => $saved["url"],
+         ],
+      ];
    }
 }

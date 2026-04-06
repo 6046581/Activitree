@@ -19,6 +19,7 @@ $routes = [
    "GET /users" => "UsersController@getAllUsers",
    "GET /users/{id}" => "UsersController@getUserById",
    "PUT /users/{id}" => "UsersController@updateUser",
+   "POST /users/{id}/avatar" => "UsersController@uploadAvatar",
    "DELETE /users/{id}" => "UsersController@deleteUser",
 
    // Activities
@@ -29,6 +30,7 @@ $routes = [
    "DELETE /activities/{id}/leave" => "ActivitiesController@leaveActivity",
    "POST /activities" => "ActivitiesController@createActivity",
    "PUT /activities/{id}" => "ActivitiesController@updateActivity",
+   "POST /activities/{id}/photo" => "ActivitiesController@uploadActivityPhoto",
    "DELETE /activities/{id}" => "ActivitiesController@deleteActivity",
 
    // Locations

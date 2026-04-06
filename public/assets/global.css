@@ -58,7 +58,7 @@ body:has(.popover) {
    }
 }
 
-.app>* {
+.app > * {
    width: 100%;
 }
 
@@ -199,7 +199,7 @@ img {
       box-shadow 0.2s ease;
 }
 
-.button>* {
+.button > * {
    position: relative;
    z-index: 1;
 }

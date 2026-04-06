@@ -1,5 +1,14 @@
 import { track } from "ripple";
 import { Popover } from "./Popover.ripple";
+import { notyf } from "../notyf";
+
+const MAX_IMAGE_BYTES = 16 * 1024 * 1024;
+const ACCEPTED_IMAGE_TYPES = [
+   "image/jpeg",
+   "image/png",
+   "image/webp",
+   "image/gif",
+];
 
 type ActivityType = "indoor" | "outdoor";
 type ActivityStatus = "planned" | "cancelled" | "completed";
@@ -19,10 +28,15 @@ export type CreateActivityPayload = {
    location_id: number | null;
 };
 
+export type CreateActivityRequest = {
+   payload: CreateActivityPayload;
+   photoFile: File | null;
+};
+
 type CreateActivityPopoverProps = {
    locations?: LocationOption[];
    onClose?: () => void;
-   onCreate?: (payload: CreateActivityPayload) => Promise<void> | void;
+   onCreate?: (request: CreateActivityRequest) => Promise<void> | void;
 };
 
 function getDefaultDate() {
@@ -45,6 +59,8 @@ export component CreateActivityPopover(props: CreateActivityPopoverProps) {
    let date = track(getDefaultDate());
    let time = track("18:00");
    let locationId = track("");
+   let photoFile = track<File | null>(null);
+   let photoPreviewUrl = track("/assets/placeholder.jpg");
    let isSubmitting = track(false);
 
    let selectedLocation = track(() => locations.find((entry) => String(entry.id) === @locationId) ?? null);
@@ -62,20 +78,63 @@ export component CreateActivityPopover(props: CreateActivityPopoverProps) {
       }
    }
 
+   function handlePhotoInput(event: Event) {
+      const target = event.target;
+      if (!(target instanceof HTMLInputElement) || !target.files || target.files.length === 0) {
+         @photoFile = null;
+         @photoPreviewUrl = "/assets/placeholder.jpg";
+         return;
+      }
+
+      const selected = target.files[0] ?? null;
+      if (!selected) {
+         @photoFile = null;
+         @photoPreviewUrl = "/assets/placeholder.jpg";
+         return;
+      }
+
+      const mimeType = String(selected.type || "").toLowerCase();
+      if (!ACCEPTED_IMAGE_TYPES.includes(mimeType)) {
+         notyf.error("Invalid image type. Please use JPG, PNG, WEBP, or GIF.");
+         target.value = "";
+         @photoFile = null;
+         @photoPreviewUrl = "/assets/placeholder.jpg";
+         return;
+      }
+
+      if (selected.size <= 0 || selected.size > MAX_IMAGE_BYTES) {
+         notyf.error("Image is too large. Maximum size is 16 MB.");
+         target.value = "";
+         @photoFile = null;
+         @photoPreviewUrl = "/assets/placeholder.jpg";
+         return;
+      }
+
+      @photoFile = selected;
+
+      @photoPreviewUrl = URL.createObjectURL(selected);
+   }
+
    async function submitForm(event: Event) {
       event.preventDefault();
 
       if (typeof onCreate !== "function" || @isSubmitting) {
+         if (typeof onCreate !== "function") {
+            notyf.error("Create action is not available right now.");
+         }
          return;
       }
 
       const cleanTitle = @title.trim();
       if (!cleanTitle || !@date || !@time) {
+         notyf.error("Please fill in title, date, and time.");
          return;
       }
 
-      const parsedLocationId = @locationId ? Number(@locationId) : null;
+      const parsedLocationId =
+         @locationId ? Number(@locationId) : null;
       if (@locationId && (parsedLocationId === null || !Number.isFinite(parsedLocationId) || parsedLocationId <= 0)) {
+         notyf.error("Please select a valid location.");
          return;
       }
 
@@ -90,7 +149,12 @@ export component CreateActivityPopover(props: CreateActivityPopoverProps) {
             location_id: parsedLocationId,
          };
 
-         await onCreate(payload);
+         await onCreate(
+            {
+               payload,
+               photoFile: @photoFile,
+            },
+         );
       } finally {
          @isSubmitting = false;
       }
@@ -183,6 +247,11 @@ export component CreateActivityPopover(props: CreateActivityPopoverProps) {
                </div>
 
                <label>
+                  <span>{"Activity photo"}</span>
+                  <input type="file" accept="image/png,image/jpeg,image/webp,image/gif" disabled={@isSubmitting} onChange={handlePhotoInput} />
+               </label>
+
+               <label>
                   <span>{"Location"}</span>
                   <select
                      value={@locationId}
@@ -197,7 +266,7 @@ export component CreateActivityPopover(props: CreateActivityPopoverProps) {
                </label>
 
                <div class="button-group bottom">
-                  <a class="button green" type="submit" disabled={@isSubmitting}>
+                  <button class="button green" type="submit" disabled={@isSubmitting}>
                      if (@isSubmitting) {
                         <i class="fas fa-spinner fa-spin" />
                         {"Creating..."}
@@ -205,14 +274,14 @@ export component CreateActivityPopover(props: CreateActivityPopoverProps) {
                         <i class="fas fa-upload" />
                         {"Create Activity"}
                      }
-                  </a>
+                  </button>
                </div>
             </form>
 
             <aside class="preview" aria-label="Activity preview">
                <h5>{"Preview"}</h5>
                <article class="preview-card">
-                  <img src="/assets/placeholder.jpg" alt="Activity cover placeholder" />
+                  <img src={@photoPreviewUrl} alt="Activity cover preview" />
 
                   <div class="preview-text">
                      <p class="preview-title">{@title.trim() || "Untitled activity"}</p>

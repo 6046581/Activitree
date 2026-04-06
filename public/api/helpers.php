@@ -75,3 +75,118 @@ function denyUnauthorized($requiredRole = null)
 
    return $user;
 }
+
+/**
+ * Build a public URL for a relative file path under the public folder.
+ *
+ * @param string $relativePath
+ * @return string
+ */
+function buildPublicFileUrl($relativePath)
+{
+   $normalized = ltrim(str_replace("\\", "/", (string) $relativePath), "/");
+   if ($normalized === "") {
+      return "/";
+   }
+
+   if (strpos($normalized, "api/uploads/") === 0) {
+      return "/" . $normalized;
+   }
+
+   if (strpos($normalized, "uploads/") === 0) {
+      return "/api/" . $normalized;
+   }
+
+   return "/" . $normalized;
+}
+
+/**
+ * Delete a previously stored upload under public/api/uploads.
+ *
+ * @param string|null $relativePath
+ * @return void
+ */
+function deleteUploadedFile($relativePath)
+{
+   if (!$relativePath) {
+      return;
+   }
+
+   $normalized = ltrim(str_replace("\\", "/", (string) $relativePath), "/");
+   if ($normalized === "" || strpos($normalized, "..") !== false) {
+      return;
+   }
+
+   if (strpos($normalized, "api/uploads/") !== 0 && strpos($normalized, "uploads/") !== 0) {
+      return;
+   }
+
+   $fullPath = dirname(__DIR__) . DIRECTORY_SEPARATOR . str_replace("/", DIRECTORY_SEPARATOR, $normalized);
+   if (is_file($fullPath)) {
+      @unlink($fullPath);
+   }
+}
+
+/**
+ * Persist an uploaded image file in public/api/uploads/{subFolder}.
+ *
+ * @param array $file The $_FILES entry.
+ * @param string $subFolder Folder under uploads (e.g. "avatars").
+ * @param string $prefix File name prefix.
+ * @return array
+ */
+function storeUploadedImage(array $file, $subFolder, $prefix = "image")
+{
+   if (($file["error"] ?? UPLOAD_ERR_NO_FILE) !== UPLOAD_ERR_OK) {
+      return ["ok" => false, "error" => "No file uploaded or upload failed"];
+   }
+
+   $tmpPath = $file["tmp_name"] ?? "";
+   if ($tmpPath === "" || !is_uploaded_file($tmpPath)) {
+      return ["ok" => false, "error" => "Invalid upload"];
+   }
+
+   $maxBytes = 16 * 1024 * 1024;
+   $size = (int) ($file["size"] ?? 0);
+   if ($size <= 0 || $size > $maxBytes) {
+      return ["ok" => false, "error" => "File must be between 1 byte and 16 MB"];
+   }
+
+   $finfo = new finfo(FILEINFO_MIME_TYPE);
+   $mime = $finfo->file($tmpPath) ?: null;
+
+   $allowed = [
+      "image/jpeg" => "jpg",
+      "image/png" => "png",
+      "image/webp" => "webp",
+      "image/gif" => "gif",
+   ];
+   if (!$mime || !isset($allowed[$mime])) {
+      return ["ok" => false, "error" => "Only JPG, PNG, WEBP, and GIF images are allowed"];
+   }
+
+   $safeFolder = trim(str_replace("\\", "/", (string) $subFolder), "/");
+   if ($safeFolder === "" || strpos($safeFolder, "..") !== false) {
+      return ["ok" => false, "error" => "Invalid target folder"];
+   }
+
+   $targetRelativeDir = "api/uploads/" . $safeFolder;
+   $targetAbsoluteDir = __DIR__ . DIRECTORY_SEPARATOR . "uploads" . DIRECTORY_SEPARATOR . str_replace("/", DIRECTORY_SEPARATOR, $safeFolder);
+   if (!is_dir($targetAbsoluteDir) && !mkdir($targetAbsoluteDir, 0755, true) && !is_dir($targetAbsoluteDir)) {
+      return ["ok" => false, "error" => "Failed to create upload directory"];
+   }
+
+   $filename = sprintf("%s_%s.%s", $prefix, bin2hex(random_bytes(12)), $allowed[$mime]);
+   $relativePath = $targetRelativeDir . "/" . $filename;
+   $absolutePath = $targetAbsoluteDir . DIRECTORY_SEPARATOR . $filename;
+
+   if (!move_uploaded_file($tmpPath, $absolutePath)) {
+      return ["ok" => false, "error" => "Failed to save uploaded file"];
+   }
+
+   return [
+      "ok" => true,
+      "path" => $relativePath,
+      "url" => buildPublicFileUrl($relativePath),
+   ];
+}

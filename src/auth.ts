@@ -9,6 +9,8 @@ export type AuthUser = {
    id: number;
    username: string;
    email: string;
+   avatar_path?: string;
+   avatar_url?: string;
    role?: "admin" | "user";
    created_at?: string;
 };
@@ -170,11 +172,15 @@ type ProfileResponse = {
       id?: number;
       username?: string;
       email?: string;
+      avatar_path?: string;
+      avatar_url?: string;
       created_at?: string;
       data?: {
          id?: number;
          username?: string;
          email?: string;
+         avatar_path?: string;
+         avatar_url?: string;
          created_at?: string;
       };
    };
@@ -214,6 +220,14 @@ export async function requireAuthenticatedUser(): Promise<AuthUser | null> {
          username: String(row.username),
          email: String(row.email),
       };
+
+      if (typeof row.avatar_path === "string" && row.avatar_path.trim().length > 0) {
+         verifiedUser.avatar_path = row.avatar_path;
+      }
+
+      if (typeof row.avatar_url === "string" && row.avatar_url.trim().length > 0) {
+         verifiedUser.avatar_url = row.avatar_url;
+      }
 
       if (typeof row.created_at === "string") {
          verifiedUser.created_at = row.created_at;

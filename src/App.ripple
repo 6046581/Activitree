@@ -6,6 +6,7 @@ import { HomePage } from "./pages/HomePage.ripple";
 import { ActivitiesPage } from "./pages/ActivitiesPage.ripple";
 import { ProfilePage } from "./pages/ProfilePage.ripple";
 import { LoginPage } from "./pages/LoginPage.ripple";
+import { NotFoundPage } from "./pages/NotFoundPage.ripple";
 
 // Components
 import { NavBar } from "./components/NavBar.ripple";
@@ -31,7 +32,6 @@ export component App() {
       return () => window.removeEventListener("popstate", handlePopState);
    }, []);
 
-   
    <div class="app">
       <Wallpaper />
       <NavBar />
@@ -42,6 +42,7 @@ export component App() {
          <Route path="/activities/:mode" element={ActivitiesPage} />
          <Route path="/profile" element={ProfilePage} />
          <Route path="/login" element={LoginPage} />
+         <Route path="**" element={NotFoundPage} />
       </Router>
    </div>
 }

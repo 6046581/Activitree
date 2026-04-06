@@ -15,6 +15,7 @@ CREATE TABLE users (
     username VARCHAR(100) NOT NULL,
     email VARCHAR(150) NOT NULL UNIQUE,
     password VARCHAR(255) NOT NULL,
+    avatar_path VARCHAR(255) NULL,
     role ENUM('admin','user') DEFAULT 'user',
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     token VARCHAR(255) NULL
@@ -54,6 +55,7 @@ CREATE TABLE activities (
     activity_type ENUM('indoor','outdoor') NOT NULL,
     status ENUM('planned','cancelled','completed') DEFAULT 'planned',
     activity_time TIMESTAMP NOT NULL,
+    photo_path VARCHAR(255) NULL,
     location_id INT,
     created_by INT,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
@@ -261,6 +263,14 @@ ON DUPLICATE KEY UPDATE
     location_id = VALUES(location_id),
     created_by = VALUES(created_by),
     created_at = VALUES(created_at);
+
+UPDATE users
+SET avatar_path = CONCAT('api/uploads/avatars/sample_', id, '.jpg')
+WHERE id BETWEEN 1 AND 25;
+
+UPDATE activities
+SET photo_path = CONCAT('api/uploads/activity_photos/sample_', id, '.jpg')
+WHERE id BETWEEN 1 AND 36;
 
 INSERT INTO activity_participants (activity_id, user_id, role, joined_at)
 VALUES

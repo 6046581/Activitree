@@ -17,6 +17,8 @@ export type ApiActivity = {
    status: "planned" | "cancelled" | "completed";
    activity_time: string;
    location_id: number | null;
+   photo_path?: string | null;
+   photo_url?: string | null;
    created_by: number;
    created_by_username?: string | null;
    participant_ids?: number[];
@@ -36,6 +38,8 @@ export type ApiParticipant = {
    id: number;
    username: string;
    email: string;
+   avatar_path?: string | null;
+   avatar_url?: string | null;
    joined_at?: string;
 };
 
@@ -48,6 +52,8 @@ export type UiActivity = {
    date: string;
    time: string;
    locationId: number | null;
+   photoPath: string | null;
+   photoUrl: string | null;
    createdBy: number;
    createdByUsername: string;
    participantIds: number[];
@@ -69,8 +75,38 @@ export type UiParticipant = {
    joinedAt: string;
 };
 
-export function buildAvatarUrl(id: number, username: string): string {
-   return `https://i.pravatar.cc/120?u=${encodeURIComponent(`${id}-${username}`)}`;
+const AVATAR_PLACEHOLDER = "/assets/avatar_placeholder.jpg";
+
+function normalizeAvatarPath(pathValue: string): string {
+   const clean = pathValue.trim();
+   if (!clean) {
+      return "";
+   }
+
+   if (clean.startsWith("http://") || clean.startsWith("https://")) {
+      return clean;
+   }
+
+   return clean.startsWith("/") ? clean : `/${clean}`;
+}
+
+export function resolveAvatarUrl(avatarUrl?: string | null, avatarPath?: string | null, id?: number | null): string {
+   const fromUrl = typeof avatarUrl === "string" ? normalizeAvatarPath(avatarUrl) : "";
+   if (fromUrl) {
+      return fromUrl;
+   }
+
+   const fromPath = typeof avatarPath === "string" ? normalizeAvatarPath(avatarPath) : "";
+   if (fromPath) {
+      return fromPath;
+   }
+
+   const parsedId = Number(id);
+   if (Number.isFinite(parsedId) && parsedId > 0) {
+      return `/api/uploads/avatars/sample_${parsedId}.jpg`;
+   }
+
+   return AVATAR_PLACEHOLDER;
 }
 
 function splitActivityTime(activityTime: string): { date: string; time: string } {
@@ -95,6 +131,8 @@ export function mapActivity(row: ApiActivity): UiActivity {
       date,
       time,
       locationId: row.location_id == null ? null : Number(row.location_id),
+      photoPath: row.photo_path == null ? null : String(row.photo_path),
+      photoUrl: row.photo_url == null ? null : String(row.photo_url),
       createdBy: Number(row.created_by),
       createdByUsername: String(row.created_by_username ?? "Unknown host"),
       participantIds,
@@ -142,7 +180,7 @@ export function mapParticipant(row: ApiParticipant): UiParticipant {
       id,
       username,
       email: String(row.email ?? ""),
-      avatar: buildAvatarUrl(id, username),
+      avatar: resolveAvatarUrl(row.avatar_url, row.avatar_path, id),
       joinedAt: String(row.joined_at ?? ""),
    };
 }
