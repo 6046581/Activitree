@@ -4,10 +4,12 @@ import { navigateTo } from "ripple-router";
 import { notyf } from "../notyf";
 import { getAuthHeaders, getCurrentUser, isLoggedIn } from "../auth";
 import { ActivityTile } from "../components/ActivityTile.ripple";
-import { ActivityPopover } from "../components/ActivityPopover.ripple";
-import { CreateActivityPopover } from "../components/CreateActivityPopover.ripple";
-import type { CreateActivityPayload, CreateActivityRequest } from "../components/CreateActivityPopover.ripple";
+
 import { StatusMessage } from "../views/StatusMessage.ripple";
+import { ActivityPopover } from "../views/ActivityPopover.ripple";
+import { CreateActivityPopover } from "../views/CreateActivityPopover.ripple";
+import type { CreateActivityPayload, CreateActivityRequest } from "../views/CreateActivityPopover.ripple";
+
 import {
    extractRows,
    filterActivitiesByMode,
@@ -292,8 +294,7 @@ export component ActivitiesPage(props: Record<string, any>) {
 
             if (uploadResponse.status === 413) {
                notyf.error("Activity created, but image upload was rejected by server (413 Request Entity Too Large).");
-            } else
-            if (!uploadResponse.ok) {
+            } else if (!uploadResponse.ok) {
                const message = await parseApiError(uploadResponse, "Activity created, but photo upload failed.");
                notyf.error(message);
             }
@@ -438,20 +439,15 @@ export component ActivitiesPage(props: Record<string, any>) {
          right: 2rem;
          bottom: 2rem;
          margin: 0;
-         width: 3rem;
-         height: 3rem;
+         width: 4rem;
+         height: 4rem;
+         font-size: 1.25rem;
          z-index: 30;
+         filter: drop-shadow(var(--card-shadow));
       }
 
-      @media screen and (max-width: 720px) {
-         .activities {
-            grid-template-columns: 1fr;
-         }
-
-         .activities-create {
-            right: 1rem;
-            bottom: max(1rem, env(safe-area-inset-bottom));
-         }
+      .activities-create:hover .fas {
+         transform: rotateZ(90deg);
       }
 
       .activities .muted {

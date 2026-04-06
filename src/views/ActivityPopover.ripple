@@ -5,7 +5,7 @@ import { fetchWeather, isOutdoorActivity, getWeatherUrl } from "../weather";
 import type { WeatherResult } from "../weather";
 import { getDateLabel, getGoogleCalendarLink, getTimeOfDayImage } from "../date";
 import { getLocationMapUrl, getLocationLabel, getLocationPreviewUrl } from "../location";
-import { Popover } from "./Popover.ripple";
+import { Popover } from "../components/Popover.ripple";
 
 const AVATAR_PLACEHOLDER = "/assets/avatar_placeholder.jpg";
 
@@ -222,7 +222,9 @@ export component ActivityPopover(props: Record<string, any>) {
                <h4 class="title">{activity?.title}</h4>
             </section>
 
-            <p class="description">{"\"" + activity?.description + "\""}</p>
+            if (activity?.description) {
+               <p class="description">{"\"" + activity?.description + "\""}</p>
+            }
 
             <section class="details">
                // --- Weather Section ---
@@ -411,6 +413,7 @@ export component ActivityPopover(props: Record<string, any>) {
          flex-direction: column;
          gap: 1rem;
          flex: 1.5;
+         overflow: hidden;
       }
 
       :global(.activity-popover-card .aside) {
@@ -422,8 +425,10 @@ export component ActivityPopover(props: Record<string, any>) {
       }
 
       :global(.activity-popover-card .hosting) {
-         font-size: 0.75em;
-         margin: 0;
+         font-size: 0.85rem;
+         letter-spacing: 0.08em;
+         text-transform: uppercase;
+         font-weight: 700;
       }
 
       :global(.activity-popover-card .activity-cover) {
@@ -441,7 +446,7 @@ export component ActivityPopover(props: Record<string, any>) {
          -webkit-box-orient: vertical;
          line-clamp: 2;
          -webkit-line-clamp: 2;
-         overflow: hidden;
+         overflow: ellipsis;
          width: 100%;
       }
 
@@ -450,7 +455,7 @@ export component ActivityPopover(props: Record<string, any>) {
          -webkit-box-orient: vertical;
          line-clamp: 8;
          -webkit-line-clamp: 8;
-         overflow: hidden;
+         overflow: ellipsis;
          width: 100%;
       }
 

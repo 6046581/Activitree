@@ -1,8 +1,8 @@
-import { track } from "ripple";
+import { effect, track } from "ripple";
 import { navigateTo } from "ripple-router";
 import { notyf } from "../notyf";
 
-import { apiPostJson, login, logout, type AuthUser } from "../auth";
+import { apiPostJson, isLoggedIn, login, logout, type AuthUser } from "../auth";
 import { TabSelector } from "../components/TabSelector.ripple";
 
 import { LoginForm } from "../views/LoginForm.ripple";
@@ -70,7 +70,7 @@ export component LoginPage() {
       },
    ];
 
-   function toAuthUser(user: ApiUser): AuthUser {
+   function mapUser(user: ApiUser): AuthUser {
       const authUser: AuthUser = {
          id: Number(user.id),
          username: String(user.username ?? ""),
@@ -84,11 +84,11 @@ export component LoginPage() {
       return authUser;
    }
 
-   function unwrapApiData<T>(payload: T & { data?: T }): T {
+   function unwrapData<T>(payload: T & { data?: T }): T {
       return payload?.data ?? payload as T;
    }
 
-   function getApiErrorMessage(
+   function getErrorMessage(
       payload: { error?: string; message?: string } | undefined,
       result: { error?: string; message?: string } | undefined,
       fallback: string,
@@ -96,15 +96,15 @@ export component LoginPage() {
       return payload?.error ?? payload?.message ?? result?.error ?? result?.message ?? fallback;
    }
 
-   async function loginViaUsersEndpoint(email: string, password: string, keepSignedIn: boolean): Promise<boolean> {
+   async function submitLogin(email: string, password: string, keepSignedIn: boolean): Promise<boolean> {
       const response = await apiPostJson(LOGIN_ENDPOINT, { email, password }, false);
 
       const result = await response.json().catch(() => ({})) as LoginResponse;
-      const payload = unwrapApiData(result);
+      const payload = unwrapData(result);
 
       if (!response.ok) {
          logout();
-         const message = getApiErrorMessage(payload, result, "Login failed. Please try again.");
+         const message = getErrorMessage(payload, result, "Login failed. Please try again.");
          notyf.error(message);
          return false;
       }
@@ -118,7 +118,7 @@ export component LoginPage() {
          return false;
       }
 
-      const authUser = toAuthUser(user);
+      const authUser = mapUser(user);
       login(token, authUser, keepSignedIn);
       return true;
    }
@@ -150,7 +150,7 @@ export component LoginPage() {
       @isLoading = true;
 
       try {
-         const didLogin = await loginViaUsersEndpoint(email, password, keepSignedIn);
+         const didLogin = await submitLogin(email, password, keepSignedIn);
 
          if (!didLogin) {
             return;
@@ -212,14 +212,14 @@ export component LoginPage() {
          const response = await apiPostJson(SIGNUP_ENDPOINT, payload, false);
 
          const result = await response.json().catch(() => ({})) as SignupResponse;
-         const responsePayload = unwrapApiData(result);
+         const responsePayload = unwrapData(result);
 
          if (!response.ok || result.success === false) {
-            notyf.error(getApiErrorMessage(responsePayload, result, "Sign up failed. Please try again."));
+            notyf.error(getErrorMessage(responsePayload, result, "Sign up failed. Please try again."));
             return;
          }
 
-         const didLogin = await loginViaUsersEndpoint(email, password, keepSignedIn);
+         const didLogin = await submitLogin(email, password, keepSignedIn);
 
          if (!didLogin) {
             notyf.success(result.message ?? "Account created. Please log in.");
@@ -234,6 +234,12 @@ export component LoginPage() {
          @isLoading = false;
       }
    }
+
+   effect(() => {
+      if (isLoggedIn()) {
+         navigateTo("/profile");
+      }
+   }, []);
 
    <article class="card login-card">
       <TabSelector {tabs} activeTabId={@selected} />

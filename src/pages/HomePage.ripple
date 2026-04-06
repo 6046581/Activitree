@@ -1,5 +1,7 @@
 import { navigateTo } from "ripple-router";
 
+import { isLoggedIn } from "../auth";
+
 export component HomePage() {
    <article id="hero">
       <h1>
@@ -19,6 +21,8 @@ export component HomePage() {
          >
             {"Explore Activities"}
          </a>
+            
+         if (!isLoggedIn()) {
          <a
             href="/login"
             class="link"
@@ -29,6 +33,20 @@ export component HomePage() {
          >
             {"Get Started"}
          </a>
+         }
+         else {
+         <a
+            href="/profile"
+            class="link"
+            onclick={(e: MouseEvent) => {
+               e.preventDefault();
+               navigateTo("/activities/organizing?create=1");
+            }}
+         >
+            {"Create Activity"}
+         </a>
+         }
+
       </section>
    </article>
 

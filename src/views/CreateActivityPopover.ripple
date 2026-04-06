@@ -1,5 +1,5 @@
 import { track } from "ripple";
-import { Popover } from "./Popover.ripple";
+import { Popover } from "../components/Popover.ripple";
 import { notyf } from "../notyf";
 
 const MAX_IMAGE_BYTES = 16 * 1024 * 1024;
@@ -248,7 +248,7 @@ export component CreateActivityPopover(props: CreateActivityPopoverProps) {
 
                <label>
                   <span>{"Activity photo"}</span>
-                  <input type="file" accept="image/png,image/jpeg,image/webp,image/gif" disabled={@isSubmitting} onChange={handlePhotoInput} />
+                  <input type="file" accept="image/png,image/jpeg,image/webp,image/gif" disabled={@isSubmitting} onInput={handlePhotoInput} />
                </label>
 
                <label>

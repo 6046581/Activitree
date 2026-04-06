@@ -20,7 +20,7 @@ export component ProfilePage() {
    let avatarUrl = track(DEFAULT_PROFILE_IMAGE);
    let isUploadingAvatar = track(false);
 
-   async function loadVerifiedProfile() {
+   async function loadProfile() {
       const user = await requireAuthenticatedUser();
       if (!user) {
          navigateTo("/login");
@@ -102,16 +102,20 @@ export component ProfilePage() {
    }
 
    effect(() => {
-      void loadVerifiedProfile();
+      void loadProfile();
    }, []);
 
    <article id="user-header">
       <a id="avatar">
          <img src={@avatarUrl} alt="avatar" onerror={`this.onerror=null;this.src='${DEFAULT_PROFILE_IMAGE}';`} />
          <p>{@username}</p>
-      </a>
-
-      <h2>{"Hiya, " + @username + "!"}</h2>
+         </a>
+         <h2>{"Hiya, " + @username + "!"}</h2>
+         
+         <a id="logout-button" class="button red" type="button" onClick={handleLogout}>
+         {"Logout"}
+         <i class="fas fa-sign-out-alt" />
+         </a>
    </article>
 
    <article class="card">
@@ -139,18 +143,13 @@ export component ProfilePage() {
                   id="avatar-upload"
                   accept="image/png,image/jpeg,image/webp,image/gif"
                   disabled={@isUploadingAvatar}
-                  onChange={handleAvatarUpload}
+                  onInput={handleAvatarUpload}
                />
             </label>
 
             if (@isUploadingAvatar) {
                <p>{"Uploading profile picture..."}</p>
             }
-
-            <button class="button red" type="button" onClick={handleLogout}>
-               <i class="fas fa-sign-out-alt" />
-               {"Logout"}
-            </button>
          </form>
       </section>
    </article>
@@ -170,6 +169,10 @@ export component ProfilePage() {
          overflow: hidden;
          object-fit: cover;
          border-radius: 1000px;
+      }
+
+      #logout-button {
+         margin-left: auto;
       }
    </style>
 }
