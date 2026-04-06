@@ -1,8 +1,13 @@
-import { isLoggedIn, requireAuthenticatedUser } from "../auth";
+import { effect, track } from "ripple";
+import { getCurrentUser, isLoggedIn, requireAuthenticatedUser } from "../auth";
 import { TabSelector } from "../components/TabSelector.ripple";
 import { navigateTo } from "ripple-router";
 
+const AVATAR_PLACEHOLDER = "/assets/avatar_placeholder.jpg";
+
 export component NavBar() {
+   let avatarUrl = track(AVATAR_PLACEHOLDER);
+
    const tabBar = {
       tabs: [
          {
@@ -57,6 +62,21 @@ export component NavBar() {
       navigateTo("/");
    }
 
+   effect(() => {
+      const localUser = getCurrentUser();
+      const localAvatar = String(localUser?.avatar_url ?? "").trim();
+      @avatarUrl = localAvatar || AVATAR_PLACEHOLDER;
+
+      if (!isLoggedIn()) {
+         return;
+      }
+
+      void requireAuthenticatedUser().then((user) => {
+         const resolved = String(user?.avatar_url ?? "").trim();
+         @avatarUrl = resolved || AVATAR_PLACEHOLDER;
+      });
+   }, []);
+
    <header class="nav-bar">
       <a class="nav-logo" href="/" onClick={handleLogoClick}>
          <img class="nav-logo-img" src="/assets/logo.png" alt="Activitree Logo" />
@@ -67,7 +87,7 @@ export component NavBar() {
 
          if (isLoggedIn()) {
             <a class="nav-profile" href="/profile" onClick={handleProfileClick}>
-               <img src="https://gravatar.com/avatar/00000000000000000000000000000000?d=mp&f=y" alt="profile" />
+               <img src={@avatarUrl} alt="profile" onerror="this.onerror=null;this.src='/assets/avatar_placeholder.jpg';" />
             </a>
          } else {
             <a class="nav-profile" href="/login" onClick={handleProfileClick}>

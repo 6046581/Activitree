@@ -89,19 +89,19 @@ function buildPublicFileUrl($relativePath)
       return "/";
    }
 
-   $scriptDir = str_replace("\\", "/", dirname($_SERVER["SCRIPT_NAME"] ?? "/"));
-   $publicBase = preg_replace("#/api/?$#", "", $scriptDir);
-   $publicBase = rtrim((string) $publicBase, "/");
-
-   if ($publicBase === "" || $publicBase === ".") {
+   if (strpos($normalized, "api/uploads/") === 0) {
       return "/" . $normalized;
    }
 
-   return $publicBase . "/" . $normalized;
+   if (strpos($normalized, "uploads/") === 0) {
+      return "/api/" . $normalized;
+   }
+
+   return "/" . $normalized;
 }
 
 /**
- * Delete a previously stored upload under public/uploads.
+ * Delete a previously stored upload under public/api/uploads.
  *
  * @param string|null $relativePath
  * @return void
@@ -113,7 +113,11 @@ function deleteUploadedFile($relativePath)
    }
 
    $normalized = ltrim(str_replace("\\", "/", (string) $relativePath), "/");
-   if ($normalized === "" || strpos($normalized, "uploads/") !== 0 || strpos($normalized, "..") !== false) {
+   if ($normalized === "" || strpos($normalized, "..") !== false) {
+      return;
+   }
+
+   if (strpos($normalized, "api/uploads/") !== 0 && strpos($normalized, "uploads/") !== 0) {
       return;
    }
 
@@ -124,10 +128,10 @@ function deleteUploadedFile($relativePath)
 }
 
 /**
- * Persist an uploaded image file in public/uploads/{subFolder}.
+ * Persist an uploaded image file in public/api/uploads/{subFolder}.
  *
  * @param array $file The $_FILES entry.
- * @param string $subFolder Folder under uploads (e.g. "profile_pictures").
+ * @param string $subFolder Folder under uploads (e.g. "avatars").
  * @param string $prefix File name prefix.
  * @return array
  */
@@ -142,17 +146,14 @@ function storeUploadedImage(array $file, $subFolder, $prefix = "image")
       return ["ok" => false, "error" => "Invalid upload"];
    }
 
-   $maxBytes = 8 * 1024 * 1024;
+   $maxBytes = 16 * 1024 * 1024;
    $size = (int) ($file["size"] ?? 0);
    if ($size <= 0 || $size > $maxBytes) {
-      return ["ok" => false, "error" => "File must be between 1 byte and 8MB"];
+      return ["ok" => false, "error" => "File must be between 1 byte and 16 MB"];
    }
 
-   $finfo = finfo_open(FILEINFO_MIME_TYPE);
-   $mime = $finfo ? finfo_file($finfo, $tmpPath) : null;
-   if ($finfo) {
-      finfo_close($finfo);
-   }
+   $finfo = new finfo(FILEINFO_MIME_TYPE);
+   $mime = $finfo->file($tmpPath) ?: null;
 
    $allowed = [
       "image/jpeg" => "jpg",
@@ -169,8 +170,8 @@ function storeUploadedImage(array $file, $subFolder, $prefix = "image")
       return ["ok" => false, "error" => "Invalid target folder"];
    }
 
-   $targetRelativeDir = "uploads/" . $safeFolder;
-   $targetAbsoluteDir = dirname(__DIR__) . DIRECTORY_SEPARATOR . str_replace("/", DIRECTORY_SEPARATOR, $targetRelativeDir);
+   $targetRelativeDir = "api/uploads/" . $safeFolder;
+   $targetAbsoluteDir = __DIR__ . DIRECTORY_SEPARATOR . "uploads" . DIRECTORY_SEPARATOR . str_replace("/", DIRECTORY_SEPARATOR, $safeFolder);
    if (!is_dir($targetAbsoluteDir) && !mkdir($targetAbsoluteDir, 0755, true) && !is_dir($targetAbsoluteDir)) {
       return ["ok" => false, "error" => "Failed to create upload directory"];
    }

@@ -38,6 +38,8 @@ export type ApiParticipant = {
    id: number;
    username: string;
    email: string;
+   avatar_path?: string | null;
+   avatar_url?: string | null;
    joined_at?: string;
 };
 
@@ -73,8 +75,38 @@ export type UiParticipant = {
    joinedAt: string;
 };
 
-export function buildAvatarUrl(id: number, username: string): string {
-   return `https://i.pravatar.cc/120?u=${encodeURIComponent(`${id}-${username}`)}`;
+const AVATAR_PLACEHOLDER = "/assets/avatar_placeholder.jpg";
+
+function normalizeAvatarPath(pathValue: string): string {
+   const clean = pathValue.trim();
+   if (!clean) {
+      return "";
+   }
+
+   if (clean.startsWith("http://") || clean.startsWith("https://")) {
+      return clean;
+   }
+
+   return clean.startsWith("/") ? clean : `/${clean}`;
+}
+
+export function resolveAvatarUrl(avatarUrl?: string | null, avatarPath?: string | null, id?: number | null): string {
+   const fromUrl = typeof avatarUrl === "string" ? normalizeAvatarPath(avatarUrl) : "";
+   if (fromUrl) {
+      return fromUrl;
+   }
+
+   const fromPath = typeof avatarPath === "string" ? normalizeAvatarPath(avatarPath) : "";
+   if (fromPath) {
+      return fromPath;
+   }
+
+   const parsedId = Number(id);
+   if (Number.isFinite(parsedId) && parsedId > 0) {
+      return `/api/uploads/avatars/sample_${parsedId}.jpg`;
+   }
+
+   return AVATAR_PLACEHOLDER;
 }
 
 function splitActivityTime(activityTime: string): { date: string; time: string } {
@@ -148,7 +180,7 @@ export function mapParticipant(row: ApiParticipant): UiParticipant {
       id,
       username,
       email: String(row.email ?? ""),
-      avatar: buildAvatarUrl(id, username),
+      avatar: resolveAvatarUrl(row.avatar_url, row.avatar_path, id),
       joinedAt: String(row.joined_at ?? ""),
    };
 }

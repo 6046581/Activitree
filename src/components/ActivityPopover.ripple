@@ -7,6 +7,8 @@ import { getDateLabel, getGoogleCalendarLink, getTimeOfDayImage } from "../date"
 import { getLocationMapUrl, getLocationLabel, getLocationPreviewUrl } from "../location";
 import { Popover } from "./Popover.ripple";
 
+const AVATAR_PLACEHOLDER = "/assets/avatar_placeholder.jpg";
+
 export component ActivityPopover(props: Record<string, any>) {
    const activity = props?.["activity"];
    const host = props?.["host"];
@@ -31,8 +33,22 @@ export component ActivityPopover(props: Record<string, any>) {
       @attendingState = isAttending;
    }, [isAttending]);
 
-   function getAvatarUrl(seed: string) {
-      return `https://www.gravatar.com/avatar/${encodeURIComponent(seed)}?d=identicon&s=80`;
+   function resolveAvatarUrl(row: Record<string, any>, id: number) {
+      const avatarUrl = String(row?.["avatar_url"] ?? "").trim();
+      if (avatarUrl) {
+         return avatarUrl;
+      }
+
+      const avatarPath = String(row?.["avatar_path"] ?? "").trim();
+      if (avatarPath) {
+         return avatarPath.startsWith("/") ? avatarPath : `/${avatarPath}`;
+      }
+
+      if (Number.isFinite(id) && id > 0) {
+         return `/api/uploads/avatars/sample_${id}.jpg`;
+      }
+
+      return AVATAR_PLACEHOLDER;
    }
 
    function upsertParticipantAtTop(participant: { id: number; username: string; joinedAt: string; avatar: string }) {
@@ -69,7 +85,7 @@ export component ActivityPopover(props: Record<string, any>) {
                id,
                username,
                joinedAt,
-               avatar: getAvatarUrl(`${id}-${username}`),
+               avatar: resolveAvatarUrl(row, id),
             };
          });
       } catch {
@@ -119,7 +135,7 @@ export component ActivityPopover(props: Record<string, any>) {
                   id: currentUserId,
                   username: currentUsername,
                   joinedAt: new Date().toISOString(),
-                  avatar: getAvatarUrl(`${currentUserId}-${currentUsername || currentUserEmail || "you"}`),
+                  avatar: resolveAvatarUrl({}, currentUserId),
                },
             );
          } else {
@@ -142,7 +158,7 @@ export component ActivityPopover(props: Record<string, any>) {
                      id: currentUserId,
                      username: currentUsername,
                      joinedAt: new Date().toISOString(),
-                     avatar: getAvatarUrl(`${currentUserId}-${currentUsername || currentUserEmail || "you"}`),
+                     avatar: resolveAvatarUrl({}, currentUserId),
                   },
                );
             } else {
@@ -297,7 +313,12 @@ export component ActivityPopover(props: Record<string, any>) {
                   } else {
                      for (let participant of @sortedParticipants) {
                         <article class="participant" role="listitem">
-                           <img class="participant-avatar" src={participant.avatar} alt={`${participant.username} profile`} />
+                           <img
+                              class="participant-avatar"
+                              src={participant.avatar}
+                              alt={`${participant.username} profile`}
+                              onerror="this.onerror=null;this.src='/assets/avatar_placeholder.jpg';"
+                           />
                            <p class="participant-name">{participant.username}</p>
                         </article>
                      }
@@ -471,12 +492,12 @@ export component ActivityPopover(props: Record<string, any>) {
             filter 0.6s var(--ease);
       }
 
-         :global(.activity-popover-card .info-box:hover .info-box-background) {
+      :global(.activity-popover-card .info-box:hover .info-box-background) {
          transform: scale(1.05);
          filter: brightness(0.9);
       }
 
-         :global(.activity-popover-card .info-box::before) {
+      :global(.activity-popover-card .info-box::before) {
          content: "";
          position: absolute;
          top: 0%;

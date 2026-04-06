@@ -85,6 +85,10 @@ class ActivitiesController
 
       // Return participants
       $rows = $this->model->getActivityParticipants($id);
+      foreach ($rows as &$row) {
+         $row["avatar_url"] = !empty($row["avatar_path"]) ? buildPublicFileUrl($row["avatar_path"]) : null;
+      }
+      unset($row);
 
       return ["code" => 200, "data" => ["data" => $rows]];
    }

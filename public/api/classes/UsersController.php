@@ -87,7 +87,7 @@ class UsersController
       // Return users
       $rows = $this->model->getAllUsers($limit, $offset);
       foreach ($rows as &$row) {
-         $row["profile_picture_url"] = !empty($row["profile_picture_path"]) ? buildPublicFileUrl($row["profile_picture_path"]) : null;
+         $row["avatar_url"] = !empty($row["avatar_path"]) ? buildPublicFileUrl($row["avatar_path"]) : null;
       }
       unset($row);
 
@@ -116,7 +116,7 @@ class UsersController
          return ["code" => 404, "data" => ["error" => "Not found"]];
       }
 
-      $row["profile_picture_url"] = !empty($row["profile_picture_path"]) ? buildPublicFileUrl($row["profile_picture_path"]) : null;
+      $row["avatar_url"] = !empty($row["avatar_path"]) ? buildPublicFileUrl($row["avatar_path"]) : null;
 
       return ["code" => 200, "data" => ["data" => $row]];
    }
@@ -224,7 +224,7 @@ class UsersController
       return ["code" => 200, "data" => ["ok" => true]];
    }
 
-   public function uploadProfilePicture($params, $data)
+   public function uploadAvatar($params, $data)
    {
       $auth = denyUnauthorized();
 
@@ -242,32 +242,32 @@ class UsersController
          return ["code" => 404, "data" => ["error" => "Not found"]];
       }
 
-      $upload = $_FILES["file"] ?? ($_FILES["profile_picture"] ?? null);
+      $upload = $_FILES["file"] ?? ($_FILES["avatar"] ?? ($_FILES["avatar"] ?? null));
       if (!$upload) {
-         return ["code" => 400, "data" => ["error" => "Missing upload file (use field 'file' or 'profile_picture')"]];
+         return ["code" => 400, "data" => ["error" => "Missing upload file (use field 'file', 'avatar', or 'avatar')"]];
       }
 
-      $saved = storeUploadedImage($upload, "profile_pictures", "user_" . $id);
+      $saved = storeUploadedImage($upload, "avatars", "user_" . $id);
       if (!($saved["ok"] ?? false)) {
          return ["code" => 400, "data" => ["error" => $saved["error"] ?? "Upload failed"]];
       }
 
-      $updated = $this->model->updateProfilePicturePath($id, $saved["path"]);
+      $updated = $this->model->updateAvatarPath($id, $saved["path"]);
       if (!$updated) {
          deleteUploadedFile($saved["path"]);
-         return ["code" => 500, "data" => ["error" => "Failed to save profile picture path"]];
+         return ["code" => 500, "data" => ["error" => "Failed to save avatar path"]];
       }
 
-      if (!empty($existing["profile_picture_path"])) {
-         deleteUploadedFile($existing["profile_picture_path"]);
+      if (!empty($existing["avatar_path"])) {
+         deleteUploadedFile($existing["avatar_path"]);
       }
 
       return [
          "code" => 200,
          "data" => [
             "ok" => true,
-            "profile_picture_path" => $saved["path"],
-            "profile_picture_url" => $saved["url"],
+            "avatar_path" => $saved["path"],
+            "avatar_url" => $saved["url"],
          ],
       ];
    }

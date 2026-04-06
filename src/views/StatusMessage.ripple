@@ -1,9 +1,10 @@
 export component StatusMessage(props: Record<string, any>) {
    let loading = Boolean(props?.["loading"] ?? false);
 
-   const icon = String(props?.["icon"] ?? "fas fa-check");
+   const icon = String(props?.["icon"] ?? "fas fa-info-circle");
    const title = String(props?.["title"] ?? "");
    const label = String(props?.["label"] ?? "");
+   const link = props?.["link"] ?? null;
 
    <article class="message" role="status">
       if (loading) {

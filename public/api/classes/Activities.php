@@ -46,7 +46,7 @@ class Activities
    public function getActivityById($id)
    {
       $query =
-          "SELECT a.id, a.title, a.description, a.activity_type, a.status, a.activity_time, a.location_id, a.photo_path, a.created_by, u.username AS created_by_username
+         "SELECT a.id, a.title, a.description, a.activity_type, a.status, a.activity_time, a.location_id, a.photo_path, a.created_by, u.username AS created_by_username
              FROM " .
          $this->table .
          " a
@@ -69,7 +69,7 @@ class Activities
 
    public function getActivityParticipants($activityId)
    {
-      $query = "SELECT u.id, u.username, u.role, ap.role AS activity_role, ap.joined_at
+      $query = "SELECT u.id, u.username, u.role, u.avatar_path, ap.role AS activity_role, ap.joined_at
           FROM activity_participants ap
           INNER JOIN users u ON u.id = ap.user_id
           WHERE ap.activity_id = :activity_id

@@ -9,7 +9,6 @@ import { CreateActivityPopover } from "../components/CreateActivityPopover.rippl
 import type { CreateActivityPayload, CreateActivityRequest } from "../components/CreateActivityPopover.ripple";
 import { StatusMessage } from "../views/StatusMessage.ripple";
 import {
-   buildAvatarUrl,
    extractRows,
    filterActivitiesByMode,
    mapActivity,
@@ -17,6 +16,7 @@ import {
    mapParticipant,
    parseApiData,
    parseApiError,
+   resolveAvatarUrl,
 } from "./activitiesPage.utils";
 import type {
    ActivitySearchParams,
@@ -47,6 +47,7 @@ export component ActivitiesPage(props: Record<string, any>) {
       currentUser?.id == null ? null : Number(currentUser.id);
    const currentUsername = String(currentUser?.username ?? "You");
    const currentUserEmail = String(currentUser?.email ?? "");
+   const currentUserAvatar = resolveAvatarUrl(currentUser?.avatar_url, currentUser?.avatar_path, currentUserId);
 
    let selectedActivityId = track(initialSelectedId ?? null);
    let isCreatePopoverOpen = track(initialCreateFlag === "1");
@@ -213,7 +214,7 @@ export component ActivitiesPage(props: Record<string, any>) {
                   id: currentUserId,
                   username: currentUsername,
                   email: currentUserEmail,
-                  avatar: buildAvatarUrl(currentUserId, currentUsername),
+                  avatar: currentUserAvatar,
                   joinedAt: new Date().toISOString(),
                },
                ...@selectedParticipants,
@@ -289,6 +290,9 @@ export component ActivitiesPage(props: Record<string, any>) {
                body: formData,
             });
 
+            if (uploadResponse.status === 413) {
+               notyf.error("Activity created, but image upload was rejected by server (413 Request Entity Too Large).");
+            } else
             if (!uploadResponse.ok) {
                const message = await parseApiError(uploadResponse, "Activity created, but photo upload failed.");
                notyf.error(message);
@@ -386,7 +390,11 @@ export component ActivitiesPage(props: Record<string, any>) {
                   if (isLoggedIn()) {
                      <StatusMessage icon="fas fa-calendar-check" title="All caught up!" label="You are not attending any activities right now." />
                   } else {
-                     <StatusMessage icon="fas fa-calendar-check" title="Joined activities will appear here!" label="Log in and join an activity to get started." />
+                     <StatusMessage
+                        icon="fas fa-calendar-check"
+                        title="Joined activities will appear here!"
+                        label="Log in and join an activity to get started."
+                     />
                   }
                } else if (@mode === "organizing") {
                   if (isLoggedIn()) {
