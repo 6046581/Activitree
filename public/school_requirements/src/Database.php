@@ -1,5 +1,7 @@
 <?php
 
+// SINGLETON DATABASE
+
 class Database
 {
    private static ?Database $instance = null;

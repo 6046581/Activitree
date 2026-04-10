@@ -380,41 +380,58 @@ export component ActivitiesPage(props: Record<string, any>) {
    <section class="activities-page">
       <section class="activities">
          if (@isLoading) {
-            <StatusMessage loading="true" />
+            <div class="activities-state">
+               <StatusMessage loading="true" />
+            </div>
          } else {
             const visibleActivities = getVisibleActivities();
 
             if (visibleActivities.length === 0) {
                if (@mode === "discover") {
-                  <StatusMessage icon="fas fa-search" title="Oops, all empty!" label="No activities found." />
+                  <div class="activities-state page-enter page-enter-delay-1">
+                     <StatusMessage icon="fas fa-search" title="Oops, all empty!" label="No activities found." />
+                  </div>
                } else if (@mode === "attending") {
                   if (isLoggedIn()) {
-                     <StatusMessage icon="fas fa-calendar-check" title="All caught up!" label="You are not attending any activities right now." />
+                     <div class="activities-state page-enter page-enter-delay-1">
+                        <StatusMessage icon="fas fa-calendar-check" title="All caught up!" label="You are not attending any activities right now." />
+                     </div>
                   } else {
-                     <StatusMessage
-                        icon="fas fa-calendar-check"
-                        title="Joined activities will appear here!"
-                        label="Log in and join an activity to get started."
-                     />
+                     <div class="activities-state page-enter page-enter-delay-1">
+                        <StatusMessage
+                           icon="fas fa-calendar-check"
+                           title="Joined activities will appear here!"
+                           label="Log in and join an activity to get started."
+                        />
+                     </div>
                   }
                } else if (@mode === "organizing") {
                   if (isLoggedIn()) {
-                     <StatusMessage icon="fas fa-calendar-plus" title="Not organizing anything yet!" label="Create an activity to get started." />
+                     <div class="activities-state page-enter page-enter-delay-1">
+                        <StatusMessage icon="fas fa-calendar-plus" title="Not organizing anything yet!" label="Create an activity to get started." />
+                     </div>
                   } else {
-                     <StatusMessage icon="fas fa-crown" title="Created activities will appear here!" label="Log in and create an activity to get started." />
+                     <div class="activities-state page-enter page-enter-delay-1">
+                        <StatusMessage icon="fas fa-crown" title="Created activities will appear here!" label="Log in and create an activity to get started." />
+                     </div>
                   }
                } else {
-                  <StatusMessage icon="fas fa-search" title="Nothing here!" label="No activities found." />
+                  <div class="activities-state page-enter page-enter-delay-1">
+                     <StatusMessage icon="fas fa-search" title="Nothing here!" label="No activities found." />
+                  </div>
                }
             } else {
-               for (let activity of visibleActivities) {
+               for (let [index, activity] of visibleActivities.entries()) {
                   const host = {
                      id: activity.createdBy,
                      username: activity.createdByUsername,
                   };
                   const location = getLocationById(activity.locationId);
+                  const entryDelay = Math.min(70 + index * 55, 380);
 
-                  <ActivityTile {activity} {host} participants={[]} participantCount={activity.participantIds.length} {location} onOpen={openActivity} />
+                  <section class="activities-entry page-enter" style={`animation-delay: ${entryDelay}ms;`}>
+                     <ActivityTile {activity} {host} participants={[]} participantCount={activity.participantIds.length} {location} onOpen={openActivity} />
+                  </section>
                }
             }
          }
@@ -430,8 +447,24 @@ export component ActivitiesPage(props: Record<string, any>) {
    <style scoped>
       .activities {
          display: grid;
-         grid-template-columns: repeat(auto-fit, minmax(500px, 1fr));
+         grid-template-columns: repeat(auto-fit, minmax(min(100%, 34rem), 1fr));
+         justify-content: center;
          gap: 2rem;
+      }
+
+      .activities-entry {
+         min-width: 0;
+      }
+
+      .activities-entry:only-child {
+         max-width: 42rem;
+         justify-self: center;
+         width: 100%;
+      }
+
+      .activities-state {
+         grid-column: 1 / -1;
+         width: 100%;
       }
 
       .activities-create {

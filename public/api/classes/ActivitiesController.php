@@ -47,13 +47,50 @@ class ActivitiesController
       // Check auth
       $auth = denyUnauthorized();
 
+      if (!is_array($data)) {
+         return ["code" => 400, "data" => ["error" => "Invalid JSON body"]];
+      }
+
       // Get input data
-      $title = $data["title"] ?? null;
-      $description = $data["description"] ?? null;
-      $activity_type = $data["activity_type"] ?? "indoor";
-      $status = $data["status"] ?? "planned";
-      $activity_time = $data["activity_time"] ?? null;
+      $title = trim((string) ($data["title"] ?? ""));
+      $description = isset($data["description"]) ? trim((string) $data["description"]) : null;
+      $activity_type = strtolower(trim((string) ($data["activity_type"] ?? "indoor")));
+      $status = strtolower(trim((string) ($data["status"] ?? "planned")));
+      $activity_time = trim((string) ($data["activity_time"] ?? ""));
       $location_id = $data["location_id"] ?? null;
+
+      if ($title === "" || mb_strlen($title) > 100) {
+         return ["code" => 400, "data" => ["error" => "Title is required and must be 100 characters or fewer"]];
+      }
+
+      $allowedTypes = ["indoor", "outdoor"];
+      if (!in_array($activity_type, $allowedTypes, true)) {
+         return ["code" => 400, "data" => ["error" => "Invalid activity_type"]];
+      }
+
+      $allowedStatuses = ["planned", "cancelled", "completed"];
+      if (!in_array($status, $allowedStatuses, true)) {
+         return ["code" => 400, "data" => ["error" => "Invalid status"]];
+      }
+
+      $dt = DateTime::createFromFormat("Y-m-d H:i:s", $activity_time);
+      if (!$dt || $dt->format("Y-m-d H:i:s") !== $activity_time) {
+         return ["code" => 400, "data" => ["error" => "Invalid activity_time format, expected YYYY-MM-DD HH:MM:SS"]];
+      }
+
+      if ($location_id === "" || $location_id === null) {
+         $location_id = null;
+      } else {
+         if (!is_numeric($location_id) || (int) $location_id <= 0) {
+            return ["code" => 400, "data" => ["error" => "Invalid location_id"]];
+         }
+
+         $location_id = (int) $location_id;
+         $locationModel = new Locations();
+         if (!$locationModel->getLocationById($location_id)) {
+            return ["code" => 400, "data" => ["error" => "Selected location does not exist"]];
+         }
+      }
 
       // Validate required fields
       if (!$title || !$activity_time) {
@@ -61,7 +98,21 @@ class ActivitiesController
       }
 
       // Create activity
-      $created = $this->model->createActivity($title, $description, $activity_type, $status, $activity_time, $location_id, $auth["id"]);
+      try {
+         $created = $this->model->createActivity($title, $description, $activity_type, $status, $activity_time, $location_id, $auth["id"]);
+      } catch (PDOException $e) {
+         $sqlState = (string) $e->getCode();
+         if ($sqlState === "22007") {
+            return ["code" => 400, "data" => ["error" => "Invalid date/time value for activity_time"]];
+         }
+
+         if ($sqlState === "23000") {
+            return ["code" => 400, "data" => ["error" => "Activity could not be created because of a data constraint", "message" => $e->getMessage()]];
+         }
+
+         return ["code" => 500, "data" => ["error" => "Database error while creating activity", "message" => $e->getMessage()]];
+      }
+
       if ($created === false) {
          return ["code" => 500, "data" => ["error" => "Failed to create activity"]];
       }

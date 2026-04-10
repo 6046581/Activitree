@@ -3,7 +3,7 @@ import { navigateTo } from "ripple-router";
 import { isLoggedIn } from "../auth";
 
 export component HomePage() {
-   <article id="hero">
+   <article id="hero" class="page-enter">
       <h1>
          {"Event planning,"}
          <br />

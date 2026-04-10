@@ -105,7 +105,7 @@ export component ProfilePage() {
       void loadProfile();
    }, []);
 
-   <article id="user-header">
+   <article id="user-header" class="page-enter">
       <a id="avatar">
          <img src={@avatarUrl} alt="avatar" onerror={`this.onerror=null;this.src='${DEFAULT_PROFILE_IMAGE}';`} />
          <p>{@username}</p>
@@ -118,7 +118,7 @@ export component ProfilePage() {
       </a>
    </article>
 
-   <article class="card">
+   <article class="card page-enter page-enter-delay-1">
       <section id="profile-form">
          <form action="" method="post">
             <label for="username">

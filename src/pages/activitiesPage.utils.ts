@@ -187,9 +187,16 @@ export function mapParticipant(row: ApiParticipant): UiParticipant {
 
 export async function parseApiError(response: Response, fallbackMessage: string): Promise<string> {
    try {
-      const json = (await response.json()) as ApiResponse<unknown>;
+      const json = (await response.json()) as ApiResponse<unknown> & { message?: string };
       if (json && typeof json.error === "string" && json.error.trim().length > 0) {
+         if (typeof json.message === "string" && json.message.trim().length > 0) {
+            return `${json.error}: ${json.message}`;
+         }
          return json.error;
+      }
+
+      if (json && typeof json.message === "string" && json.message.trim().length > 0) {
+         return json.message;
       }
    } catch {
       // Ignore JSON parsing errors and use fallback message.

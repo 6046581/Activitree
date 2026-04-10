@@ -3,7 +3,7 @@ import { navigateTo } from "ripple-router";
 import { StatusMessage } from "../views/StatusMessage.ripple";
 
 export component NotFoundPage() {
-   <article>
+   <article class="page-enter">
       <StatusMessage
          icon="fas fa-exclamation-triangle"
          title="Whoopsies! That's a 404..."

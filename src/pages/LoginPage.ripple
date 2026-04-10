@@ -241,7 +241,7 @@ export component LoginPage() {
       }
    }, []);
 
-   <article class="card login-card">
+   <article class="card login-card page-enter">
       <TabSelector {tabs} activeTabId={@selected} />
       if (@selected === "login") {
          <h2>{"Welcome back"}</h2>
