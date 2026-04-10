@@ -1,3 +1,10 @@
+https://excalidraw.com/#json=UgreHvXVQZM4uGkz42fhF,pfMEX6KnvWepj-RPzqXaHw
+
+![[Class diagram image.png]]
+
+
+## Mermaid Code
+
 ```mermaid
 
 classDiagram
