@@ -3,6 +3,11 @@ class Users extends AbstractModel
 {
    private $table = "users";
 
+   private function hashToken($token)
+   {
+      return hash("sha256", (string) $token);
+   }
+
    public $id;
    public $username;
    public $email;
@@ -133,7 +138,8 @@ class Users extends AbstractModel
       $query = "UPDATE " . $this->table . " SET token = :token WHERE id = :id";
       $stmt = $this->conn->prepare($query);
 
-      $stmt->bindValue(":token", $token);
+      $tokenToStore = $token === null ? null : $this->hashToken($token);
+      $stmt->bindValue(":token", $tokenToStore);
       $stmt->bindValue(":id", $id, PDO::PARAM_INT);
 
       return $stmt->execute();
@@ -145,10 +151,12 @@ class Users extends AbstractModel
          return null;
       }
 
+      $tokenHash = $this->hashToken($token);
+
       $query = "SELECT id, username, email, role, avatar_path AS avatar_path FROM " . $this->table . " WHERE token = :token LIMIT 1";
       $stmt = $this->conn->prepare($query);
 
-      $stmt->bindValue(":token", $token);
+      $stmt->bindValue(":token", $tokenHash);
 
       $stmt->execute();
       return $stmt->fetch(PDO::FETCH_ASSOC);
