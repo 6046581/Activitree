@@ -1,21 +1,12 @@
-https://excalidraw.com/#json=UgreHvXVQZM4uGkz42fhF,pfMEX6KnvWepj-RPzqXaHw
+https://excalidraw.com/#json=_iS8E3RJfv-ueeMelC1sa,ZhYtGCZjuymgBMvhPADwMQ
 
 ![[Class diagram image.png]]
-
 
 ## Mermaid Code
 
 ```mermaid
 
 classDiagram
-
-  
-
-%% ========================
-
-%% API domain (public/api)
-
-%% ========================
 
 class Router {
 
@@ -27,7 +18,7 @@ class Router {
 
   
 
-class ApiDatabase {
+class Database {
 
   -instance: static
 
@@ -45,19 +36,11 @@ class ApiDatabase {
 
   
 
-class AbstractModel {
-
-  #conn
-
-  +__construct(database = null)
-
-}
-
-  
-
 class Activities {
 
   -table: string
+
+	-conn
 
   +id
 
@@ -109,6 +92,8 @@ class Locations {
 
   -table: string
 
+	-conn
+
   +__construct(database = null)
 
   +getAllLocations(limit, offset)
@@ -122,6 +107,8 @@ class Locations {
 class Users {
 
   -table: string
+
+	-conn
 
   +id
 
@@ -231,88 +218,21 @@ class UsersController {
 
   
 
-AbstractModel <|-- Activities
+Activities o-- Database : aggregation (shared singleton)
 
-AbstractModel <|-- Locations
+Locations o-- Database : aggregation (shared singleton)
 
-AbstractModel <|-- Users
+Users o-- Database : aggregation (shared singleton)
 
-AbstractModel o-- ApiDatabase : aggregation (shared singleton)
+ActivitiesController *-- Activities : composition (constructor)
 
-ActivitiesController *-- Activities : composition (constructed in ctor)
+LocationsController *-- Locations : composition (constructor)
 
-LocationsController *-- Locations : composition (constructed in ctor)
-
-UsersController *-- Users : composition (constructed in ctor)
+UsersController *-- Users : composition (constructor)
 
 Router ..> ActivitiesController : association (dispatch)
 
 Router ..> LocationsController : association (dispatch)
 
 Router ..> UsersController : association (dispatch)
-
-  
-
-%% ======================================
-
-%% School requirements demo (separate set)
-
-%% ======================================
-
-class SRRepository {
-
-  <<interface>>
-
-  +getType() string
-
-}
-
-  
-
-class SRDatabase {
-
-  -instance: static SRDatabase
-
-  -__construct()
-
-  +getInstance() SRDatabase
-
-}
-
-  
-
-class BaseRepository {
-
-  #db: SRDatabase
-
-  +__construct()
-
-}
-
-  
-
-class SRActivities {
-
-  +getType() string
-
-}
-
-  
-
-class SRUsers {
-
-  +getType() string
-
-}
-
-  
-
-SRRepository <|.. BaseRepository
-
-BaseRepository <|-- SRActivities
-
-BaseRepository <|-- SRUsers
-
-BaseRepository o-- SRDatabase : aggregation (shared singleton)
-
 ```

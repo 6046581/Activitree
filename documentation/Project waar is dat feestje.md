@@ -1,190 +1,188 @@
 [[User Stories]]
 [[Use Case Diagram]]
+[[Visual Design]]
+[[Narratives]]
 [[Class Diagram]]
+[[Progression]]
 
-# Doel
+## Goal
 
-Bedrijf X organiseert regelmatig activiteiten voor medewerkers, maar de planning verloopt chaotisch door:
+Company X regularly organizes activities for employees, but scheduling has become chaotic due to:
 
-- Slechte communicatie
-- Verouderde systemen
-- Geen centraal overzicht
-- Dubbel geboekte locaties
-- Onduidelijke deelnemerslijsten
-- Activiteiten die niet aansluiten bij voorkeuren
+- Poor communication
+- Outdated systems
+- No central overview
+- Double-booked locations
+- Unclear participant lists
+- Activities that don't match attendee preferences
 
 ---
 
-# Kern
+## Core
 
-Gebruik:
+Technologies and approach:
 
 - **PHP** (OOP)
 - **JavaScript** (OOP)
-- **Weer-API** (JSON van https://weerlive.nl/)
+- **Weather API** (JSON from https://weerlive.nl/)
 - **Database**
-- **Scrumboard in GitHub**
-- **Documentatie** (use case diagram, class diagram, narratives)
+- **GitHub Scrumboard**
+- **Documentation** (use case diagram, class diagram, narratives)
 
-> Het project draait niet alleen om functionaliteit, maar ook om **architectuur, OOP-principes en documentatie**.
-
----
-
-# Stakeholders Eisen
-
-## Klant
-
-- Gebruiksvriendelijke applicatie
-- Activiteiten kunnen aanmaken, beheren en bekijken
-- Onderscheid tussen binnen- en buitenactiviteiten
-- Voor buitenactiviteiten: actuele weersinformatie
-- Kalenderfunctie
+The project focuses not only on features, but also on **architecture, OOP principles, and documentation**.
 
 ---
 
-## Projectleider
+## Stakeholder Requirements
 
-- Robuuste, nette en schaalbare code
-- Goede codekwaliteit en OOP-principes
+### Client
+
+- A user-friendly application
+- Ability to create, manage, and view activities
+- Distinguish between indoor and outdoor activities
+- For outdoor activities: display current weather information
+- Calendar functionality
+
+---
+
+### Project Lead
+
+- Robust, clean, and scalable code
+- Good code quality and adherence to OOP principles
 - Scrumboard in GitHub
-- Volledige documentatie:
-- Use case diagram
-- Class diagram
-- Narratives
-- Toepassing van OOP in **zowel PHP als JavaScript**
+- Complete documentation:
+	- Use case diagram
+	- Class diagram
+	- Narratives
+- Demonstrate OOP in **both PHP and JavaScript**
 
 ---
 
-## Eindgebruikers
+### End Users
 
-- Eenvoudige registratie en login
-- Zoekfunctie / filters voor activiteiten
-- Externe gasten kunnen uitnodigen (moeten zich registreren)
-- Meldingen bij wijzigingen
+- Simple registration and login
+- Search and filters for activities
+- Ability to invite external guests (they must register)
+- Notifications for changes
 
 ---
 
-# Activiteitseisen
+## Activity Requirements
 
-Elke activiteit moet bevatten:
+Each activity must include:
 
-- Titel + beschrijving
-- Datum, tijd, locatie
-- Type (binnen/buiten)
-- Deelnemerslijst (incl. gasten)
+- Title and description
+- Date, time, and location
+- Type (indoor/outdoor)
+- Participant list (including guests)
 - Status:
-- Gepland
-- Geannuleerd
-- Voltooid
-- Optionele notities
-- Bij buitenactiviteiten: gekoppelde weersinformatie
+	- Planned
+	- Cancelled
+	- Completed
+- Optional notes
+- For outdoor activities: linked weather information
 
-> Dit vormt de kern van ons datamodel.
-
----
-
-# Weekplanning
-
-## Week 1–2: Voorbereiding
-
-- User stories maken
-- Scrumboard opzetten
-- Use case diagram maken
-- Minimaal 1 user story per persoon realiseren
-- Eerste OOP in PHP
-- Basis JS (DOM + forms)
+This defines the core of the data model.
 
 ---
 
-## Week 3: Narratives
+## Week Plan
 
-- Narratives schrijven vóór implementatie
-- Functionaliteiten bouwen
-- Verdere DOM-manipulatie
+### Week 1–2: Preparation
 
-Narratives zijn verplicht vóór coderen.
-
----
-
-## Week 4: Abstracte classes + API
-
-- Abstracte classes in PHP
-- Weer-API koppelen (JSON ophalen via JS)
-- Use case diagram bijwerken
+- Create user stories
+- Set up the GitHub Scrumboard
+- Create the use case diagram
+- Implement at least one user story per person
+- Initial OOP in PHP
+- Basic JS (DOM and forms)
 
 ---
 
-## Week 5: Class Diagram + Modules
+### Week 3: Narratives
 
-- Class diagram maken van bestaande code
-- JavaScript modules gebruiken
-- PHP static methods toepassen
+- Write narratives before implementation
+- Build features
+- Further DOM manipulation
 
----
-
-## Week 6: Database + Volledige OOP JS
-
-- Database class (Singleton of Dependency Injection)
-- JS volledig OOP
-- Class diagram verbeteren
+Narratives must be written before coding.
 
 ---
 
-## Week 7–8: Eindopdracht
+### Week 4: Abstract Classes & API
 
-- Nieuwe eisen verwerken
-- Diagrams aanpassen
-- Narratives schrijven
-- Applicatie verfijnen
-
----
-
-# Technisch Ontwerp – Verplichte Relaties
-
-Je moet aantonen dat je deze 4 UML-relaties kunt implementeren:
-
-1. **Associatie**
-2. **Aggregatie**
-3. **Compositie**
-4. **Generalisatie (overerving)**
-
-> Als één relatie ontbreekt in je class diagram, moet je een apart PHP-bestand maken waarin je die relatie alsnog demonstreert.
-
-Voorbeelden moeten logisch zijn (geen onzinnige relaties).
+- Abstract classes in PHP
+- Integrate Weather API (fetch JSON via JS)
+- Update use case diagram
 
 ---
 
-# Beoordeling
+### Week 5: Class Diagram & Modules
 
-Wordt beoordeeld op:
+- Create a class diagram from the existing code
+- Use JavaScript modules
+- Apply PHP static methods where appropriate
 
-### 🔹 Technische werking
+---
 
-- PHP
-- JavaScript
-- Database
-- API-integratie
+### Week 6: Database & Full OOP in JS
 
-### 🔹 Scrum & GitHub
+- Database class (Singleton or Dependency Injection)
+- JavaScript fully object-oriented
+- Improve the class diagram
 
-- Scrumboard
-- Planning
-- Transparantie
+---
 
-### 🔹 Documentatie
+### Week 7–8: Final Deliverable
 
-- Use case diagram
-- Class diagram
-- Narratives
-- Correcte UML-relaties
+- Incorporate new requirements
+- Update diagrams
+- Complete narratives
+- Refine the application
 
-# Wat is écht het belangrijkste?
+---
 
-Als je het project strategisch bekijkt, draait alles om:
+## Technical Design – Required Relationships
 
-1. **Correcte toepassing van OOP in PHP én JS**
-2. **Een goed doordacht datamodel**
-3. **Documentatie vóór implementatie**
-4. **Schaalbare architectuur**
-5. **De 4 verplichte UML-relaties correct aantonen**
-6. **Weer-API correct integreren bij buitenactiviteiten**
+You must demonstrate implementations of these four UML relationships:
+
+1. **Association**
+2. **Aggregation**
+3. **Composition**
+4. **Generalization (inheritance)**
+
+If any relationship is missing from your class diagram, provide a separate PHP file that demonstrates it.
+
+Examples should be logical and meaningful.
+
+---
+
+## Evaluation Criteria
+
+Assessment will be based on:
+
+- Technical functionality:
+	- PHP
+	- JavaScript
+	- Database
+	- API integration
+- Scrum & GitHub:
+	- Scrumboard
+	- Planning
+	- Transparency
+- Documentation:
+	- Use case diagram
+	- Class diagram
+	- Narratives
+	- Correct UML relationships
+
+## Key Priorities
+
+Strategically, the project emphasizes:
+
+1. **Correct application of OOP in both PHP and JS**
+2. **A well-designed data model**
+3. **Documentation before implementation**
+4. **Scalable architecture**
+5. **Proper demonstration of the four UML relationships**
+6. **Correct weather-API integration for outdoor activities**

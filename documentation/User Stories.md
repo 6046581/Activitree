@@ -1,37 +1,37 @@
-### Gast
+### Guest
 
-**Als gast**  
-Wil ik **de datum, tijd en locatie van een evenement kunnen bekijken**  
-Zodat **ik weet waar en wanneer ik aanwezig moet zijn**
+**As a guest**
+I want to view the date, time, and location of an event
+So I know where and when to attend
 
-**Als gast**  
-Wil ik **een account kunnen registreren**  
-Zodat **ik activiteiten kan maken en later kan terugvinden**
-
----
-
-### Gebruiker
-
-**Als gebruiker**  
-Wil ik **kunnen inloggen**  
-Zodat **ik toegang heb tot mijn account en mijn activiteiten kan terugvinden**
-
-**Als gebruiker**  
-Wil ik **een evenement kunnen maken**  
-Zodat **anderen het evenement dat ik organiseer kunnen zien**
-
-**Als gebruiker**  
-Wil ik **gasten of gebruikers kunnen uitnodigen via e-mail**  
-Zodat **ik mensen kan toevoegen aan mijn activiteit**
+**As a guest**
+I want to register an account
+So I can create activities and access them later
 
 ---
 
-### Beheerder
+### User
 
-**Als beheerder**  
-Wil ik **activiteiten kunnen beheren**  
-Zodat **ik evenementen kan aanpassen of verwijderen wanneer dat nodig is**
+**As a user**
+I want to log in
+So I can access my account and see my activities
 
-**Als beheerder**  
-Wil ik **gebruikersaccounts kunnen beheren**  
-Zodat **ik gebruikers kan aanpassen, blokkeren of verwijderen**
+**As a user**
+I want to create an event
+So others can see the event I organize
+
+**As a user**
+I want to invite guests or users via email
+So I can add people to my activity
+
+---
+
+### Administrator
+
+**As an administrator**
+I want to manage activities
+So I can edit or remove events when necessary
+
+**As an administrator**
+I want to manage user accounts
+So I can edit, block, or delete users

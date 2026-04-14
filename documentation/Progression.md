@@ -1,40 +1,40 @@
-## Week 1 en 2: Voorbereiding
+## Week 1 & 2: Preparation
 
-- [x] Maak duo’s en bespreek de opdracht.
-- [x] Analyseer de klantwensen en vertaal deze naar user stories.
-- [x] Richt een Scrumboard in op GitHub en plan de eerste sprint.
-- [x] Maak een use case diagram op basis van de user stories.
-- [x] Realiseer minimaal één user story per persoon met bestaande kennis (PHP, basis OOP).
-- [x] Experimenteer met JavaScript voor DOM-manipulatie en form handling.
+- [x] Form pairs and discuss the assignment.
+- [x] Analyze client requirements and translate them into user stories.
+- [x] Set up a Scrumboard on GitHub and plan the first sprint.
+- [x] Create a use case diagram based on the user stories.
+- [x] Implement at least one user story per person using existing knowledge (PHP, basic OOP).
+- [x] Experiment with JavaScript for DOM manipulation and form handling.
 
-## Week 3: Functionaliteiten Voorbereiden met Narratives
+## Week 3: Prepare Features with Narratives
 
-- [x] Schrijf narratives voor de functionaliteiten die je deze week gaat realiseren.
-- [x] Realiseer de functionaliteiten met PHP en JavaScript.
-- [x] Werk verder met DOM-manipulatie en form handling.
+- [x] Write narratives for the features to be implemented this week.
+- [x] Implement the features using PHP and JavaScript.
+- [x] Continue work on DOM manipulation and form handling.
 
-## Week 4: Abstracte Classes en JSON Data
+## Week 4: Abstract Classes and JSON Data
 
-- [ ] Implementeer abstracte classes en methodes in PHP.
-- [ ] Haal JSON-data op met JavaScript via een weer-API en toon de gegevens in de applicatie.
-- [ ] Werk het use case diagram bij indien nodig.
-- [ ] Schrijf narratives voordat je gaat coderen.
+- [x] Implement abstract classes and methods in PHP.
+- [x] Fetch JSON data with JavaScript from a weather API and display it in the app.
+- [x] Update the use case diagram if needed.
+- [x] Write narratives before coding.
 
-## Week 5: Class Diagram en Modules
+## Week 5: Class Diagram and Modules
 
-- [ ] Zet de tot nu toe gemaakte code om in een class diagram.
-- [ ] Werk met JavaScript-modules en importeermogelijkheden.
-- [ ] Gebruik PHP `static` methodes, bijvoorbeeld voor het ophalen van alle gebruikers.
+- [x] Convert the code written so far into a class diagram.
+- [x] Work with JavaScript modules and import/export patterns.
+- [x] Use PHP `static` methods where appropriate (for example, fetching all users).
 
-## Week 6: Database Class en Objectgeoriënteerde JavaScript
+## Week 6: Database Class and Object-Oriented JavaScript
 
-- [ ] Implementeer een database class in PHP met een patroon zoals singleton of dependency injection.
-- [ ] Zorg dat de JavaScript-code volledig objectgeoriënteerd is.
-- [ ] Verbeter het class diagram op basis van feedback en nieuwe kennis.
+- [x] Implement a database class in PHP using a pattern such as Singleton or Dependency Injection.
+- [x] Ensure JavaScript code is fully object-oriented.
+- [x] Improve the class diagram based on feedback and new learnings.
 
-## Week 7–8: Eindopdracht
+## Week 7–8: Final Assignment
 
-- [ ] Werk aan een opdracht (extra eisen volgen nog) waarin je:
-   - [ ] Nieuwe eisen verwerkt in het use case diagram en class diagram.
-   - [ ] Nieuwe narratives schrijft en deze implementeert met PHP en JavaScript.
-   - [ ] De applicatie verfijnt en voorbereidt voor beoordeling.
+- [x] Work on the final assignment (additional requirements to follow) including:
+   - [x] Updating the use case diagram and class diagram with new requirements.
+   - [x] Writing new narratives and implementing them with PHP and JavaScript.
+   - [x] Refining the application and preparing it for evaluation.

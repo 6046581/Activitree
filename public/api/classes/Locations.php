@@ -1,11 +1,16 @@
 <?php
-class Locations extends AbstractModel
+class Locations
 {
+   private $conn;
    private $table = "locations";
 
    public function __construct($database = null)
    {
-      parent::__construct($database);
+      if ($database === null) {
+         $database = Database::getInstance();
+      }
+
+      $this->conn = $database->getConnection();
    }
 
    public function getAllLocations($limit = 200, $offset = 0)

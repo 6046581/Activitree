@@ -1,6 +1,7 @@
 <?php
-class Users extends AbstractModel
+class Users
 {
+   private $conn;
    private $table = "users";
 
    private function hashToken($token)
@@ -15,7 +16,11 @@ class Users extends AbstractModel
 
    public function __construct($database = null)
    {
-      parent::__construct($database);
+      if ($database === null) {
+         $database = Database::getInstance();
+      }
+
+      $this->conn = $database->getConnection();
    }
 
    public function loginUser($email, $password)
