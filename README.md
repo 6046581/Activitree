@@ -1,8 +1,10 @@
 # Activitree
 
-This is an application built for a school project. somthing something something, but we wanted to go further with it by making use of an experimental new frontend framework and creating a backend API similar to how is usually done in real fullstack applications.
+This is a web application initially built for a school project. The actual project requirements were pretty basic, but we wanted to go further with it by making use of an experimental new frontend framework and creating a backend API similar to how is usually done in real fullstack applications.
 
 Activitree is an event planning application built with Ripple, Vite, TypeScript, and a PHP/MySQL backend. It lets users create and manage activities, invite participants, view locations, and handle authentication from the browser.
+
+> Note: not actually meant to be used anywhere, RippleTS is not production ready and this project was just to show off our skills.
 
 ## Features
 
