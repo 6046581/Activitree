@@ -1,6 +1,7 @@
 # Activitree
 
 This is an application built for a school project. somthing something something, but we wanted to go further with it by making use of an experimental new frontend framework and creating a backend API similar to how is usually done in real fullstack applications.
+
 Activitree is an event planning application built with Ripple, Vite, TypeScript, and a PHP/MySQL backend. It lets users create and manage activities, invite participants, view locations, and handle authentication from the browser.
 
 ## Features
@@ -26,34 +27,32 @@ Activitree is an event planning application built with Ripple, Vite, TypeScript,
 
 ## Requirements
 
-- Node.js 20 or newer
 - Bun 1.3 or newer
-- PHP 8+ with a web server
-- MySQL or MariaDB
+- Docker Desktop
 
-## Setup
+## Development Setup
 
-### 1. Install dependencies
-
-```bash
-bun install # or npm/pnpm/yarn
-```
-
-### 2. Import the database
-
-Create a MySQL database named `activitree`, then import `documentation/db.sql`.
-
-### 3. Run the PHP API
-
-Serve the `public/api` directory through your PHP-capable web/dev server so `index.php` is reachable. The frontend expects the API to be available under `/api`.
-
-### 4. Start the frontend
+### Start
 
 ```bash
-bun run dev
+docker compose up --build
 ```
 
-The Vite dev server runs on port `3000`.
+### Services
+
+- Frontend: `http://localhost:3000`
+- API: `http://localhost:8080/api`
+- MySQL: `localhost:3307`
+
+## Dev Commands
+
+- `bun install` - install dependencies
+- `bun run dev` - start the Vite development server
+- `bun run build` - build the production bundle
+- `bun run serve` - preview the production build locally
+- `bun run lint` - run ESLint
+- `bun run format` - format the codebase with Prettier
+- `bun run format:check` - verify formatting without writing changes
 
 ## Environment Variables
 
@@ -63,16 +62,7 @@ The Vite config supports these optional variables:
 - `VITE_DEV_API_TARGET` - PHP server target for local development, defaults to `http://localhost`
 - `VITE_DEV_API_BASE_PATH` - backend path used by the dev proxy, defaults to `/activitree/public/api`
 
-## Scripts
-
-- `bun run dev` - start the Vite development server
-- `bun run build` - build the production bundle
-- `bun run serve` - preview the production build locally
-- `bun run lint` - run ESLint
-- `bun run format` - format the codebase with Prettier
-- `bun run format:check` - verify formatting without writing changes
-
-## API Overview
+## Backend API
 
 The PHP backend exposes routes for users, activities, and locations. The main entrypoint is `public/api/index.php`, which wires requests into the controllers under `public/api/classes/`.
-Additional information can be found in `documentation/api.md`.
+More API information can be found in `documentation/api.md`.

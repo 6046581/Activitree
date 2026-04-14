@@ -24,7 +24,7 @@ Technologies and approach:
 
 - **PHP** (OOP)
 - **JavaScript** (OOP)
-- **Weather API** (JSON from https://weerlive.nl/)
+- **Weather API** (JSON)
 - **Database**
 - **GitHub Scrumboard**
 - **Documentation** (use case diagram, class diagram, narratives)
@@ -51,9 +51,9 @@ The project focuses not only on features, but also on **architecture, OOP princi
 - Good code quality and adherence to OOP principles
 - Scrumboard in GitHub
 - Complete documentation:
-	- Use case diagram
-	- Class diagram
-	- Narratives
+   - Use case diagram
+   - Class diagram
+   - Narratives
 - Demonstrate OOP in **both PHP and JavaScript**
 
 ---
@@ -76,9 +76,9 @@ Each activity must include:
 - Type (indoor/outdoor)
 - Participant list (including guests)
 - Status:
-	- Planned
-	- Cancelled
-	- Completed
+   - Planned
+   - Cancelled
+   - Completed
 - Optional notes
 - For outdoor activities: linked weather information
 
@@ -162,19 +162,19 @@ Examples should be logical and meaningful.
 Assessment will be based on:
 
 - Technical functionality:
-	- PHP
-	- JavaScript
-	- Database
-	- API integration
+   - PHP
+   - JavaScript
+   - Database
+   - API integration
 - Scrum & GitHub:
-	- Scrumboard
-	- Planning
-	- Transparency
+   - Scrumboard
+   - Planning
+   - Transparency
 - Documentation:
-	- Use case diagram
-	- Class diagram
-	- Narratives
-	- Correct UML relationships
+   - Use case diagram
+   - Class diagram
+   - Narratives
+   - Correct UML relationships
 
 ## Key Priorities
 

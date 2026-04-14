@@ -16,7 +16,7 @@ class Router {
 
 }
 
-  
+
 
 class Database {
 
@@ -34,7 +34,7 @@ class Database {
 
 }
 
-  
+
 
 class Activities {
 
@@ -86,7 +86,7 @@ class Activities {
 
 }
 
-  
+
 
 class Locations {
 
@@ -102,7 +102,7 @@ class Locations {
 
 }
 
-  
+
 
 class Users {
 
@@ -146,7 +146,7 @@ class Users {
 
 }
 
-  
+
 
 class ActivitiesController {
 
@@ -174,7 +174,7 @@ class ActivitiesController {
 
 }
 
-  
+
 
 class LocationsController {
 
@@ -188,7 +188,7 @@ class LocationsController {
 
 }
 
-  
+
 
 class UsersController {
 
@@ -216,7 +216,7 @@ class UsersController {
 
 }
 
-  
+
 
 Activities o-- Database : aggregation (shared singleton)
 
