@@ -17,24 +17,27 @@
    },
    "license": "MIT",
    "devDependencies": {
-      "@ripple-ts/eslint-parser": "latest",
-      "@ripple-ts/eslint-plugin": "latest",
-      "@ripple-ts/prettier-plugin": "latest",
-      "@ripple-ts/typescript-plugin": "latest",
-      "@ripple-ts/vite-plugin": "latest",
+      "@prettier/plugin-php": "^0.25.0",
+      "@ripple-ts/eslint-parser": "0.3.12",
+      "@ripple-ts/eslint-plugin": "0.3.12",
+      "@ripple-ts/prettier-plugin": "0.3.12",
+      "@ripple-ts/typescript-plugin": "0.3.12",
+      "@ripple-ts/vite-plugin": "0.3.12",
       "@types/node": "^25.6.0",
       "@typescript-eslint/parser": "^8.58.1",
       "eslint": "^9.39.4",
       "prettier": "^3.8.2",
-      "@prettier/plugin-php": "^0.25.0",
       "typescript": "^5.9.3",
       "vite": "^7.3.2",
       "vitest": "^4.1.4"
    },
    "dependencies": {
-      "ripple": "latest",
-      "ripple-router": "^1.0.1",
-      "notyf": "^3.10.0"
+      "notyf": "^3.10.0",
+      "ripple": "0.3.12",
+      "ripple-router": "^1.0.1"
    },
-   "packageManager": "bun@1.3.10"
+   "packageManager": "bun@1.3.10",
+   "patchedDependencies": {
+      "ripple-router@1.0.1": "patches/ripple-router@1.0.1.patch"
+   }
 }

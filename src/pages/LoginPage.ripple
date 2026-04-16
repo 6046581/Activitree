@@ -57,7 +57,7 @@ export component LoginPage() {
          label: "Log in",
          icon: "fas fa-sign-in-alt",
          onClick: () => {
-            @selected = "login";
+            selected.value = "login";
          },
       },
       {
@@ -65,7 +65,7 @@ export component LoginPage() {
          label: "Sign up",
          icon: "fas fa-user-plus",
          onClick: () => {
-            @selected = "signup";
+            selected.value = "signup";
          },
       },
    ];
@@ -126,7 +126,7 @@ export component LoginPage() {
    async function handleLoginSubmit(event: Event) {
       event.preventDefault();
 
-      if (@isLoading) {
+      if (isLoading.value) {
          return;
       }
 
@@ -147,7 +147,7 @@ export component LoginPage() {
          return;
       }
 
-      @isLoading = true;
+      isLoading.value = true;
 
       try {
          const didLogin = await submitLogin(email, password, keepSignedIn);
@@ -160,14 +160,14 @@ export component LoginPage() {
       } catch {
          notyf.error("Could not reach the API. Please try again later.");
       } finally {
-         @isLoading = false;
+         isLoading.value = false;
       }
    }
 
    async function handleSignupSubmit(event: Event) {
       event.preventDefault();
 
-      if (@isLoading) {
+      if (isLoading.value) {
          return;
       }
 
@@ -200,7 +200,7 @@ export component LoginPage() {
          return;
       }
 
-      @isLoading = true;
+      isLoading.value = true;
 
       try {
          const payload = {
@@ -223,7 +223,7 @@ export component LoginPage() {
 
          if (!didLogin) {
             notyf.success(result.message ?? "Account created. Please log in.");
-            @selected = "login";
+            selected.value = "login";
             return;
          }
 
@@ -231,7 +231,7 @@ export component LoginPage() {
       } catch {
          notyf.error("Could not reach the API. Please try again later.");
       } finally {
-         @isLoading = false;
+         isLoading.value = false;
       }
    }
 
@@ -242,8 +242,8 @@ export component LoginPage() {
    }, []);
 
    <article class="card login-card page-enter">
-      <TabSelector {tabs} activeTabId={@selected} />
-      if (@selected === "login") {
+      <TabSelector {tabs} activeTabId={selected.value} />
+      if (selected.value === "login") {
          <h2>{"Welcome back"}</h2>
          <p>{"Log in to your account."}</p>
       } else {
@@ -251,10 +251,10 @@ export component LoginPage() {
          <p>{"Sign up to start planning activities."}</p>
       }
 
-      if (@selected === "login") {
-         <LoginForm {@isLoading} onSubmit={handleLoginSubmit} />
+      if (selected.value === "login") {
+         <LoginForm isLoading={isLoading.value} onSubmit={handleLoginSubmit} />
       } else {
-         <SignupForm {@isLoading} onSubmit={handleSignupSubmit} />
+         <SignupForm isLoading={isLoading.value} onSubmit={handleSignupSubmit} />
       }
    </article>
 

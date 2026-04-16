@@ -10,7 +10,7 @@ export component Wallpaper() {
    }
 
    function handleImageError() {
-      @loadError = true;
+      loadError.value = true;
    }
 
    function handleImageLoad() {
@@ -20,11 +20,11 @@ export component Wallpaper() {
       }
    }
 
-   @wallpaperSrc = getRandomWallpaper();
+   wallpaperSrc.value = getRandomWallpaper();
 
    <div id="wallpaper">
-      if (!@loadError) {
-         <img src={@wallpaperSrc} alt="Wallpaper" loading="lazy" onload={handleImageLoad} onerror={handleImageError} />
+      if (!loadError.value) {
+         <img src={wallpaperSrc.value} alt="Wallpaper" loading="lazy" onload={handleImageLoad} onerror={handleImageError} />
       }
    </div>
 

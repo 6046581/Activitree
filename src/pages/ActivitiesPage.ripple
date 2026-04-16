@@ -38,7 +38,7 @@ type ActivityParams = {
 export component ActivitiesPage(props: Record<string, any>) {
    const searchParams = props?.["searchParams"] ?? {} as ActivitySearchParams;
    let mode = track(() => String((props?.["params"] ?? {} as ActivityParams)?.mode ?? "").toLowerCase());
-   let currentPath = track(() => (@mode ? `/activities/${@mode}` : "/activities"));
+   let currentPath = track(() => (mode.value ? `/activities/${mode.value}` : "/activities"));
 
    const initialSearchParams = new URLSearchParams(window.location.search);
    const initialSelectedId = searchParams.id ?? initialSearchParams.get("id");
@@ -64,7 +64,7 @@ export component ActivitiesPage(props: Record<string, any>) {
    }
 
    function navigateWithSearchParams(nextSearchParams: ActivitySearchParams) {
-      navigateTo(@currentPath, {
+      navigateTo(currentPath.value, {
          searchParams: nextSearchParams,
       });
    }
@@ -78,21 +78,21 @@ export component ActivitiesPage(props: Record<string, any>) {
             id,
          },
       );
-      @selectedActivityId = id;
-      @isCreatePopoverOpen = false;
+      selectedActivityId.value = id;
+      isCreatePopoverOpen.value = false;
    }
 
    function closeActivity() {
       const { id: _ignored, ...nextSearchParams } = getCurrentSearchParams();
       navigateWithSearchParams(nextSearchParams);
-      @selectedActivityId = null;
-      @selectedParticipants = [];
+      selectedActivityId.value = null;
+      selectedParticipants.value = [];
    }
 
    function closeCreatePopover() {
       const { create: _ignoredCreate, ...nextSearchParams } = getCurrentSearchParams();
       navigateWithSearchParams(nextSearchParams);
-      @isCreatePopoverOpen = false;
+      isCreatePopoverOpen.value = false;
    }
 
    function openCreatePopover() {
@@ -103,18 +103,18 @@ export component ActivitiesPage(props: Record<string, any>) {
             create: "1",
          },
       );
-      @selectedActivityId = null;
-      @isCreatePopoverOpen = true;
+      selectedActivityId.value = null;
+      isCreatePopoverOpen.value = true;
    }
 
    function syncPopoverStateFromUrl() {
       const currentSearchParams = getCurrentSearchParams();
-      @selectedActivityId = currentSearchParams.id ?? null;
-      @isCreatePopoverOpen = currentSearchParams.create === "1";
+      selectedActivityId.value = currentSearchParams.id ?? null;
+      isCreatePopoverOpen.value = currentSearchParams.create === "1";
    }
 
    function getVisibleActivities(): UiActivity[] {
-      return filterActivitiesByMode(@activities, @mode, currentUserId);
+      return filterActivitiesByMode(activities.value, mode.value, currentUserId);
    }
 
    function getLocationById(id: number | null): UiLocation | undefined {
@@ -122,11 +122,11 @@ export component ActivitiesPage(props: Record<string, any>) {
          return undefined;
       }
 
-      return @locations.find((location) => location.id === id);
+      return locations.value.find((location) => location.id === id);
    }
 
    async function loadInitialData() {
-      @isLoading = true;
+      isLoading.value = true;
       try {
          const [activitiesResponse, locationsResponse] = await Promise.all([
             fetch("/api/activities"),
@@ -148,38 +148,38 @@ export component ActivitiesPage(props: Record<string, any>) {
          const activitiesData = await parseApiData<ApiActivity[]>(activitiesResponse);
          const locationsData = await parseApiData<ApiLocation[]>(locationsResponse);
 
-         @activities = Array.isArray(activitiesData) ? activitiesData.map(mapActivity) : [];
-         @locations = Array.isArray(locationsData) ? locationsData.map(mapLocation) : [];
+         activities.value = Array.isArray(activitiesData) ? activitiesData.map(mapActivity) : [];
+         locations.value = Array.isArray(locationsData) ? locationsData.map(mapLocation) : [];
       } catch {
          notyf.error("Failed to load activities.");
       } finally {
-         @isLoading = false;
+         isLoading.value = false;
       }
    }
 
    async function loadParticipants(activityId: number) {
-      @isParticipantsLoading = true;
+      isParticipantsLoading.value = true;
       try {
          const response = await fetch(`/api/activities/${activityId}/participants`);
          if (!response.ok) {
             const message = await parseApiError(response, "Failed to load participants.");
             notyf.error(message);
-            @selectedParticipants = [];
+            selectedParticipants.value = [];
             return;
          }
 
          const payload = await response.json().catch(() => ({})) as ApiResponse<ApiParticipant[]> | ApiParticipant[];
-         @selectedParticipants = extractRows<ApiParticipant>(payload).map(mapParticipant);
+         selectedParticipants.value = extractRows<ApiParticipant>(payload).map(mapParticipant);
       } catch {
-         @selectedParticipants = [];
+         selectedParticipants.value = [];
          notyf.error("Failed to load participants.");
       } finally {
-         @isParticipantsLoading = false;
+         isParticipantsLoading.value = false;
       }
    }
 
    function updateLocalParticipantIds(activityId: number, userId: number, isJoining: boolean) {
-      @activities = @activities.map((activity) => {
+      activities.value = activities.value.map((activity) => {
          if (activity.id !== activityId) {
             return activity;
          }
@@ -209,9 +209,9 @@ export component ActivitiesPage(props: Record<string, any>) {
 
       updateLocalParticipantIds(activityId, currentUserId, isJoining);
       if (isJoining) {
-         const alreadyShown = @selectedParticipants.some((participant) => participant.id === currentUserId);
+         const alreadyShown = selectedParticipants.value.some((participant) => participant.id === currentUserId);
          if (!alreadyShown) {
-            @selectedParticipants = [
+            selectedParticipants.value = [
                {
                   id: currentUserId,
                   username: currentUsername,
@@ -219,11 +219,11 @@ export component ActivitiesPage(props: Record<string, any>) {
                   avatar: currentUserAvatar,
                   joinedAt: new Date().toISOString(),
                },
-               ...@selectedParticipants,
+               ...selectedParticipants.value,
             ];
          }
       } else {
-         @selectedParticipants = @selectedParticipants.filter((participant) => participant.id !== currentUserId);
+         selectedParticipants.value = selectedParticipants.value.filter((participant) => participant.id !== currentUserId);
       }
 
       try {
@@ -309,11 +309,11 @@ export component ActivitiesPage(props: Record<string, any>) {
 
          if (Number.isFinite(createdId) && createdId > 0) {
             nextParams.id = String(createdId);
-            @selectedActivityId = String(createdId);
+            selectedActivityId.value = String(createdId);
          }
 
          navigateWithSearchParams(nextParams);
-         @isCreatePopoverOpen = false;
+         isCreatePopoverOpen.value = false;
          notyf.success("Activity created.");
       } catch {
          notyf.error("Could not reach the API. Please try again later.");
@@ -330,29 +330,29 @@ export component ActivitiesPage(props: Record<string, any>) {
    }, []);
 
    effect(() => {
-      const selectedId = @selectedActivityId;
+      const selectedId = selectedActivityId.value;
       if (!selectedId) {
-         @selectedParticipants = [];
+         selectedParticipants.value = [];
          return;
       }
 
       const id = Number(selectedId);
       if (Number.isNaN(id)) {
-         @selectedParticipants = [];
+         selectedParticipants.value = [];
          return;
       }
 
       void loadParticipants(id);
    }, [selectedActivityId]);
 
-   let selectedActivity = track(() => @activities.find((activity) => String(activity.id) === @selectedActivityId));
+   let selectedActivity = track(() => activities.value.find((activity) => String(activity.id) === selectedActivityId.value));
 
-   if (@isCreatePopoverOpen) {
-      <CreateActivityPopover {@locations} onClose={closeCreatePopover} onCreate={createActivity} />
+   if (isCreatePopoverOpen.value) {
+      <CreateActivityPopover locations={locations.value} onClose={closeCreatePopover} onCreate={createActivity} />
    }
 
-   if (!@isCreatePopoverOpen && @selectedActivity) {
-      const currentActivity = @selectedActivity;
+   if (!isCreatePopoverOpen.value && selectedActivity.value) {
+      const currentActivity = selectedActivity.value;
       const host = {
          id: currentActivity.createdBy,
          username: currentActivity.createdByUsername,
@@ -363,9 +363,9 @@ export component ActivitiesPage(props: Record<string, any>) {
       <ActivityPopover
          activity={currentActivity}
          {host}
-         participants={@selectedParticipants}
+         participants={selectedParticipants.value}
          participantCount={currentActivity.participantIds.length}
-         {@isParticipantsLoading}
+         isParticipantsLoading={isParticipantsLoading.value}
          {currentUserId}
          {currentUsername}
          {currentUserEmail}
@@ -379,7 +379,7 @@ export component ActivitiesPage(props: Record<string, any>) {
 
    <section class="activities-page">
       <section class="activities">
-         if (@isLoading) {
+         if (isLoading.value) {
             <div class="activities-state">
                <StatusMessage loading="true" />
             </div>
@@ -387,11 +387,11 @@ export component ActivitiesPage(props: Record<string, any>) {
             const visibleActivities = getVisibleActivities();
 
             if (visibleActivities.length === 0) {
-               if (@mode === "discover") {
+               if (mode.value === "discover") {
                   <div class="activities-state page-enter page-enter-delay-1">
                      <StatusMessage icon="fas fa-search" title="Oops, all empty!" label="No activities found." />
                   </div>
-               } else if (@mode === "attending") {
+               } else if (mode.value === "attending") {
                   if (isLoggedIn()) {
                      <div class="activities-state page-enter page-enter-delay-1">
                         <StatusMessage icon="fas fa-calendar-check" title="All caught up!" label="You are not attending any activities right now." />
@@ -405,7 +405,7 @@ export component ActivitiesPage(props: Record<string, any>) {
                         />
                      </div>
                   }
-               } else if (@mode === "organizing") {
+               } else if (mode.value === "organizing") {
                   if (isLoggedIn()) {
                      <div class="activities-state page-enter page-enter-delay-1">
                         <StatusMessage icon="fas fa-calendar-plus" title="Not organizing anything yet!" label="Create an activity to get started." />

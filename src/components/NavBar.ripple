@@ -65,7 +65,7 @@ export component NavBar() {
    effect(() => {
       const localUser = getCurrentUser();
       const localAvatar = String(localUser?.avatar_url ?? "").trim();
-      @avatarUrl = localAvatar || AVATAR_PLACEHOLDER;
+      avatarUrl.value = localAvatar || AVATAR_PLACEHOLDER;
 
       if (!isLoggedIn()) {
          return;
@@ -73,7 +73,7 @@ export component NavBar() {
 
       void requireAuthenticatedUser().then((user) => {
          const resolved = String(user?.avatar_url ?? "").trim();
-         @avatarUrl = resolved || AVATAR_PLACEHOLDER;
+         avatarUrl.value = resolved || AVATAR_PLACEHOLDER;
       });
    }, []);
 
@@ -87,7 +87,7 @@ export component NavBar() {
 
          if (isLoggedIn()) {
             <a class="nav-profile" href="/profile" onClick={handleProfileClick}>
-               <img src={@avatarUrl} alt="profile" onerror="this.onerror=null;this.src='/assets/avatar_placeholder.jpg';" />
+               <img src={avatarUrl.value} alt="profile" onerror="this.onerror=null;this.src='/assets/avatar_placeholder.jpg';" />
             </a>
          } else {
             <a class="nav-profile" href="/login" onClick={handleProfileClick}>

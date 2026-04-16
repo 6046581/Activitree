@@ -30,7 +30,7 @@ export component ActivityPopover(props: Record<string, any>) {
    let isLoadingParticipants = track(false);
 
    effect(() => {
-      @attendingState = isAttending;
+      attendingState.value = isAttending;
    }, [isAttending]);
 
    function resolveAvatarUrl(row: Record<string, any>, id: number) {
@@ -52,16 +52,16 @@ export component ActivityPopover(props: Record<string, any>) {
    }
 
    function upsertParticipantAtTop(participant: { id: number; username: string; joinedAt: string; avatar: string }) {
-      const filtered = @fetchedParticipants.filter((p) => Number(p.id) !== Number(participant.id));
-      @fetchedParticipants = [participant, ...filtered];
+      const filtered = fetchedParticipants.value.filter((p) => Number(p.id) !== Number(participant.id));
+      fetchedParticipants.value = [participant, ...filtered];
    }
 
    function removeParticipantById(id: number) {
-      @fetchedParticipants = @fetchedParticipants.filter((p) => Number(p.id) !== Number(id));
+      fetchedParticipants.value = fetchedParticipants.value.filter((p) => Number(p.id) !== Number(id));
    }
 
    async function fetchParticipantsForActivity(activityId: number) {
-      @isLoadingParticipants = true;
+      isLoadingParticipants.value = true;
       try {
          const response = await fetch(`/api/activities/${activityId}/participants`);
          const payload = await response.json().catch(() => ({}));
@@ -75,7 +75,7 @@ export component ActivityPopover(props: Record<string, any>) {
                      ? payload.data.data
                      : [];
 
-         @fetchedParticipants = rows.map((row: Record<string, any>, index: number) => {
+         fetchedParticipants.value = rows.map((row: Record<string, any>, index: number) => {
             const parsedId = Number(row?.["id"]);
             const id = Number.isFinite(parsedId) ? parsedId : index + 1;
             const username = String(row?.["username"] ?? row?.["name"] ?? "Unknown");
@@ -89,9 +89,9 @@ export component ActivityPopover(props: Record<string, any>) {
             };
          });
       } catch {
-         @fetchedParticipants = [];
+         fetchedParticipants.value = [];
       } finally {
-         @isLoadingParticipants = false;
+         isLoadingParticipants.value = false;
       }
    }
 
@@ -99,8 +99,8 @@ export component ActivityPopover(props: Record<string, any>) {
       const activityId = Number(activity?.id);
 
       if (!Number.isFinite(activityId) || activityId <= 0) {
-         @fetchedParticipants = [];
-         @isLoadingParticipants = false;
+         fetchedParticipants.value = [];
+         isLoadingParticipants.value = false;
          return;
       }
 
@@ -112,21 +112,21 @@ export component ActivityPopover(props: Record<string, any>) {
    effect(() => {
       if (isOutdoorActivity(activity, location)) {
          fetchWeather(location.latitude, location.longitude, activity.date, activity.time).then((w) => {
-            @weather = w;
+            weather.value = w;
          });
       } else {
-         @weather = null;
+         weather.value = null;
       }
    }, [activity?.type, location?.latitude, location?.longitude, activity?.date, activity?.time]);
 
    async function toggleAttendance() {
-      if (!canToggleAttendance || @isSubmittingAttendance || typeof onToggleAttendance !== "function") {
+      if (!canToggleAttendance || isSubmittingAttendance.value || typeof onToggleAttendance !== "function") {
          return;
       }
 
-      const previousState = @attendingState;
+      const previousState = attendingState.value;
       const activityId = Number(activity?.id);
-      @attendingState = !previousState;
+      attendingState.value = !previousState;
 
       if (currentUserId !== null) {
          if (!previousState) {
@@ -143,14 +143,14 @@ export component ActivityPopover(props: Record<string, any>) {
          }
       }
 
-      @isSubmittingAttendance = true;
+      isSubmittingAttendance.value = true;
       try {
          await onToggleAttendance(activity?.id, previousState);
          if (Number.isFinite(activityId) && activityId > 0) {
             void fetchParticipantsForActivity(activityId);
          }
       } catch {
-         @attendingState = previousState;
+         attendingState.value = previousState;
          if (currentUserId !== null) {
             if (previousState) {
                upsertParticipantAtTop(
@@ -166,12 +166,12 @@ export component ActivityPopover(props: Record<string, any>) {
             }
          }
       } finally {
-         @isSubmittingAttendance = false;
+         isSubmittingAttendance.value = false;
       }
    }
 
    effect(() => {
-      const list = [...@fetchedParticipants];
+      const list = [...fetchedParticipants.value];
 
       list.sort((a, b) => {
          const aIsCurrent = currentUserId !== null && Number(a?.id) === currentUserId;
@@ -193,7 +193,7 @@ export component ActivityPopover(props: Record<string, any>) {
          return String(a?.username ?? "").localeCompare(String(b?.username ?? ""));
       });
 
-      @sortedParticipants = list;
+      sortedParticipants.value = list;
    }, [fetchedParticipants, currentUserId]);
 
    function inviteOthers() {
@@ -215,7 +215,7 @@ export component ActivityPopover(props: Record<string, any>) {
    }
 
    <Popover onClose={closePopover} closeAriaLabel="Close activity details">
-      <article class="activity card activity-popover-card">
+      <article class="activity card">
          <div class="content">
             <section>
                <p class="hosting">{host?.username + " is hosting:"}</p>
@@ -228,24 +228,24 @@ export component ActivityPopover(props: Record<string, any>) {
 
             <section class="details">
                // --- Weather Section ---
-               if (isOutdoorActivity(activity, location) && @weather !== null) {
+               if (isOutdoorActivity(activity, location) && weather.value !== null) {
                   <a class="info-box weather" href={getWeatherUrl(location)} target="_blank" rel="noopener noreferrer">
                      <img
                         class="info-box-background"
-                        src={@weather.img || "/assets/placeholder.jpg"}
+                        src={weather.value.img || "/assets/placeholder.jpg"}
                         alt="Weather background"
                         aria-hidden="true"
                         onerror="this.onerror=null;this.src='/assets/placeholder.jpg';"
                      />
-                     <i class={`fas ${@weather.icon}`} />
+                     <i class={`fas ${weather.value.icon}`} />
                      <div>
                         <h4>
-                           {@weather.description}
-                           {@weather.temperature !== null && @weather.temperature !== undefined ? `, ${@weather.temperature}°C` : ""}
+                           {weather.value.description}
+                           {weather.value.temperature !== null && weather.value.temperature !== undefined ? `, ${weather.value.temperature}°C` : ""}
                         </h4>
                         <p>
-                           {(@weather.windspeed !== null && @weather.windspeed !== undefined ? `Wind: ${Math.round(@weather.windspeed)} km/h` : "") +
-                              (@weather.rainfall !== null && @weather.rainfall !== undefined && @weather.rainfall > 0 ? `, Rain: ${@weather.rainfall} mm` : "")}
+                           {(weather.value.windspeed !== null && weather.value.windspeed !== undefined ? `Wind: ${Math.round(weather.value.windspeed)} km/h` : "") +
+                              (weather.value.rainfall !== null && weather.value.rainfall !== undefined && weather.value.rainfall > 0 ? `, Rain: ${weather.value.rainfall} mm` : "")}
                         </p>
                      </div>
                   </a>
@@ -302,18 +302,18 @@ export component ActivityPopover(props: Record<string, any>) {
             <section class="attendance" aria-label="Attendance">
                <p class="attendance-title">
                   <i class="fas fa-users" />
-                  {`${@fetchedParticipants.length} Attending`}
+                  {`${fetchedParticipants.value.length} Attending`}
                </p>
 
                <div class="attendance-list" role="list">
-                  if (@sortedParticipants.length === 0) {
-                     if (@isLoadingParticipants) {
+                  if (sortedParticipants.value.length === 0) {
+                     if (isLoadingParticipants.value) {
                         <p class="attendance-empty">{"Loading participants..."}</p>
                      } else {
                         <p class="attendance-empty">{"No participants yet. Be the first to join!"}</p>
                      }
                   } else {
-                     for (let participant of @sortedParticipants) {
+                     for (let participant of sortedParticipants.value) {
                         <article class="participant" role="listitem">
                            <img
                               class="participant-avatar"
@@ -329,15 +329,15 @@ export component ActivityPopover(props: Record<string, any>) {
 
                <div class="button-group bottom">
                   <button
-                     class={`button ${@attendingState ? "red" : "green"}`}
+                     class={`button ${attendingState.value ? "red" : "green"}`}
                      type="button"
                      onClick={toggleAttendance}
-                     disabled={!canToggleAttendance || @isSubmittingAttendance}
+                     disabled={!canToggleAttendance || isSubmittingAttendance.value}
                   >
-                     <i class={`fas ${@attendingState ? "fa-user-minus" : "fa-user-plus"}`} />
-                     {@isSubmittingAttendance
+                     <i class={`fas ${attendingState.value ? "fa-user-minus" : "fa-user-plus"}`} />
+                     {isSubmittingAttendance.value
                         ? "Saving..."
-                        : @attendingState
+                        : attendingState.value
                            ? "Leave"
                            : "Join"}
                   </button>
@@ -352,7 +352,7 @@ export component ActivityPopover(props: Record<string, any>) {
    </Popover>
 
    <style scoped>
-      :global(.activity-popover-card) {
+      .activity {
          position: relative;
          font-size: 1.4rem;
          display: flex;
@@ -367,13 +367,13 @@ export component ActivityPopover(props: Record<string, any>) {
       }
 
       @media screen and (min-width: 1280px) {
-         :global(.activity-popover-card) {
+         .activity {
             font-size: 1.6rem;
          }
       }
 
       @media screen and (max-width: 1080px) {
-         :global(.activity-popover-card) {
+         .activity {
             font-size: 1.3rem;
             padding: 1.25rem 1.5rem;
             gap: 1.5rem;
@@ -381,7 +381,7 @@ export component ActivityPopover(props: Record<string, any>) {
       }
 
       @media screen and (max-width: 960px) {
-         :global(.activity-popover-card) {
+         .activity {
             font-size: 1.2rem;
             padding: 1rem 1.25rem;
             gap: 1.25rem;
@@ -389,26 +389,26 @@ export component ActivityPopover(props: Record<string, any>) {
       }
 
       @media screen and (max-width: 900px) {
-         :global(.activity-popover-card) {
+         .activity {
             flex-direction: column;
             aspect-ratio: unset;
             overflow-y: auto;
          }
 
-         :global(.activity-popover-card .aside) {
+         .aside {
             margin-top: 0;
          }
 
-         :global(.activity-popover-card .activity-cover) {
+         .activity-cover {
             aspect-ratio: 16 / 8;
          }
 
-         :global(.activity-popover-card .attendance) {
+         .attendance {
             max-height: 22rem;
          }
       }
 
-      :global(.activity-popover-card .content) {
+      .content {
          display: flex;
          flex-direction: column;
          gap: 1rem;
@@ -416,7 +416,7 @@ export component ActivityPopover(props: Record<string, any>) {
          overflow: hidden;
       }
 
-      :global(.activity-popover-card .aside) {
+      .aside {
          display: flex;
          flex-direction: column;
          flex: 1;
@@ -424,14 +424,14 @@ export component ActivityPopover(props: Record<string, any>) {
          gap: 1rem;
       }
 
-      :global(.activity-popover-card .hosting) {
+      .hosting {
          font-size: 0.85rem;
          letter-spacing: 0.08em;
          text-transform: uppercase;
          font-weight: 700;
       }
 
-      :global(.activity-popover-card .activity-cover) {
+      .activity-cover {
          width: 100%;
          aspect-ratio: 4/3;
          object-fit: cover;
@@ -440,7 +440,7 @@ export component ActivityPopover(props: Record<string, any>) {
          box-shadow: var(--shadow);
       }
 
-      :global(.activity-popover-card .title) {
+      .title {
          position: relative;
          display: -webkit-box;
          -webkit-box-orient: vertical;
@@ -450,7 +450,7 @@ export component ActivityPopover(props: Record<string, any>) {
          width: 100%;
       }
 
-      :global(.activity-popover-card .description) {
+      .description {
          display: -webkit-box;
          -webkit-box-orient: vertical;
          line-clamp: 8;
@@ -459,14 +459,14 @@ export component ActivityPopover(props: Record<string, any>) {
          width: 100%;
       }
 
-      :global(.activity-popover-card .details) {
+      .details {
          margin-top: auto;
          display: flex;
          flex-direction: column;
          gap: 0.6rem;
       }
 
-      :global(.activity-popover-card .info-box) {
+      .info-box {
          position: relative;
          display: flex;
          flex-direction: row;
@@ -484,7 +484,7 @@ export component ActivityPopover(props: Record<string, any>) {
          box-shadow: var(--shadow);
       }
 
-      :global(.activity-popover-card .info-box .info-box-background) {
+      .info-box .info-box-background {
          position: absolute;
          inset: 0;
          width: 100%;
@@ -497,12 +497,12 @@ export component ActivityPopover(props: Record<string, any>) {
             filter 0.6s var(--ease);
       }
 
-      :global(.activity-popover-card .info-box:hover .info-box-background) {
+         .info-box:hover .info-box-background {
          transform: scale(1.05);
          filter: brightness(0.9);
       }
 
-      :global(.activity-popover-card .info-box::before) {
+         .info-box::before {
          content: "";
          position: absolute;
          top: 0%;
@@ -517,42 +517,42 @@ export component ActivityPopover(props: Record<string, any>) {
          transition: width 0.6s var(--ease);
       }
 
-      :global(.activity-popover-card .info-box:hover::before) {
+      .info-box:hover::before {
          width: 55%;
       }
 
-      :global(.activity-popover-card .info-box > i),
-      :global(.activity-popover-card .info-box > div) {
+      .info-box > i,
+      .info-box > div {
          position: relative;
          z-index: 2;
       }
 
-      :global(.activity-popover-card .info-box i) {
+      .info-box i {
          color: white;
          font-size: 2.5em;
          transition: scale 0.4s var(--ease);
       }
 
-      :global(.activity-popover-card .info-box:hover i) {
+      .info-box:hover i {
          scale: 1.1;
       }
 
-      :global(.activity-popover-card .info-box *) {
+      .info-box * {
          color: white;
          mix-blend-mode: normal;
          margin: 0;
          text-shadow: 1px 1px 4px rgba(0, 0, 0, 1);
       }
 
-      :global(.activity-popover-card .info-box h4) {
+      .info-box h4 {
          font-weight: 800;
       }
 
-      :global(.activity-popover-card .info-box p) {
+      .info-box p {
          font-weight: 600;
       }
 
-      :global(.activity-popover-card .attendance) {
+      .attendance {
          display: flex;
          flex-direction: column;
          border-radius: 1rem;
@@ -565,7 +565,7 @@ export component ActivityPopover(props: Record<string, any>) {
          box-shadow: var(--shadow);
       }
 
-      :global(.activity-popover-card .attendance-title) {
+      .attendance-title {
          display: flex;
          justify-content: center;
          align-items: center;
@@ -575,7 +575,7 @@ export component ActivityPopover(props: Record<string, any>) {
          white-space: nowrap;
       }
 
-      :global(.activity-popover-card .attendance-list) {
+      .attendance-list {
          display: flex;
          flex-direction: column;
          gap: 0.8rem;
@@ -584,16 +584,16 @@ export component ActivityPopover(props: Record<string, any>) {
          padding-right: 0.2rem;
       }
 
-      :global(.activity-popover-card .attendance-list::-webkit-scrollbar) {
+      .attendance-list::-webkit-scrollbar {
          width: 0.25rem;
       }
 
-      :global(.activity-popover-card .attendance-list::-webkit-scrollbar-thumb) {
+      .attendance-list::-webkit-scrollbar-thumb {
          border-radius: 1000px;
          background-color: rgba(0, 0, 0, 0.2);
       }
 
-      :global(.activity-popover-card .participant) {
+      .participant {
          display: flex;
          align-items: center;
          gap: 0.6rem;
@@ -601,7 +601,7 @@ export component ActivityPopover(props: Record<string, any>) {
          padding: 0 0.6rem;
       }
 
-      :global(.activity-popover-card .participant-avatar) {
+      .participant-avatar {
          width: 2.4em;
          height: 2.4em;
          aspect-ratio: 1 / 1;
@@ -610,12 +610,12 @@ export component ActivityPopover(props: Record<string, any>) {
          box-shadow: var(--shadow);
       }
 
-      :global(.activity-popover-card .participant-name) {
+      .participant-name {
          font-weight: 600;
          line-height: 1.2;
       }
 
-      :global(.activity-popover-card .attendance-empty) {
+      .attendance-empty {
          margin: 0;
          opacity: 0.75;
       }

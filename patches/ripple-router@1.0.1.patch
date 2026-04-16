@@ -1,0 +1,82 @@
+diff --git a/src/components/Renderer.ripple b/src/components/Renderer.ripple
+index dbb60be734a2b3469447ac8fce80d1c59a461e0e..3e8bc268d1c14d635c399bdafa5df421d5f89fa8 100644
+--- a/src/components/Renderer.ripple
++++ b/src/components/Renderer.ripple
+@@ -6,19 +6,27 @@ import { matchPath } from '../utils/matchPath';
+ import { getParams } from '../utils/getParams';
+ import { SYMBOLS } from '../constants';
+ 
++function normalizePath(path: string): string {
++    if (path.length > 1 && path.endsWith('/')) {
++        return path.slice(0, -1);
++    }
++
++    return path;
++}
++
+ export component Renderer() {
+     const routes = RoutesContext.get();
+     let routeMatched = track(() => false);
+ 
+     // Get location pathname
+-    let path = track(() => window.location.pathname);
+-    let locationPathFragments = track(() => formatPath(@path));
++    let path = track(() => normalizePath(window.location.pathname));
++    let locationPathFragments = track(() => formatPath(path.value));
+     let element = track(null);
+     let params = track(null);
+ 
+     effect(() => {
+         function listenToNavigation() {
+-            @path = window.location.pathname;
++            path.value = normalizePath(window.location.pathname);
+         }
+ 
+         window.addEventListener('popstate', listenToNavigation);
+@@ -26,22 +34,27 @@ export component Renderer() {
+     })
+ 
+     effect(() => {
++        routeMatched.value = false;
++        element.value = null;
++        params.value = null;
++
+         for (const route of routes.keys()) {
+             const routePathFragments = formatPath(route);
+ 
+-            if (matchPath(routePathFragments, @locationPathFragments)) {
+-                @routeMatched = true;
+-                @element = routes.get(route);
+-                @params = getParams(routePathFragments, @locationPathFragments);
++            if (matchPath(routePathFragments, locationPathFragments.value)) {
++                routeMatched.value = true;
++                element.value = routes.get(route);
++                params.value = getParams(routePathFragments, locationPathFragments.value);
++                break;
+             }
+         }
+     })
+ 
+-    if (@routeMatched) {
+-        <@element params={@params} />
++    if (routeMatched.value) {
++        <@element params={params.value} />
+     }
+     
+-    if (!@routeMatched) {
++    if (!routeMatched.value) {
+         const CustomNotFound = routes.get(SYMBOLS.CATCH_ALL);
+ 
+         if (CustomNotFound) {
+diff --git a/src/components/Router.ripple b/src/components/Router.ripple
+index cf1b812e90e2858aa8409b0ab5e4cba07ec3a9eb..fe39be9dd2a8c5c125169d62e5e15e5251a2a91e 100644
+--- a/src/components/Router.ripple
++++ b/src/components/Router.ripple
+@@ -8,6 +8,6 @@ import { Renderer } from '../components/Renderer.ripple';
+  * @returns The router component.
+  */
+ export component Router(props) {
+-	<props.children />
++	{props.children}
+     <Renderer />
+ }

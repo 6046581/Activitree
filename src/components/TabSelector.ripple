@@ -26,11 +26,11 @@ export component TabSelector(props: TabSelectorProps) {
 
    effect(() => {
       function onLocationChange() {
-         @currentPath = window.location.pathname;
+         currentPath.value = window.location.pathname;
 
          // Keep route-based tabs in sync with URL instead of stale internal state.
-         if (isRouteTabId(@internalActiveTabId)) {
-            @internalActiveTabId = "";
+         if (isRouteTabId(internalActiveTabId.value)) {
+            internalActiveTabId.value = "";
          }
       }
 
@@ -39,7 +39,7 @@ export component TabSelector(props: TabSelectorProps) {
    });
 
    function getActiveTabId(): string {
-      return props?.activeTabId ?? @internalActiveTabId;
+      return props?.activeTabId ?? internalActiveTabId.value;
    }
 
    function isRouteTabId(tabId: string): boolean {
@@ -69,7 +69,7 @@ export component TabSelector(props: TabSelectorProps) {
          return false;
       }
 
-      const path = @currentPath;
+      const path = currentPath.value;
 
       if (tab.href === "/") {
          return path === "/";
@@ -88,7 +88,7 @@ export component TabSelector(props: TabSelectorProps) {
 
    function handleTabClick(event: Event, tab: TabItem) {
       if (tab.id) {
-         @internalActiveTabId = tab.id;
+         internalActiveTabId.value = tab.id;
       }
 
       if (tab.onClick) {
@@ -123,11 +123,11 @@ export component TabSelector(props: TabSelectorProps) {
       const activeIndex = findActiveTabIndex();
 
       if (activeIndex >= 0) {
-         @lastActiveTabIndex = activeIndex;
+         lastActiveTabIndex.value = activeIndex;
          return activeIndex;
       }
 
-      return Math.min(@lastActiveTabIndex, Math.max(0, tabs.length - 1));
+      return Math.min(lastActiveTabIndex.value, Math.max(0, tabs.length - 1));
    }
 
    function hasActiveTab(): boolean {
@@ -135,7 +135,7 @@ export component TabSelector(props: TabSelectorProps) {
    }
 
    function getContainerClass(): string {
-      return `tab-selector ${hasActiveTab() ? "has-active" : ""} ${@suppressSlideOnShow ? "no-slide" : ""}`;
+      return `tab-selector ${hasActiveTab() ? "has-active" : ""} ${suppressSlideOnShow.value ? "no-slide" : ""}`;
    }
 
    function getContainerStyle(): string {
@@ -145,19 +145,19 @@ export component TabSelector(props: TabSelectorProps) {
    effect(() => {
       const active = hasActiveTab();
 
-      if (active && !@wasActive) {
-         @suppressSlideOnShow = true;
+      if (active && !wasActive.value) {
+         suppressSlideOnShow.value = true;
 
          const frameId = requestAnimationFrame(() => {
-            @suppressSlideOnShow = false;
+            suppressSlideOnShow.value = false;
          });
 
-         @wasActive = active;
+         wasActive.value = active;
          return () => cancelAnimationFrame(frameId);
       }
 
-      @suppressSlideOnShow = false;
-      @wasActive = active;
+      suppressSlideOnShow.value = false;
+      wasActive.value = active;
    });
 
    <div class={getContainerClass()} style={getContainerStyle()}>

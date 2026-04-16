@@ -56,14 +56,14 @@ export component CreateActivityPopover(props: CreateActivityPopoverProps) {
    let isSubmitting = track(false);
 
    let selectedLocation = track(() => {
-      return @locations.find((entry) => String(entry.id) === @locationId) ?? null;
+      return locations.value.find((entry) => String(entry.id) === locationId.value) ?? null;
    });
 
    let isFormValid = track(() => {
-      const cleanTitle = @title.trim();
-      const hasValidLocation = !!@locationId && Number(@locationId) > 0;
+      const cleanTitle = title.value.trim();
+      const hasValidLocation = !!locationId.value && Number(locationId.value) > 0;
 
-      return !!cleanTitle && !!@activityType && !!@status && !!@date && !!@time && hasValidLocation;
+      return !!cleanTitle && !!activityType.value && !!status.value && !!date.value && !!time.value && hasValidLocation;
    });
 
    function closePopover() {
@@ -82,15 +82,15 @@ export component CreateActivityPopover(props: CreateActivityPopoverProps) {
    function handlePhotoInput(event: Event) {
       const target = event.target;
       if (!(target instanceof HTMLInputElement) || !target.files || target.files.length === 0) {
-         @photoFile = null;
-         @photoPreviewUrl = "/assets/placeholder.jpg";
+         photoFile.value = null;
+         photoPreviewUrl.value = "/assets/placeholder.jpg";
          return;
       }
 
       const selected = target.files[0] ?? null;
       if (!selected) {
-         @photoFile = null;
-         @photoPreviewUrl = "/assets/placeholder.jpg";
+         photoFile.value = null;
+         photoPreviewUrl.value = "/assets/placeholder.jpg";
          return;
       }
 
@@ -98,70 +98,70 @@ export component CreateActivityPopover(props: CreateActivityPopoverProps) {
       if (!ACCEPTED_IMAGE_TYPES.includes(mimeType)) {
          notyf.error("Invalid image type. Please use JPG, PNG, WEBP, or GIF.");
          target.value = "";
-         @photoFile = null;
-         @photoPreviewUrl = "/assets/placeholder.jpg";
+         photoFile.value = null;
+         photoPreviewUrl.value = "/assets/placeholder.jpg";
          return;
       }
 
       if (selected.size <= 0 || selected.size > MAX_IMAGE_BYTES) {
          notyf.error("Image is too large. Maximum size is 16 MB.");
          target.value = "";
-         @photoFile = null;
-         @photoPreviewUrl = "/assets/placeholder.jpg";
+         photoFile.value = null;
+         photoPreviewUrl.value = "/assets/placeholder.jpg";
          return;
       }
 
-      @photoFile = selected;
+      photoFile.value = selected;
 
-      @photoPreviewUrl = URL.createObjectURL(selected);
+      photoPreviewUrl.value = URL.createObjectURL(selected);
    }
 
    async function submitForm(event: Event) {
       event.preventDefault();
 
-      if (typeof onCreate !== "function" || @isSubmitting) {
+      if (typeof onCreate !== "function" || isSubmitting.value) {
          if (typeof onCreate !== "function") {
             notyf.error("Create action is not available right now.");
          }
          return;
       }
 
-      const cleanTitle = @title.trim();
-      if (!cleanTitle || !@activityType || !@status || !@date || !@time || !@locationId) {
+      const cleanTitle = title.value.trim();
+      if (!cleanTitle || !activityType.value || !status.value || !date.value || !time.value || !locationId.value) {
          notyf.error("Please fill in title, type, status, date, time, and location.");
          return;
       }
 
-      const parsedLocationId = Number(@locationId);
+      const parsedLocationId = Number(locationId.value);
       if (!Number.isFinite(parsedLocationId) || parsedLocationId <= 0) {
          notyf.error("Please select a valid location.");
          return;
       }
 
-      @isSubmitting = true;
+      isSubmitting.value = true;
       try {
          const payload: CreateActivityPayload = {
             title: cleanTitle,
-            description: @description.trim(),
-            activity_type: @activityType,
-            status: @status,
-            activity_time: `${@date} ${@time}:00`,
+            description: description.value.trim(),
+            activity_type: activityType.value,
+            status: status.value,
+            activity_time: `${date.value} ${time.value}:00`,
             location_id: parsedLocationId,
          };
 
          await onCreate(
             {
                payload,
-               photoFile: @photoFile,
+               photoFile: photoFile.value,
             },
          );
       } finally {
-         @isSubmitting = false;
+         isSubmitting.value = false;
       }
    }
 
    <Popover onClose={closePopover} closeAriaLabel="Close create activity">
-      <article class="create-activity card create-activity-popover-card">
+      <article class="create-activity card">
          <section>
             <p class="action">{"Creating:"}</p>
             <h4 class="title">{"New Activity"}</h4>
@@ -174,12 +174,12 @@ export component CreateActivityPopover(props: CreateActivityPopoverProps) {
                      <span>{"Title"}</span>
                      <input
                         type="text"
-                        value={@title}
+                        value={title.value}
                         placeholder="What are you planning?"
                         maxlength="100"
                         required
-                        disabled={@isSubmitting}
-                        onInput={(event: Event) => updateInputValue(event, (value) => (@title = value))}
+                        disabled={isSubmitting.value}
+                        onInput={(event: Event) => updateInputValue(event, (value) => (title.value = value))}
                      />
                   </label>
 
@@ -187,23 +187,23 @@ export component CreateActivityPopover(props: CreateActivityPopoverProps) {
                      <span>{"Description"}</span>
                      <textarea
                         rows={4}
-                        value={@description}
+                        value={description.value}
                         placeholder="What should people bring and expect?"
                         maxlength="480"
-                        disabled={@isSubmitting}
-                        onInput={(event: Event) => updateInputValue(event, (value) => (@description = value))}
+                        disabled={isSubmitting.value}
+                        onInput={(event: Event) => updateInputValue(event, (value) => (description.value = value))}
                      />
-                     <p class="field-helper">{`${@description.length}/480 characters`}</p>
+                     <p class="field-helper">{`${description.value.length}/480 characters`}</p>
                   </label>
 
                   <div class="field-grid">
                      <label>
                         <span>{"Type"}</span>
                         <select
-                           value={@activityType}
+                           value={activityType.value}
                            required
-                           disabled={@isSubmitting}
-                           onInput={(event: Event) => updateInputValue(event, (value) => (@activityType = value as ActivityType))}
+                           disabled={isSubmitting.value}
+                           onInput={(event: Event) => updateInputValue(event, (value) => (activityType.value = value as ActivityType))}
                         >
                            <option value="outdoor">{"Outdoor"}</option>
                            <option value="indoor">{"Indoor"}</option>
@@ -213,10 +213,10 @@ export component CreateActivityPopover(props: CreateActivityPopoverProps) {
                      <label>
                         <span>{"Status"}</span>
                         <select
-                           value={@status}
+                           value={status.value}
                            required
-                           disabled={@isSubmitting}
-                           onInput={(event: Event) => updateInputValue(event, (value) => (@status = value as ActivityStatus))}
+                           disabled={isSubmitting.value}
+                           onInput={(event: Event) => updateInputValue(event, (value) => (status.value = value as ActivityStatus))}
                         >
                            <option value="planned">{"Planned"}</option>
                            <option value="cancelled">{"Cancelled"}</option>
@@ -232,10 +232,10 @@ export component CreateActivityPopover(props: CreateActivityPopoverProps) {
                         <span>{"Date"}</span>
                         <input
                            type="date"
-                           value={@date}
+                           value={date.value}
                            required
-                           disabled={@isSubmitting}
-                           onInput={(event: Event) => updateInputValue(event, (value) => (@date = value))}
+                           disabled={isSubmitting.value}
+                           onInput={(event: Event) => updateInputValue(event, (value) => (date.value = value))}
                         />
                      </label>
 
@@ -243,10 +243,10 @@ export component CreateActivityPopover(props: CreateActivityPopoverProps) {
                         <span>{"Time"}</span>
                         <input
                            type="time"
-                           value={@time}
+                           value={time.value}
                            required
-                           disabled={@isSubmitting}
-                           onInput={(event: Event) => updateInputValue(event, (value) => (@time = value))}
+                           disabled={isSubmitting.value}
+                           onInput={(event: Event) => updateInputValue(event, (value) => (time.value = value))}
                         />
                      </label>
                   </div>
@@ -254,17 +254,17 @@ export component CreateActivityPopover(props: CreateActivityPopoverProps) {
                   <label>
                      <span>{"Location"}</span>
                      <select
-                        value={@locationId}
+                        value={locationId.value}
                         required
-                        disabled={@isSubmitting || @locations.length === 0}
-                        onInput={(event: Event) => updateInputValue(event, (value) => (@locationId = value))}
+                        disabled={isSubmitting.value || locations.value.length === 0}
+                        onInput={(event: Event) => updateInputValue(event, (value) => (locationId.value = value))}
                      >
                         <option value="">{"No location selected"}</option>
-                        for (let location of @locations) {
+                        for (let location of locations.value) {
                            <option value={String(location.id)}>{location.name + " - " + location.address}</option>
                         }
                      </select>
-                     if (@locations.length === 0) {
+                     if (locations.value.length === 0) {
                         <p class="field-helper">{"No locations available yet."}</p>
                      }
                   </label>
@@ -273,14 +273,14 @@ export component CreateActivityPopover(props: CreateActivityPopoverProps) {
                <section class="form-section">
                   <label>
                      <span>{"Activity photo"}</span>
-                     <input type="file" accept="image/png,image/jpeg,image/webp,image/gif" disabled={@isSubmitting} onInput={handlePhotoInput} />
+                     <input type="file" accept="image/png,image/jpeg,image/webp,image/gif" disabled={isSubmitting.value} onInput={handlePhotoInput} />
                      <p class="field-helper">{"Allowed: JPG, PNG, WEBP, GIF (max 16 MB)."}</p>
                   </label>
                </section>
 
                <div class="button-group bottom">
-                  <button class="button green" type="submit" disabled={@isSubmitting || !@isFormValid}>
-                     if (@isSubmitting) {
+                  <button class="button green" type="submit" disabled={isSubmitting.value || !isFormValid.value}>
+                     if (isSubmitting.value) {
                         <i class="fas fa-spinner fa-spin" />
                         {"Creating..."}
                      } else {
@@ -294,25 +294,25 @@ export component CreateActivityPopover(props: CreateActivityPopoverProps) {
             <aside class="preview" aria-label="Activity preview">
                <h5>{"Preview"}</h5>
                <article class="preview-card">
-                  <img src={@photoPreviewUrl} alt="Activity cover preview" />
+                  <img src={photoPreviewUrl.value} alt="Activity cover preview" />
 
                   <div class="preview-text">
-                     <p class="preview-title">{@title.trim() || "Untitled activity"}</p>
-                     <p class="preview-description">{@description.trim() || "No description yet."}</p>
+                     <p class="preview-title">{title.value.trim() || "Untitled activity"}</p>
+                     <p class="preview-description">{description.value.trim() || "No description yet."}</p>
                   </div>
 
                   <div class="preview-meta">
                      <p class="icon-text">
                         <i class="fas fa-clock" />
-                        {(@date || "Date") + " " + (@time || "Time")}
+                        {(date.value || "Date") + " " + (time.value || "Time")}
                      </p>
                      <p class="icon-text">
-                        <i class={`fas ${@activityType === "outdoor" ? "fa-tree" : "fa-house"}`} />
-                        {@activityType === "outdoor" ? "Outdoor" : "Indoor"}
+                        <i class={`fas ${activityType.value === "outdoor" ? "fa-tree" : "fa-house"}`} />
+                        {activityType.value === "outdoor" ? "Outdoor" : "Indoor"}
                      </p>
                      <p class="icon-text">
                         <i class="fas fa-location-dot" />
-                        {@selectedLocation ? @selectedLocation.address : "No location selected"}
+                        {selectedLocation.value ? selectedLocation.value.address : "No location selected"}
                      </p>
                   </div>
                </article>
@@ -322,7 +322,7 @@ export component CreateActivityPopover(props: CreateActivityPopoverProps) {
    </Popover>
 
    <style scoped>
-      :global(.create-activity-popover-card) {
+      .create-activity {
          width: min(72rem, 100%);
          max-height: 100%;
          overflow: auto;
@@ -332,26 +332,26 @@ export component CreateActivityPopover(props: CreateActivityPopoverProps) {
          animation: popover-card-in 0.6s var(--ease) both;
       }
 
-      :global(.create-activity-popover-card .action) {
+      .action {
          font-size: 0.85rem;
          letter-spacing: 0.08em;
          text-transform: uppercase;
          font-weight: 700;
       }
 
-      :global(.create-activity-popover-card .body) {
+      .body {
          display: flex;
          gap: 1.5rem;
       }
 
-      :global(.create-activity-popover-card .create-form) {
+      .create-form {
          display: flex;
          flex-direction: column;
          flex: 1.5;
          gap: 1rem;
       }
 
-      :global(.create-activity-popover-card .form-section) {
+      .form-section {
          display: flex;
          flex-direction: column;
          gap: 0.75rem;
@@ -360,20 +360,20 @@ export component CreateActivityPopover(props: CreateActivityPopoverProps) {
          padding: 0.9rem;
       }
 
-      :global(.create-activity-popover-card .field-helper) {
+      .field-helper {
          font-size: 0.78rem;
          opacity: 0.8;
          margin-top: -0.15rem;
       }
 
-      :global(.create-activity-popover-card .field-grid) {
+      .field-grid {
          display: grid;
          grid-template-columns: repeat(2, minmax(0, 1fr));
          gap: 0.65rem;
       }
 
-      :global(.create-activity-popover-card textarea),
-      :global(.create-activity-popover-card select) {
+      textarea,
+      select {
          background-color: #ffffff;
          border: none;
          border-radius: 1rem;
@@ -383,17 +383,17 @@ export component CreateActivityPopover(props: CreateActivityPopoverProps) {
          outline: none;
       }
 
-      :global(.create-activity-popover-card textarea) {
+      textarea {
          resize: vertical;
          min-height: 5rem;
       }
 
-      :global(.create-activity-popover-card textarea:focus),
-      :global(.create-activity-popover-card select:focus) {
+      textarea:focus,
+      select:focus {
          box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.15);
       }
 
-      :global(.create-activity-popover-card .preview) {
+      .preview {
          display: flex;
          flex-direction: column;
          flex: 1;
@@ -404,30 +404,30 @@ export component CreateActivityPopover(props: CreateActivityPopoverProps) {
          box-shadow: var(--shadow);
       }
 
-      :global(.create-activity-popover-card .preview-card) {
+      .preview-card {
          display: flex;
          flex-direction: column;
          gap: 0.75rem;
       }
 
-      :global(.create-activity-popover-card .preview-card img) {
+      .preview-card img {
          width: 100%;
          aspect-ratio: 16 / 9;
          object-fit: cover;
          box-shadow: var(--shadow);
       }
 
-      :global(.create-activity-popover-card .preview-text) {
+      .preview-text {
          display: flex;
          flex-direction: column;
          gap: 0.35rem;
       }
 
-      :global(.create-activity-popover-card .preview-title) {
+      .preview-title {
          font-weight: 700;
       }
 
-      :global(.create-activity-popover-card .preview-description) {
+      .preview-description {
          opacity: 0.85;
          font-size: 0.95rem;
          line-clamp: 4;
@@ -437,13 +437,13 @@ export component CreateActivityPopover(props: CreateActivityPopoverProps) {
          overflow: hidden;
       }
 
-      :global(.create-activity-popover-card .preview-meta) {
+      .preview-meta {
          display: flex;
          flex-direction: column;
          gap: 0.45rem;
       }
 
-      :global(.create-activity-popover-card .preview-meta .icon-text) {
+      .preview-meta .icon-text {
          font-size: 0.95rem;
       }
 
@@ -460,13 +460,13 @@ export component CreateActivityPopover(props: CreateActivityPopoverProps) {
       }
 
       @media screen and (max-width: 980px) {
-         :global(.create-activity-popover-card .body) {
+         .body {
             grid-template-columns: 1fr;
          }
       }
 
       @media screen and (max-width: 640px) {
-         :global(.create-activity-popover-card .field-grid) {
+         .field-grid {
             grid-template-columns: 1fr;
          }
       }

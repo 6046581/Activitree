@@ -27,10 +27,10 @@ export component ProfilePage() {
          return;
       }
 
-      @userId = Number(user.id);
-      @username = user.username;
-      @email = user.email;
-      @avatarUrl = user.avatar_url && user.avatar_url.trim().length > 0 ? user.avatar_url : DEFAULT_PROFILE_IMAGE;
+      userId.value = Number(user.id);
+      username.value = user.username;
+      email.value = user.email;
+      avatarUrl.value = user.avatar_url && user.avatar_url.trim().length > 0 ? user.avatar_url : DEFAULT_PROFILE_IMAGE;
    }
 
    async function handleAvatarUpload(event: Event) {
@@ -40,8 +40,8 @@ export component ProfilePage() {
       }
 
       const file = target.files[0];
-      const id = @userId;
-      if (!file || id == null || @isUploadingAvatar) {
+      const id = userId.value;
+      if (!file || id == null || isUploadingAvatar.value) {
          return;
       }
 
@@ -58,7 +58,7 @@ export component ProfilePage() {
          return;
       }
 
-      @isUploadingAvatar = true;
+      isUploadingAvatar.value = true;
       try {
          const formData = new FormData();
          formData.append("file", file);
@@ -86,12 +86,12 @@ export component ProfilePage() {
          const uploadedUrlValue = json?.["avatar_url"];
          const uploadedUrl =
             typeof uploadedUrlValue === "string" ? uploadedUrlValue.trim() : "";
-         @avatarUrl = uploadedUrl || DEFAULT_PROFILE_IMAGE;
+         avatarUrl.value = uploadedUrl || DEFAULT_PROFILE_IMAGE;
          notyf.success("Profile picture updated.");
       } catch {
          notyf.error("Could not reach the API. Please try again later.");
       } finally {
-         @isUploadingAvatar = false;
+         isUploadingAvatar.value = false;
          target.value = "";
       }
    }
@@ -107,10 +107,10 @@ export component ProfilePage() {
 
    <article id="user-header" class="page-enter">
       <a id="avatar">
-         <img src={@avatarUrl} alt="avatar" onerror={`this.onerror=null;this.src='${DEFAULT_PROFILE_IMAGE}';`} />
-         <p>{@username}</p>
+         <img src={avatarUrl.value} alt="avatar" onerror={`this.onerror=null;this.src='${DEFAULT_PROFILE_IMAGE}';`} />
+         <p>{username.value}</p>
       </a>
-      <h2>{"Hiya, " + @username + "!"}</h2>
+      <h2>{"Hiya, " + username.value + "!"}</h2>
 
       <a id="logout-button" class="button red" type="button" onClick={handleLogout}>
          {"Logout"}
@@ -123,11 +123,11 @@ export component ProfilePage() {
          <form action="" method="post">
             <label for="username">
                <span>{"Username"}</span>
-               <input class="profile-input" type="text" name="username" id="username" placeholder="Username" value={@username} />
+               <input class="profile-input" type="text" name="username" id="username" placeholder="Username" value={username.value} />
             </label>
             <label for="email">
                <span>{"Email"}</span>
-               <input class="profile-input" type="email" name="email" id="email" placeholder="Email" value={@email} />
+               <input class="profile-input" type="email" name="email" id="email" placeholder="Email" value={email.value} />
             </label>
             <label for="password">
                <span>{"Password"}</span>
@@ -142,12 +142,12 @@ export component ProfilePage() {
                   name="avatar-upload"
                   id="avatar-upload"
                   accept="image/png,image/jpeg,image/webp,image/gif"
-                  disabled={@isUploadingAvatar}
+                  disabled={isUploadingAvatar.value}
                   onInput={handleAvatarUpload}
                />
             </label>
 
-            if (@isUploadingAvatar) {
+            if (isUploadingAvatar.value) {
                <p>{"Uploading profile picture..."}</p>
             }
          </form>
