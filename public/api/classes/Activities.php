@@ -207,6 +207,109 @@ class Activities
       return $stmt->execute();
    }
 
+   public function getOrCreateInviteToken($activityId, $createdBy = null)
+   {
+      $this->ensureInviteLinksTable();
+
+      $existing = $this->getInviteTokenByActivityId($activityId);
+      if ($existing) {
+         return $existing;
+      }
+
+      for ($attempt = 0; $attempt < 5; $attempt++) {
+         $token = $this->generateInviteToken();
+
+         try {
+            $query = "INSERT INTO activity_invite_links (activity_id, token, created_by) VALUES (:activity_id, :token, :created_by)";
+            $stmt = $this->conn->prepare($query);
+
+            $stmt->bindValue(":activity_id", $activityId, PDO::PARAM_INT);
+            $stmt->bindValue(":token", $token);
+            if ($createdBy === null) {
+               $stmt->bindValue(":created_by", null, PDO::PARAM_NULL);
+            } else {
+               $stmt->bindValue(":created_by", $createdBy, PDO::PARAM_INT);
+            }
+
+            if ($stmt->execute()) {
+               return $token;
+            }
+         } catch (PDOException $e) {
+            if ((string) $e->getCode() !== "23000") {
+               throw $e;
+            }
+
+            $existing = $this->getInviteTokenByActivityId($activityId);
+            if ($existing) {
+               return $existing;
+            }
+         }
+      }
+
+      return false;
+   }
+
+   public function getActivityByInviteToken($token)
+   {
+      $this->ensureInviteLinksTable();
+
+      $query =
+         "SELECT a.id, a.title, a.description, a.activity_type, a.status, a.activity_time, a.location_id, a.photo_path, a.created_by, u.username AS created_by_username
+          FROM activity_invite_links ail
+          INNER JOIN " .
+         $this->table .
+         " a ON a.id = ail.activity_id
+          LEFT JOIN users u ON u.id = a.created_by
+          WHERE ail.token = :token
+          LIMIT 1";
+      $stmt = $this->conn->prepare($query);
+
+      $stmt->bindValue(":token", $token);
+      $stmt->execute();
+
+      $row = $stmt->fetch(PDO::FETCH_ASSOC);
+      if (!$row) {
+         return false;
+      }
+
+      $rows = $this->attachParticipantIds([$row]);
+      return $rows[0] ?? false;
+   }
+
+   private function getInviteTokenByActivityId($activityId)
+   {
+      $query = "SELECT token FROM activity_invite_links WHERE activity_id = :activity_id LIMIT 1";
+      $stmt = $this->conn->prepare($query);
+
+      $stmt->bindValue(":activity_id", $activityId, PDO::PARAM_INT);
+      $stmt->execute();
+
+      $token = $stmt->fetchColumn();
+      return $token ? (string) $token : false;
+   }
+
+   private function generateInviteToken()
+   {
+      return rtrim(strtr(base64_encode(random_bytes(18)), "+/", "-_"), "=");
+   }
+
+   private function ensureInviteLinksTable()
+   {
+      $query = "CREATE TABLE IF NOT EXISTS activity_invite_links (
+         id INT AUTO_INCREMENT PRIMARY KEY,
+         activity_id INT NOT NULL,
+         token VARCHAR(64) NOT NULL,
+         created_by INT NULL,
+         created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+         UNIQUE KEY unique_activity_invite_link (activity_id),
+         UNIQUE KEY unique_activity_invite_token (token),
+         FOREIGN KEY (activity_id) REFERENCES activities(id) ON DELETE CASCADE,
+         FOREIGN KEY (created_by) REFERENCES users(id) ON DELETE SET NULL
+      )";
+
+      $this->conn->exec($query);
+   }
+
    private function attachParticipantIds(array $activities)
    {
       if (empty($activities)) {

@@ -26,12 +26,14 @@ $routes = [
    "GET /activities" => "ActivitiesController@getAllActivities",
    "GET /activities/{id}" => "ActivitiesController@getActivityById",
    "GET /activities/{id}/participants" => "ActivitiesController@getActivityParticipants",
+   "POST /activities/{id}/invite-link" => "ActivitiesController@createActivityInviteLink",
    "POST /activities/{id}/join" => "ActivitiesController@joinActivity",
    "DELETE /activities/{id}/leave" => "ActivitiesController@leaveActivity",
    "POST /activities" => "ActivitiesController@createActivity",
    "PUT /activities/{id}" => "ActivitiesController@updateActivity",
    "POST /activities/{id}/photo" => "ActivitiesController@uploadActivityPhoto",
    "DELETE /activities/{id}" => "ActivitiesController@deleteActivity",
+   "GET /invites/{token}" => "ActivitiesController@getActivityByInviteToken",
 
    // Locations
    "GET /locations" => "LocationsController@getAllLocations",

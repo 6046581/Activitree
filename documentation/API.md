@@ -122,6 +122,21 @@ Return one activity.
 - Response: `200` with `{ "data": { ... } }`
 - Errors: `400` for an invalid id, `404` if missing
 
+### `POST /activities/{id}/invite-link`
+
+Create or return the shareable invite link token for an activity.
+
+- Auth: optional
+- Success: `200` with `{ "data": { "activity_id": <id>, "token": "...", "invite_path": "/invite/..." } }`
+- Errors: `400` for an invalid id, `404` if the activity does not exist
+
+### `GET /invites/{token}`
+
+Resolve an invite token to its activity. This route is public so guests can open invite links.
+
+- Response: `200` with `{ "data": { "activity": { ... } } }`
+- Errors: `400` for an invalid token, `404` if the invite does not exist
+
 ### `POST /activities`
 
 Create an activity.
@@ -204,7 +219,7 @@ Return one location.
 
 ## Data Model
 
-Core tables: `users`, `activities`, `locations`, `activity_participants`, `invitations`, and `notifications`.
+Core tables: `users`, `activities`, `locations`, `activity_participants`, `invitations`, `activity_invite_links`, and `notifications`.
 
 ## Implementation Notes
 

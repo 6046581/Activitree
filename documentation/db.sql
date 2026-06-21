@@ -102,6 +102,23 @@ CREATE TABLE invitations (
         ON DELETE CASCADE
 );
 
+CREATE TABLE activity_invite_links (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    activity_id INT NOT NULL,
+    token VARCHAR(64) NOT NULL,
+    created_by INT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+
+    UNIQUE KEY unique_activity_invite_link (activity_id),
+    UNIQUE KEY unique_activity_invite_token (token),
+
+    FOREIGN KEY (activity_id) REFERENCES activities(id)
+        ON DELETE CASCADE,
+
+    FOREIGN KEY (created_by) REFERENCES users(id)
+        ON DELETE SET NULL
+);
+
 -- ======================================
 -- NOTIFICATIONS
 -- ======================================

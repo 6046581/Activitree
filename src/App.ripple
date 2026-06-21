@@ -6,6 +6,7 @@ import { HomePage } from "./pages/HomePage.ripple";
 import { ActivitiesPage } from "./pages/ActivitiesPage.ripple";
 import { ProfilePage } from "./pages/ProfilePage.ripple";
 import { LoginPage } from "./pages/LoginPage.ripple";
+import { InvitePage } from "./pages/InvitePage.ripple";
 import { NotFoundPage } from "./pages/NotFoundPage.ripple";
 
 // Components
@@ -40,6 +41,7 @@ export component App() {
          <Route path="/" element={HomePage} />
          <Route path="/activities" element={ActivitiesPage} />
          <Route path="/activities/:mode" element={ActivitiesPage} />
+         <Route path="/invite/:token" element={InvitePage} />
          <Route path="/profile" element={ProfilePage} />
          <Route path="/login" element={LoginPage} />
          <Route path="**" element={NotFoundPage} />

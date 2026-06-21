@@ -42,6 +42,60 @@ class ActivitiesController
       return ["code" => 200, "data" => ["data" => $row]];
    }
 
+   public function createActivityInviteLink($params, $data)
+   {
+      $id = isset($params[0]) ? (int) $params[0] : null;
+      if (!$id) {
+         return ["code" => 400, "data" => ["error" => "Invalid id"]];
+      }
+
+      $existing = $this->model->getActivityById($id);
+      if (!$existing) {
+         return ["code" => 404, "data" => ["error" => "Not found"]];
+      }
+
+      $auth = $this->getAuthenticatedUserOrNull();
+      $token = $this->model->getOrCreateInviteToken($id, $auth["id"] ?? null);
+      if (!$token) {
+         return ["code" => 500, "data" => ["error" => "Failed to create invite link"]];
+      }
+
+      return [
+         "code" => 200,
+         "data" => [
+            "data" => [
+               "activity_id" => $id,
+               "token" => $token,
+               "invite_path" => "/invite/" . $token,
+            ],
+         ],
+      ];
+   }
+
+   public function getActivityByInviteToken($params, $data)
+   {
+      $token = isset($params[0]) ? trim((string) $params[0]) : "";
+      if ($token === "" || !preg_match("/^[A-Za-z0-9_-]{16,64}$/", $token)) {
+         return ["code" => 400, "data" => ["error" => "Invalid invite token"]];
+      }
+
+      $row = $this->model->getActivityByInviteToken($token);
+      if (!$row) {
+         return ["code" => 404, "data" => ["error" => "Invite not found"]];
+      }
+
+      $row["photo_url"] = !empty($row["photo_path"]) ? buildPublicFileUrl($row["photo_path"]) : null;
+
+      return [
+         "code" => 200,
+         "data" => [
+            "data" => [
+               "activity" => $row,
+            ],
+         ],
+      ];
+   }
+
    public function createActivity($params, $data)
    {
       // Check auth
@@ -306,5 +360,16 @@ class ActivitiesController
             "photo_url" => $saved["url"],
          ],
       ];
+   }
+
+   private function getAuthenticatedUserOrNull()
+   {
+      $token = getRequestToken();
+      if (!$token) {
+         return null;
+      }
+
+      $users = new Users();
+      return $users->getUserByToken($token) ?: null;
    }
 }

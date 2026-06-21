@@ -5,6 +5,8 @@ import { fetchWeather, isOutdoorActivity, getWeatherUrl } from "../weather";
 import type { WeatherResult } from "../weather";
 import { getDateLabel, getGoogleCalendarLink, getTimeOfDayImage } from "../date";
 import { getLocationMapUrl, getLocationLabel, getLocationPreviewUrl } from "../location";
+import { getAuthHeaders } from "../auth";
+import { notyf } from "../notyf";
 import { Popover } from "../components/Popover.ripple";
 
 const AVATAR_PLACEHOLDER = "/assets/avatar_placeholder.jpg";
@@ -28,10 +30,30 @@ export component ActivityPopover(props: Record<string, any>) {
    let fetchedParticipants = track<Array<{ id: number; username: string; joinedAt: string; avatar: string }>>([]);
    let sortedParticipants = track<Array<{ id: number; username: string; joinedAt: string; avatar: string }>>([]);
    let isLoadingParticipants = track(false);
+   let isInviteDialogOpen = track(false);
+   let inviteLink = track("");
+   let inviteError = track("");
+   let isInviteLinkLoading = track(false);
+   let isCopyingInviteLink = track(false);
+   let hasCopiedInviteLink = track(false);
+   let copyInviteResetTimer: number | null = null;
 
    effect(() => {
       attendingState.value = isAttending;
    }, [isAttending]);
+
+   effect(() => {
+      isInviteDialogOpen.value = false;
+      inviteLink.value = "";
+      inviteError.value = "";
+      isInviteLinkLoading.value = false;
+      isCopyingInviteLink.value = false;
+      hasCopiedInviteLink.value = false;
+      if (copyInviteResetTimer !== null) {
+         window.clearTimeout(copyInviteResetTimer);
+         copyInviteResetTimer = null;
+      }
+   }, [activity?.id]);
 
    function resolveAvatarUrl(row: Record<string, any>, id: number) {
       const avatarUrl = String(row?.["avatar_url"] ?? "").trim();
@@ -196,9 +218,114 @@ export component ActivityPopover(props: Record<string, any>) {
       sortedParticipants.value = list;
    }, [fetchedParticipants, currentUserId]);
 
+   function resolveInvitePayload(payload: Record<string, any>) {
+      const data =
+         payload?.["data"] && typeof payload["data"] === "object" ? payload["data"] as Record<string, any> : payload;
+      const token = String(data?.["token"] ?? "").trim();
+      const invitePath = String(data?.["invite_path"] ?? "").trim();
+
+      if (invitePath) {
+         return new URL(invitePath, window.location.origin).toString();
+      }
+
+      if (token) {
+         return new URL(`/invite/${token}`, window.location.origin).toString();
+      }
+
+      return "";
+   }
+
+   async function loadInviteLink() {
+      const activityId = Number(activity?.id);
+      if (!Number.isFinite(activityId) || activityId <= 0) {
+         inviteError.value = "This activity cannot be shared yet.";
+         return;
+      }
+
+      isInviteLinkLoading.value = true;
+      inviteError.value = "";
+
+      try {
+         const response = await fetch(`/api/activities/${activityId}/invite-link`, {
+            method: "POST",
+            headers: getAuthHeaders(),
+         });
+         const payload = await response.json().catch(() => ({}));
+
+         if (!response.ok) {
+            inviteError.value = String(payload?.["error"] ?? "Could not create invite link.");
+            notyf.error(inviteError.value);
+            return;
+         }
+
+         const link = resolveInvitePayload(payload);
+         if (!link) {
+            inviteError.value = "Invite link response was incomplete.";
+            return;
+         }
+
+         inviteLink.value = link;
+      } catch {
+         inviteError.value = "Could not reach the API. Please try again later.";
+         notyf.error(inviteError.value);
+      } finally {
+         isInviteLinkLoading.value = false;
+      }
+   }
+
    function inviteOthers() {
-      // TODO: Implement invite flow via email
-      window.alert("Invite flow coming later.");
+      isInviteDialogOpen.value = true;
+
+      if (!inviteLink.value && !isInviteLinkLoading.value) {
+         void loadInviteLink();
+      }
+   }
+
+   function closeInviteDialog() {
+      isInviteDialogOpen.value = false;
+   }
+
+   function stopInviteDialogClick(event: Event) {
+      event.stopPropagation();
+   }
+
+   async function copyInviteLink() {
+      if (!inviteLink.value || isCopyingInviteLink.value) {
+         return;
+      }
+
+      isCopyingInviteLink.value = true;
+      hasCopiedInviteLink.value = false;
+      try {
+         if (navigator.clipboard?.writeText) {
+            await navigator.clipboard.writeText(inviteLink.value);
+         } else {
+            const textarea = document.createElement("textarea");
+            textarea.value = inviteLink.value;
+            textarea.setAttribute("readonly", "true");
+            textarea.style.position = "fixed";
+            textarea.style.opacity = "0";
+            document.body.appendChild(textarea);
+            textarea.select();
+            document.execCommand("copy");
+            document.body.removeChild(textarea);
+         }
+
+         hasCopiedInviteLink.value = true;
+         if (copyInviteResetTimer !== null) {
+            window.clearTimeout(copyInviteResetTimer);
+         }
+         copyInviteResetTimer = window.setTimeout(() => {
+            hasCopiedInviteLink.value = false;
+            copyInviteResetTimer = null;
+         }, 1100);
+         notyf.success("Invite link copied.");
+      } catch {
+         hasCopiedInviteLink.value = false;
+         notyf.error("Could not copy invite link.");
+      } finally {
+         isCopyingInviteLink.value = false;
+      }
    }
 
    function closePopover() {
@@ -244,8 +371,12 @@ export component ActivityPopover(props: Record<string, any>) {
                            {weather.value.temperature !== null && weather.value.temperature !== undefined ? `, ${weather.value.temperature}°C` : ""}
                         </h4>
                         <p>
-                           {(weather.value.windspeed !== null && weather.value.windspeed !== undefined ? `Wind: ${Math.round(weather.value.windspeed)} km/h` : "") +
-                              (weather.value.rainfall !== null && weather.value.rainfall !== undefined && weather.value.rainfall > 0 ? `, Rain: ${weather.value.rainfall} mm` : "")}
+                           {(weather.value.windspeed !== null && weather.value.windspeed !== undefined
+                              ? `Wind: ${Math.round(weather.value.windspeed)} km/h`
+                              : "") +
+                              (weather.value.rainfall !== null && weather.value.rainfall !== undefined && weather.value.rainfall > 0
+                                 ? `, Rain: ${weather.value.rainfall} mm`
+                                 : "")}
                         </p>
                      </div>
                   </a>
@@ -343,11 +474,71 @@ export component ActivityPopover(props: Record<string, any>) {
                   </button>
                   <button class="button" type="button" onClick={inviteOthers}>
                      <i class="fas fa-paper-plane" />
-                     {"Share"}
+                     {"Invite"}
                   </button>
                </div>
             </section>
          </div>
+
+         if (isInviteDialogOpen.value) {
+            <div class="invite-overlay" onClick={closeInviteDialog}>
+               <section class="invite-dialog" aria-label="Invite link" onClick={stopInviteDialogClick}>
+                  <div class="invite-header">
+                     <div>
+                        <h5 class="invite-title">{"Invite people"}</h5>
+                        <p class="invite-subtitle">{"Copy a link to this activity."}</p>
+                     </div>
+                     <button class="invite-icon-button" type="button" onClick={closeInviteDialog} aria-label="Close invite dialog" title="Close">
+                        <i class="fas fa-xmark" />
+                     </button>
+                  </div>
+
+                  if (isInviteLinkLoading.value) {
+                     <p class="invite-status">
+                        <i class="fas fa-spinner fa-spin" />
+                        {"Creating invite link..."}
+                     </p>
+                  } else if (inviteError.value) {
+                     <p class="invite-error">{inviteError.value}</p>
+                     <button class="invite-action-button" type="button" onClick={loadInviteLink}>
+                        <i class="fas fa-rotate-right" />
+                        {"Try again"}
+                     </button>
+                  } else {
+                     <div class="invite-link-row">
+                        <input class="invite-link-input" type="text" readonly value={inviteLink.value} aria-label="Invite link" />
+                        <button
+                           class={`invite-icon-button invite-copy-button ${hasCopiedInviteLink.value ? "invite-copy-confirmed" : ""}`}
+                           type="button"
+                           onClick={copyInviteLink}
+                           disabled={!inviteLink.value || isCopyingInviteLink.value}
+                           aria-label={isCopyingInviteLink.value
+                              ? "Copying invite link"
+                              : hasCopiedInviteLink.value
+                                 ? "Invite link copied"
+                                 : "Copy invite link"}
+                           title={isCopyingInviteLink.value
+                              ? "Copying"
+                              : hasCopiedInviteLink.value
+                                 ? "Copied"
+                                 : "Copy"}
+                        >
+                           <i
+                              class={`invite-copy-icon fas ${
+                                 isCopyingInviteLink.value
+                                    ? "fa-spinner fa-spin"
+                                    : hasCopiedInviteLink.value
+                                       ? "fa-check"
+                                       : "fa-copy"
+                              }`}
+                           />
+                        </button>
+                     </div>
+                     <p class="invite-note">{"Guests can open this activity. They will need an account to join."}</p>
+                  }
+               </section>
+            </div>
+         }
       </article>
    </Popover>
 
@@ -497,12 +688,12 @@ export component ActivityPopover(props: Record<string, any>) {
             filter 0.6s var(--ease);
       }
 
-         .info-box:hover .info-box-background {
+      .info-box:hover .info-box-background {
          transform: scale(1.05);
          filter: brightness(0.9);
       }
 
-         .info-box::before {
+      .info-box::before {
          content: "";
          position: absolute;
          top: 0%;
@@ -618,6 +809,276 @@ export component ActivityPopover(props: Record<string, any>) {
       .attendance-empty {
          margin: 0;
          opacity: 0.75;
+      }
+
+      .invite-overlay {
+         position: absolute;
+         inset: 0;
+         display: flex;
+         justify-content: center;
+         align-items: center;
+         padding: 1.25rem;
+         border-radius: inherit;
+         background: rgba(7, 12, 28, 0.38);
+         backdrop-filter: blur(5px);
+         z-index: 30;
+         animation: invite-overlay-in 180ms ease-out both;
+      }
+
+      .invite-dialog {
+         display: flex;
+         flex-direction: column;
+         width: min(28rem, 100%);
+         gap: 0.9rem;
+         border-radius: 0.85rem;
+         padding: 0.95rem;
+         font-size: 1rem;
+         line-height: 1.35;
+         color: var(--color-card-text);
+         background: rgba(255, 255, 255, 0.96);
+         box-shadow:
+            0 18px 50px rgba(15, 19, 45, 0.28),
+            0 2px 8px rgba(15, 19, 45, 0.12);
+         animation: invite-dialog-in 260ms cubic-bezier(0.18, 0.85, 0.24, 1) both;
+      }
+
+      .invite-header {
+         display: flex;
+         align-items: center;
+         justify-content: space-between;
+         gap: 0.75rem;
+      }
+
+      .invite-title {
+         margin: 0;
+         font-size: 1.05em;
+         font-weight: 800;
+         color: var(--color-card-text);
+         mix-blend-mode: normal;
+      }
+
+      .invite-subtitle {
+         margin: 0.12rem 0 0;
+         font-size: 0.86em;
+         font-weight: 600;
+         color: rgba(34, 36, 57, 0.68);
+         mix-blend-mode: normal;
+      }
+
+      .invite-note,
+      .invite-status,
+      .invite-error {
+         color: var(--color-card-text);
+         mix-blend-mode: normal;
+      }
+
+      .invite-icon-button {
+         display: inline-flex;
+         justify-content: center;
+         align-items: center;
+         flex: 0 0 auto;
+         width: 2.35em;
+         height: 2.35em;
+         border: 0;
+         border-radius: 1000px;
+         color: var(--color-primary);
+         background: rgba(47, 57, 134, 0.09);
+         box-shadow: none;
+         cursor: pointer;
+         transition:
+            background 160ms ease,
+            color 160ms ease,
+            transform 220ms var(--ease);
+      }
+
+      .invite-icon-button:hover:not(:disabled) {
+         color: white;
+         background: rgba(47, 57, 134, 0.92);
+         transform: scale(1.04);
+      }
+
+      .invite-icon-button:active:not(:disabled) {
+         transform: scale(0.96);
+      }
+
+      .invite-icon-button:disabled {
+         opacity: 0.55;
+         cursor: not-allowed;
+      }
+
+      .invite-icon-button .fas {
+         font-size: 0.95em;
+      }
+
+      .invite-copy-icon {
+         transform-origin: center;
+      }
+
+      .invite-link-row {
+         display: flex;
+         align-items: center;
+         gap: 0.45rem;
+         border-radius: 1000px;
+         background: rgba(47, 57, 134, 0.08);
+         padding: 0.28rem;
+      }
+
+      .invite-link-input {
+         height: 2.35em;
+         margin: 0;
+         padding: 0 0.85rem;
+         min-width: 0;
+         border-radius: 1000px;
+         background: transparent;
+         box-shadow: none;
+         font-size: 0.88em;
+         font-weight: 650;
+         color: var(--color-card-text);
+         text-overflow: ellipsis;
+      }
+
+      .invite-link-input:focus {
+         box-shadow: none;
+      }
+
+      .invite-copy-button {
+         color: white;
+         background: rgba(0, 133, 80, 0.92);
+      }
+
+      .invite-copy-button:hover:not(:disabled) {
+         background: rgb(0, 119, 101);
+      }
+
+      .invite-copy-button.invite-copy-confirmed {
+         background: rgb(0, 119, 101);
+      }
+
+      .invite-copy-button.invite-copy-confirmed .invite-copy-icon {
+         animation: invite-copy-check-pop 680ms cubic-bezier(0.16, 1, 0.3, 1) both;
+      }
+
+      .invite-note,
+      .invite-status,
+      .invite-error {
+         margin: 0;
+         font-size: 0.82em;
+         font-weight: 600;
+      }
+
+      .invite-note {
+         color: rgba(34, 36, 57, 0.66);
+      }
+
+      .invite-status {
+         display: flex;
+         align-items: center;
+         gap: 0.5rem;
+      }
+
+      .invite-error {
+         color: rgb(160, 0, 51);
+      }
+
+      .invite-action-button {
+         display: inline-flex;
+         align-items: center;
+         justify-content: center;
+         gap: 0.45rem;
+         width: fit-content;
+         border: 0;
+         border-radius: 1000px;
+         padding: 0.55rem 0.85rem;
+         font: inherit;
+         font-size: 0.86em;
+         font-weight: 800;
+         color: var(--color-primary);
+         background: rgba(47, 57, 134, 0.09);
+         cursor: pointer;
+         transition:
+            background 160ms ease,
+            color 160ms ease,
+            transform 220ms var(--ease);
+      }
+
+      .invite-action-button:hover {
+         color: white;
+         background: rgba(47, 57, 134, 0.92);
+         transform: scale(1.03);
+      }
+
+      @media screen and (max-width: 560px) {
+         .invite-link-row {
+            gap: 0.25rem;
+         }
+      }
+
+      @media screen and (min-width: 900px) {
+         .invite-dialog {
+            width: min(30rem, 100%);
+            gap: 1rem;
+            padding: 1.05rem;
+            font-size: 1.05rem;
+         }
+      }
+
+      @media screen and (min-width: 1280px) {
+         .invite-dialog {
+            width: min(34rem, 100%);
+            gap: 1.1rem;
+            padding: 1.15rem;
+            font-size: 1.12rem;
+         }
+      }
+
+      @keyframes invite-overlay-in {
+         from {
+            opacity: 0;
+         }
+
+         to {
+            opacity: 1;
+         }
+      }
+
+      @keyframes invite-dialog-in {
+         from {
+            opacity: 0;
+            transform: translateY(0.75rem) scale(0.97);
+         }
+
+         to {
+            opacity: 1;
+            transform: translateY(0) scale(1);
+         }
+      }
+
+      @keyframes invite-copy-check-pop {
+         0% {
+            opacity: 0;
+            transform: scale(0.45) rotate(-18deg);
+         }
+
+         38% {
+            opacity: 1;
+            transform: scale(1.25) rotate(4deg);
+         }
+
+         62% {
+            transform: scale(0.88) rotate(0deg);
+         }
+
+         100% {
+            opacity: 1;
+            transform: scale(1) rotate(0deg);
+         }
+      }
+
+      @media (prefers-reduced-motion: reduce) {
+         .invite-overlay,
+         .invite-dialog {
+            animation: none;
+         }
       }
 
       @keyframes popover-card-in {
