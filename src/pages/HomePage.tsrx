@@ -2,7 +2,8 @@ import { navigateTo } from "ripple-router";
 
 import { isLoggedIn } from "../auth";
 
-export component HomePage() {
+export function HomePage() @{
+   <>
    <article id="hero" class="page-enter">
       <h1>
          {"Event planning,"}
@@ -22,7 +23,7 @@ export component HomePage() {
             {"Explore Activities"}
          </a>
 
-         if (!isLoggedIn()) {
+         @if (!isLoggedIn()) {
             <a
                href="/login"
                class="link"
@@ -33,7 +34,7 @@ export component HomePage() {
             >
                {"Get Started"}
             </a>
-         } else {
+         } @else {
             <a
                href="/profile"
                class="link"
@@ -87,4 +88,5 @@ export component HomePage() {
          gap: 1.5em;
       }
    </style>
+   </>
 }

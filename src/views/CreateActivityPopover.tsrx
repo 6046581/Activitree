@@ -1,5 +1,5 @@
 import { track } from "ripple";
-import { Popover } from "../components/Popover.ripple";
+import { Popover } from "../components/Popover.tsrx";
 import { notyf } from "../notyf";
 
 const MAX_IMAGE_BYTES = 16 * 1024 * 1024;
@@ -39,7 +39,7 @@ type CreateActivityPopoverProps = {
    onCreate?: (request: CreateActivityRequest) => Promise<void> | void;
 };
 
-export component CreateActivityPopover(props: CreateActivityPopoverProps) {
+export function CreateActivityPopover(props: CreateActivityPopoverProps) @{
    let locations = track(() => (Array.isArray(props?.locations) ? props.locations : []));
    const onClose = props?.onClose;
    const onCreate = props?.onCreate;
@@ -160,6 +160,7 @@ export component CreateActivityPopover(props: CreateActivityPopoverProps) {
       }
    }
 
+   <>
    <Popover onClose={closePopover} closeAriaLabel="Close create activity">
       <article class="create-activity card">
          <section>
@@ -260,11 +261,11 @@ export component CreateActivityPopover(props: CreateActivityPopoverProps) {
                         onInput={(event: Event) => updateInputValue(event, (value) => (locationId.value = value))}
                      >
                         <option value="">{"No location selected"}</option>
-                        for (let location of locations.value) {
+                        @for (let location of locations.value) {
                            <option value={String(location.id)}>{location.name + " - " + location.address}</option>
                         }
                      </select>
-                     if (locations.value.length === 0) {
+                     @if (locations.value.length === 0) {
                         <p class="field-helper">{"No locations available yet."}</p>
                      }
                   </label>
@@ -280,12 +281,16 @@ export component CreateActivityPopover(props: CreateActivityPopoverProps) {
 
                <div class="button-group bottom">
                   <button class="button green" type="submit" disabled={isSubmitting.value || !isFormValid.value}>
-                     if (isSubmitting.value) {
-                        <i class="fas fa-spinner fa-spin" />
-                        {"Creating..."}
-                     } else {
-                        <i class="fas fa-plus" />
-                        {"Create Activity"}
+                     @if (isSubmitting.value) {
+                        <>
+                           <i class="fas fa-spinner fa-spin" />
+                           {"Creating..."}
+                        </>
+                     } @else {
+                        <>
+                           <i class="fas fa-plus" />
+                           {"Create Activity"}
+                        </>
                      }
                   </button>
                </div>
@@ -471,4 +476,5 @@ export component CreateActivityPopover(props: CreateActivityPopoverProps) {
          }
       }
    </style>
+   </>
 }

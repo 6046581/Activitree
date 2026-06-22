@@ -1,11 +1,11 @@
 import { effect, track } from "ripple";
 import { getCurrentUser, isLoggedIn, requireAuthenticatedUser } from "../auth";
-import { TabSelector } from "../components/TabSelector.ripple";
+import { TabSelector } from "../components/TabSelector.tsrx";
 import { navigateTo } from "ripple-router";
 
 const AVATAR_PLACEHOLDER = "/assets/avatar_placeholder.jpg";
 
-export component NavBar() {
+export function NavBar() @{
    let avatarUrl = track(AVATAR_PLACEHOLDER);
 
    const tabBar = {
@@ -77,6 +77,7 @@ export component NavBar() {
       });
    }, []);
 
+   <>
    <header class="nav-bar">
       <a class="nav-logo" href="/" onClick={handleLogoClick}>
          <img class="nav-logo-img" src="/assets/logo.png" alt="Activitree Logo" />
@@ -85,11 +86,11 @@ export component NavBar() {
       <nav>
          <TabSelector tabs={tabBar.tabs} />
 
-         if (isLoggedIn()) {
+         @if (isLoggedIn()) {
             <a class="nav-profile" href="/profile" onClick={handleProfileClick}>
                <img src={avatarUrl.value} alt="profile" onerror="this.onerror=null;this.src='/assets/avatar_placeholder.jpg';" />
             </a>
-         } else {
+         } @else {
             <a class="nav-profile" href="/login" onClick={handleProfileClick}>
                <i class="fas fa-sign-in-alt" aria-hidden="true" />
             </a>
@@ -229,4 +230,5 @@ export component NavBar() {
          }
       }
    </style>
+   </>
 }

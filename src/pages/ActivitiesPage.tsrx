@@ -3,12 +3,12 @@ import { navigateTo } from "ripple-router";
 
 import { notyf } from "../notyf";
 import { getAuthHeaders, getCurrentUser, isLoggedIn } from "../auth";
-import { ActivityTile } from "../components/ActivityTile.ripple";
+import { ActivityTile } from "../components/ActivityTile.tsrx";
 
-import { StatusMessage } from "../views/StatusMessage.ripple";
-import { ActivityPopover } from "../views/ActivityPopover.ripple";
-import { CreateActivityPopover } from "../views/CreateActivityPopover.ripple";
-import type { CreateActivityPayload, CreateActivityRequest } from "../views/CreateActivityPopover.ripple";
+import { StatusMessage } from "../views/StatusMessage.tsrx";
+import { ActivityPopover } from "../views/ActivityPopover.tsrx";
+import { CreateActivityPopover } from "../views/CreateActivityPopover.tsrx";
+import type { CreateActivityPayload, CreateActivityRequest } from "../views/CreateActivityPopover.tsrx";
 
 import {
    extractRows,
@@ -35,7 +35,7 @@ type ActivityParams = {
    mode?: string;
 };
 
-export component ActivitiesPage(props: Record<string, any>) {
+export function ActivitiesPage(props: Record<string, any>) @{
    const searchParams = props?.["searchParams"] ?? {} as ActivitySearchParams;
    let mode = track(() => String((props?.["params"] ?? {} as ActivityParams)?.mode ?? "").toLowerCase());
    let currentPath = track(() => (mode.value ? `/activities/${mode.value}` : "/activities"));
@@ -115,6 +115,50 @@ export component ActivitiesPage(props: Record<string, any>) {
 
    function getVisibleActivities(): UiActivity[] {
       return filterActivitiesByMode(activities.value, mode.value, currentUserId);
+   }
+
+   function getEmptyState() {
+      if (mode.value === "discover") {
+         return {
+            icon: "fas fa-search",
+            title: "Oops, all empty!",
+            label: "No activities found.",
+         };
+      }
+
+      if (mode.value === "attending") {
+         return isLoggedIn()
+            ? {
+                 icon: "fas fa-calendar-check",
+                 title: "All caught up!",
+                 label: "You are not attending any activities right now.",
+              }
+            : {
+                 icon: "fas fa-calendar-check",
+                 title: "Joined activities will appear here!",
+                 label: "Log in and join an activity to get started.",
+              };
+      }
+
+      if (mode.value === "organizing") {
+         return isLoggedIn()
+            ? {
+                 icon: "fas fa-calendar-plus",
+                 title: "Not organizing anything yet!",
+                 label: "Create an activity to get started.",
+              }
+            : {
+                 icon: "fas fa-crown",
+                 title: "Created activities will appear here!",
+                 label: "Log in and create an activity to get started.",
+              };
+      }
+
+      return {
+         icon: "fas fa-search",
+         title: "Nothing here!",
+         label: "No activities found.",
+      };
    }
 
    function getLocationById(id: number | null): UiLocation | undefined {
@@ -346,12 +390,15 @@ export component ActivitiesPage(props: Record<string, any>) {
    }, [selectedActivityId]);
 
    let selectedActivity = track(() => activities.value.find((activity) => String(activity.id) === selectedActivityId.value));
+   let visibleActivities = track(() => getVisibleActivities());
+   let emptyState = track(() => getEmptyState());
 
-   if (isCreatePopoverOpen.value) {
+   <>
+   @if (isCreatePopoverOpen.value) {
       <CreateActivityPopover locations={locations.value} onClose={closeCreatePopover} onCreate={createActivity} />
    }
 
-   if (!isCreatePopoverOpen.value && selectedActivity.value) {
+   @if (!isCreatePopoverOpen.value && selectedActivity.value) {
       const currentActivity = selectedActivity.value;
       const host = {
          id: currentActivity.createdBy,
@@ -379,49 +426,17 @@ export component ActivitiesPage(props: Record<string, any>) {
 
    <section class="activities-page">
       <section class="activities">
-         if (isLoading.value) {
+         @if (isLoading.value) {
             <div class="activities-state">
                <StatusMessage loading="true" />
             </div>
-         } else {
-            const visibleActivities = getVisibleActivities();
-
-            if (visibleActivities.length === 0) {
-               if (mode.value === "discover") {
-                  <div class="activities-state page-enter page-enter-delay-1">
-                     <StatusMessage icon="fas fa-search" title="Oops, all empty!" label="No activities found." />
-                  </div>
-               } else if (mode.value === "attending") {
-                  if (isLoggedIn()) {
-                     <div class="activities-state page-enter page-enter-delay-1">
-                        <StatusMessage icon="fas fa-calendar-check" title="All caught up!" label="You are not attending any activities right now." />
-                     </div>
-                  } else {
-                     <div class="activities-state page-enter page-enter-delay-1">
-                        <StatusMessage
-                           icon="fas fa-calendar-check"
-                           title="Joined activities will appear here!"
-                           label="Log in and join an activity to get started."
-                        />
-                     </div>
-                  }
-               } else if (mode.value === "organizing") {
-                  if (isLoggedIn()) {
-                     <div class="activities-state page-enter page-enter-delay-1">
-                        <StatusMessage icon="fas fa-calendar-plus" title="Not organizing anything yet!" label="Create an activity to get started." />
-                     </div>
-                  } else {
-                     <div class="activities-state page-enter page-enter-delay-1">
-                        <StatusMessage icon="fas fa-crown" title="Created activities will appear here!" label="Log in and create an activity to get started." />
-                     </div>
-                  }
-               } else {
-                  <div class="activities-state page-enter page-enter-delay-1">
-                     <StatusMessage icon="fas fa-search" title="Nothing here!" label="No activities found." />
-                  </div>
-               }
-            } else {
-               for (let [index, activity] of visibleActivities.entries()) {
+         } @else {
+            @if (visibleActivities.value.length === 0) {
+               <div class="activities-state page-enter page-enter-delay-1">
+                  <StatusMessage icon={emptyState.value.icon} title={emptyState.value.title} label={emptyState.value.label} />
+               </div>
+            } @else {
+               @for (let [index, activity] of visibleActivities.value.entries()) {
                   const host = {
                      id: activity.createdBy,
                      username: activity.createdByUsername,
@@ -437,7 +452,7 @@ export component ActivitiesPage(props: Record<string, any>) {
          }
       </section>
 
-      if (isLoggedIn()) {
+      @if (isLoggedIn()) {
          <button class="button white icon-button activities-create" type="button" onClick={openCreatePopover} aria-label="Create activity">
             <i class="fas fa-plus" />
          </button>
@@ -492,4 +507,5 @@ export component ActivitiesPage(props: Record<string, any>) {
          opacity: 0.8;
       }
    </style>
+   </>
 }

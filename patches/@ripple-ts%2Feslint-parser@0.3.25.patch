@@ -1,0 +1,13 @@
+diff --git a/dist/index.js b/dist/index.js
+index 13046501338a542f09a5d25ad77db14025a3f265..5e40786c60bf75c35d1ba1897a1ea9bc5e19cb1f 100644
+--- a/dist/index.js
++++ b/dist/index.js
+@@ -86,7 +86,7 @@ function ensureNodeProperties(node, code) {
+ */
+ function parseForESLint(code, options) {
+ 	try {
+-		const ast = requireRippleCompiler().parse(code);
++		const ast = requireRippleCompiler().parse(code, options?.filePath ?? options?.filename ?? "eslint.tsrx");
+ 		if (!ast) throw new Error("Parser returned null or undefined AST");
+ 		normalizeRippleAstForEslint(ast);
+ 		ensureNodeProperties(ast, code);

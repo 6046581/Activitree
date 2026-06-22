@@ -6,7 +6,7 @@ type PopoverProps = {
    children: Component;
 };
 
-export component Popover(props: PopoverProps) {
+export function Popover(props: PopoverProps) @{
    const onClose = props?.onClose;
    const closeAriaLabel = String(props?.closeAriaLabel ?? "Close popover");
 
@@ -20,6 +20,7 @@ export component Popover(props: PopoverProps) {
       event.stopPropagation();
    }
 
+   <>
    <div class="popover" onClick={closePopover}>
       <button class="close-button" type="button" aria-label={closeAriaLabel} onClick={closePopover}>
          <i class="fas fa-xmark" />
@@ -105,4 +106,5 @@ export component Popover(props: PopoverProps) {
          }
       }
    </style>
+   </>
 }

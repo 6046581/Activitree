@@ -2,7 +2,7 @@ import { effect, track } from "ripple";
 import { navigateTo } from "ripple-router";
 
 import { notyf } from "../notyf";
-import { StatusMessage } from "../views/StatusMessage.ripple";
+import { StatusMessage } from "../views/StatusMessage.tsrx";
 import { parseApiData, parseApiError } from "./activitiesPage.utils";
 
 type InviteParams = {
@@ -15,7 +15,7 @@ type InviteResponse = {
    };
 };
 
-export component InvitePage(props: Record<string, any>) {
+export function InvitePage(props: Record<string, any>) @{
    const token = String((props?.["params"] ?? {} as InviteParams)?.token ?? "").trim();
    let statusTitle = track("Opening invite...");
    let statusLabel = track("Finding the shared activity.");
@@ -77,11 +77,12 @@ export component InvitePage(props: Record<string, any>) {
       void resolveInvite();
    }, [token]);
 
+   <>
    <section class="invite-page page-enter">
       <div class="invite-state">
          <StatusMessage icon={statusIcon.value} title={statusTitle.value} label={statusLabel.value} loading={!hasFailed.value ? "true" : undefined} />
 
-         if (hasFailed.value) {
+         @if (hasFailed.value) {
             <button class="button white" type="button" onClick={goToActivities}>
                <i class="fas fa-calendar-days" />
                {"Browse activities"}
@@ -109,4 +110,5 @@ export component InvitePage(props: Record<string, any>) {
          width: fit-content;
       }
    </style>
+   </>
 }

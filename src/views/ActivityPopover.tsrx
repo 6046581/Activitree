@@ -7,11 +7,11 @@ import { getDateLabel, getGoogleCalendarLink, getTimeOfDayImage } from "../date"
 import { getLocationMapUrl, getLocationLabel, getLocationPreviewUrl } from "../location";
 import { getAuthHeaders } from "../auth";
 import { notyf } from "../notyf";
-import { Popover } from "../components/Popover.ripple";
+import { Popover } from "../components/Popover.tsrx";
 
 const AVATAR_PLACEHOLDER = "/assets/avatar_placeholder.jpg";
 
-export component ActivityPopover(props: Record<string, any>) {
+export function ActivityPopover(props: Record<string, any>) @{
    const activity = props?.["activity"];
    const host = props?.["host"];
    const currentUserId =
@@ -341,6 +341,7 @@ export component ActivityPopover(props: Record<string, any>) {
       });
    }
 
+   <>
    <Popover onClose={closePopover} closeAriaLabel="Close activity details">
       <article class="activity card">
          <div class="content">
@@ -349,13 +350,13 @@ export component ActivityPopover(props: Record<string, any>) {
                <h4 class="title">{activity?.title}</h4>
             </section>
 
-            if (activity?.description) {
+            @if (activity?.description) {
                <p class="description">{"\"" + activity?.description + "\""}</p>
             }
 
             <section class="details">
                // --- Weather Section ---
-               if (isOutdoorActivity(activity, location) && weather.value !== null) {
+               @if (isOutdoorActivity(activity, location) && weather.value !== null) {
                   <a class="info-box weather" href={getWeatherUrl(location)} target="_blank" rel="noopener noreferrer">
                      <img
                         class="info-box-background"
@@ -437,14 +438,14 @@ export component ActivityPopover(props: Record<string, any>) {
                </p>
 
                <div class="attendance-list" role="list">
-                  if (sortedParticipants.value.length === 0) {
-                     if (isLoadingParticipants.value) {
+                  @if (sortedParticipants.value.length === 0) {
+                     @if (isLoadingParticipants.value) {
                         <p class="attendance-empty">{"Loading participants..."}</p>
-                     } else {
+                     } @else {
                         <p class="attendance-empty">{"No participants yet. Be the first to join!"}</p>
                      }
-                  } else {
-                     for (let participant of sortedParticipants.value) {
+                  } @else {
+                     @for (let participant of sortedParticipants.value) {
                         <article class="participant" role="listitem">
                            <img
                               class="participant-avatar"
@@ -480,7 +481,7 @@ export component ActivityPopover(props: Record<string, any>) {
             </section>
          </div>
 
-         if (isInviteDialogOpen.value) {
+         @if (isInviteDialogOpen.value) {
             <div class="invite-overlay" onClick={closeInviteDialog}>
                <section class="invite-dialog" aria-label="Invite link" onClick={stopInviteDialogClick}>
                   <div class="invite-header">
@@ -493,48 +494,52 @@ export component ActivityPopover(props: Record<string, any>) {
                      </button>
                   </div>
 
-                  if (isInviteLinkLoading.value) {
+                  @if (isInviteLinkLoading.value) {
                      <p class="invite-status">
                         <i class="fas fa-spinner fa-spin" />
                         {"Creating invite link..."}
                      </p>
-                  } else if (inviteError.value) {
-                     <p class="invite-error">{inviteError.value}</p>
-                     <button class="invite-action-button" type="button" onClick={loadInviteLink}>
-                        <i class="fas fa-rotate-right" />
-                        {"Try again"}
-                     </button>
-                  } else {
-                     <div class="invite-link-row">
-                        <input class="invite-link-input" type="text" readonly value={inviteLink.value} aria-label="Invite link" />
-                        <button
-                           class={`invite-icon-button invite-copy-button ${hasCopiedInviteLink.value ? "invite-copy-confirmed" : ""}`}
-                           type="button"
-                           onClick={copyInviteLink}
-                           disabled={!inviteLink.value || isCopyingInviteLink.value}
-                           aria-label={isCopyingInviteLink.value
-                              ? "Copying invite link"
-                              : hasCopiedInviteLink.value
-                                 ? "Invite link copied"
-                                 : "Copy invite link"}
-                           title={isCopyingInviteLink.value
-                              ? "Copying"
-                              : hasCopiedInviteLink.value
-                                 ? "Copied"
-                                 : "Copy"}
-                        >
-                           <i
-                              class={`invite-copy-icon fas ${
-                                 isCopyingInviteLink.value
-                                    ? "fa-spinner fa-spin"
-                                    : hasCopiedInviteLink.value
-                                       ? "fa-check"
-                                       : "fa-copy"
-                              }`}
-                           />
+                  } @else if (inviteError.value) {
+                     <>
+                        <p class="invite-error">{inviteError.value}</p>
+                        <button class="invite-action-button" type="button" onClick={loadInviteLink}>
+                           <i class="fas fa-rotate-right" />
+                           {"Try again"}
                         </button>
-                     </div>
-                     <p class="invite-note">{"Guests can open this activity. They will need an account to join."}</p>
+                     </>
+                  } @else {
+                     <>
+                        <div class="invite-link-row">
+                           <input class="invite-link-input" type="text" readonly value={inviteLink.value} aria-label="Invite link" />
+                           <button
+                              class={`invite-icon-button invite-copy-button ${hasCopiedInviteLink.value ? "invite-copy-confirmed" : ""}`}
+                              type="button"
+                              onClick={copyInviteLink}
+                              disabled={!inviteLink.value || isCopyingInviteLink.value}
+                              aria-label={isCopyingInviteLink.value
+                                 ? "Copying invite link"
+                                 : hasCopiedInviteLink.value
+                                    ? "Invite link copied"
+                                    : "Copy invite link"}
+                              title={isCopyingInviteLink.value
+                                 ? "Copying"
+                                 : hasCopiedInviteLink.value
+                                    ? "Copied"
+                                    : "Copy"}
+                           >
+                              <i
+                                 class={`invite-copy-icon fas ${
+                                    isCopyingInviteLink.value
+                                       ? "fa-spinner fa-spin"
+                                       : hasCopiedInviteLink.value
+                                          ? "fa-check"
+                                          : "fa-copy"
+                                 }`}
+                              />
+                           </button>
+                        </div>
+                        <p class="invite-note">{"Guests can open this activity. They will need an account to join."}</p>
+                     </>
                   }
                </section>
             </div>
@@ -1093,4 +1098,5 @@ export component ActivityPopover(props: Record<string, any>) {
          }
       }
    </style>
+   </>
 }

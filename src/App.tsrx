@@ -2,18 +2,18 @@ import { effect } from "ripple";
 import { Router, Route } from "ripple-router";
 
 // Pages
-import { HomePage } from "./pages/HomePage.ripple";
-import { ActivitiesPage } from "./pages/ActivitiesPage.ripple";
-import { ProfilePage } from "./pages/ProfilePage.ripple";
-import { LoginPage } from "./pages/LoginPage.ripple";
-import { InvitePage } from "./pages/InvitePage.ripple";
-import { NotFoundPage } from "./pages/NotFoundPage.ripple";
+import { HomePage } from "./pages/HomePage.tsrx";
+import { ActivitiesPage } from "./pages/ActivitiesPage.tsrx";
+import { ProfilePage } from "./pages/ProfilePage.tsrx";
+import { LoginPage } from "./pages/LoginPage.tsrx";
+import { InvitePage } from "./pages/InvitePage.tsrx";
+import { NotFoundPage } from "./pages/NotFoundPage.tsrx";
 
 // Components
-import { NavBar } from "./components/NavBar.ripple";
-import { Wallpaper } from "./components/Wallpaper.ripple";
+import { NavBar } from "./components/NavBar.tsrx";
+import { Wallpaper } from "./components/Wallpaper.tsrx";
 
-export component App() {
+export function App() @{
    effect(() => {
       let previousPathname = window.location.pathname;
 
@@ -33,6 +33,7 @@ export component App() {
       return () => window.removeEventListener("popstate", handlePopState);
    }, []);
 
+   <>
    <div class="app">
       <Wallpaper />
       <NavBar />
@@ -47,4 +48,5 @@ export component App() {
          <Route path="**" element={NotFoundPage} />
       </Router>
    </div>
+   </>
 }

@@ -3,10 +3,10 @@ import { navigateTo } from "ripple-router";
 import { notyf } from "../notyf";
 
 import { apiPostJson, isLoggedIn, login, logout, type AuthUser } from "../auth";
-import { TabSelector } from "../components/TabSelector.ripple";
+import { TabSelector } from "../components/TabSelector.tsrx";
 
-import { LoginForm } from "../views/LoginForm.ripple";
-import { SignupForm } from "../views/SignupForm.ripple";
+import { LoginForm } from "../views/LoginForm.tsrx";
+import { SignupForm } from "../views/SignupForm.tsrx";
 
 type ApiUser = {
    id: number;
@@ -43,7 +43,7 @@ type SignupResponse = {
    error?: string;
 };
 
-export component LoginPage() {
+export function LoginPage() @{
    const LOGIN_ENDPOINT = "/api/users/login";
    const SIGNUP_ENDPOINT = "/api/users/signup";
 
@@ -241,19 +241,24 @@ export component LoginPage() {
       }
    }, []);
 
+   <>
    <article class="card login-card page-enter">
       <TabSelector {tabs} activeTabId={selected.value} />
-      if (selected.value === "login") {
-         <h2>{"Welcome back"}</h2>
-         <p>{"Log in to your account."}</p>
-      } else {
-         <h2>{"Create account"}</h2>
-         <p>{"Sign up to start planning activities."}</p>
+      @if (selected.value === "login") {
+         <>
+            <h2>{"Welcome back"}</h2>
+            <p>{"Log in to your account."}</p>
+         </>
+      } @else {
+         <>
+            <h2>{"Create account"}</h2>
+            <p>{"Sign up to start planning activities."}</p>
+         </>
       }
 
-      if (selected.value === "login") {
+      @if (selected.value === "login") {
          <LoginForm isLoading={isLoading.value} onSubmit={handleLoginSubmit} />
-      } else {
+      } @else {
          <SignupForm isLoading={isLoading.value} onSubmit={handleSignupSubmit} />
       }
    </article>
@@ -274,4 +279,5 @@ export component LoginPage() {
          }
       }
    </style>
+   </>
 }

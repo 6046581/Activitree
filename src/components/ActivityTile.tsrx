@@ -1,6 +1,6 @@
 import { getDateLabel } from "../date";
 
-export component ActivityTile(props: Record<string, any>) {
+export function ActivityTile(props: Record<string, any>) @{
    const activity = props?.["activity"];
    const host = props?.["host"];
    const participants = props?.["participants"] ?? [];
@@ -17,6 +17,7 @@ export component ActivityTile(props: Record<string, any>) {
 
    const activityImage = String(activity?.photoUrl ?? "").trim() || "/assets/placeholder.jpg";
 
+   <>
    <a class="activity card" href={`?id=${activity?.id}`} onClick={handleOpen}>
       <img src={activityImage} alt="Activity Image" onerror="this.onerror=null;this.src='/assets/placeholder.jpg';" />
       <h4 class="title">{activity?.title}</h4>
@@ -30,7 +31,7 @@ export component ActivityTile(props: Record<string, any>) {
                <i class="fas fa-location-dot" />
                {location?.address}
             </p>
-            if (activity?.type === "outdoor") {
+            @if (activity?.type === "outdoor") {
                <p class="icon-text">
                   <i class="fas fa-cloud" />
                   {"Outside"}
@@ -181,4 +182,5 @@ export component ActivityTile(props: Record<string, any>) {
          white-space: nowrap;
       }
    </style>
+   </>
 }

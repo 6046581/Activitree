@@ -3,13 +3,14 @@ type SignupFormProps = {
    onSubmit?: (event: Event) => void;
 };
 
-export component SignupForm(props: SignupFormProps) {
+export function SignupForm(props: SignupFormProps) @{
    const isLoading = Boolean(props?.isLoading);
    function noopSubmit(_event: Event): void {
       // this bs is needed cuz just making it do nothing causes the formatter to break the onSubmit assignment for some reason
    }
    const onSubmit = props?.onSubmit ?? noopSubmit;
 
+   <>
    <form class="auth-form" {onSubmit}>
       <label>
          <span>{"Username"}</span>
@@ -36,15 +37,19 @@ export component SignupForm(props: SignupFormProps) {
          <span>{"Keep me signed in"}</span>
       </label>
 
-      if (!isLoading) {
+      @if (!isLoading) {
          <button class="button bottom" type="submit">
-            <i class="fas fa-user-plus" />
-            {"Create account"}
+            <>
+               <i class="fas fa-user-plus" />
+               {"Create account"}
+            </>
          </button>
-      } else {
+      } @else {
          <button class="button bottom" type="submit" disabled>
-            <i class="fas fa-spinner fa-spin" />
-            {"Creating account..."}
+            <>
+               <i class="fas fa-spinner fa-spin" />
+               {"Creating account..."}
+            </>
          </button>
       }
    </form>
@@ -72,4 +77,5 @@ export component SignupForm(props: SignupFormProps) {
          margin-right: 0.4em;
       }
    </style>
+   </>
 }

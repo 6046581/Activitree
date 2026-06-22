@@ -13,7 +13,7 @@ const ACCEPTED_IMAGE_TYPES = [
    "image/gif",
 ];
 
-export component ProfilePage() {
+export function ProfilePage() @{
    let userId = track<number | null>(null);
    let username = track("");
    let email = track("");
@@ -105,6 +105,7 @@ export component ProfilePage() {
       void loadProfile();
    }, []);
 
+   <>
    <article id="user-header" class="page-enter">
       <a id="avatar">
          <img src={avatarUrl.value} alt="avatar" onerror={`this.onerror=null;this.src='${DEFAULT_PROFILE_IMAGE}';`} />
@@ -147,7 +148,7 @@ export component ProfilePage() {
                />
             </label>
 
-            if (isUploadingAvatar.value) {
+            @if (isUploadingAvatar.value) {
                <p>{"Uploading profile picture..."}</p>
             }
          </form>
@@ -175,4 +176,5 @@ export component ProfilePage() {
          margin-left: auto;
       }
    </style>
+   </>
 }

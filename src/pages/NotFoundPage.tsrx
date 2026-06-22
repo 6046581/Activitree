@@ -1,8 +1,9 @@
 import { navigateTo } from "ripple-router";
 
-import { StatusMessage } from "../views/StatusMessage.ripple";
+import { StatusMessage } from "../views/StatusMessage.tsrx";
 
-export component NotFoundPage() {
+export function NotFoundPage() @{
+   <>
    <article class="page-enter">
       <StatusMessage
          icon="fas fa-exclamation-triangle"
@@ -18,4 +19,5 @@ export component NotFoundPage() {
          }}
       />
    </article>
+   </>
 }

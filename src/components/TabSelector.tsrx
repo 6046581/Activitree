@@ -15,7 +15,7 @@ type TabSelectorProps = {
    activeTabId?: string;
 };
 
-export component TabSelector(props: TabSelectorProps) {
+export function TabSelector(props: TabSelectorProps) @{
    let internalActiveTabId = track(props?.activeTabId ?? "");
    let currentPath = track(window.location.pathname);
    let lastActiveTabIndex = track(0);
@@ -160,29 +160,30 @@ export component TabSelector(props: TabSelectorProps) {
       wasActive.value = active;
    });
 
+   <>
    <div class={getContainerClass()} style={getContainerStyle()}>
       <span class="active-pill" aria-hidden="true" />
-      for (let tab of tabs) {
-         if (tab.href) {
+      @for (let tab of tabs) {
+         @if (tab.href) {
             <a
                class={`tab-item ${isTabActive(tab) ? "active" : ""}`}
                href={tab.href}
                aria-current={isTabActive(tab) ? "page" : false}
                onClick={(event: Event) => handleTabClick(event, tab)}
             >
-               if (tab.icon) {
+               @if (tab.icon) {
                   <i class={tab.icon} />
                }
                {tab.label}
             </a>
-         } else {
+         } @else {
             <button
                class={`tab-item ${isTabActive(tab) ? "active" : ""}`}
                type="button"
                aria-pressed={isTabActive(tab)}
                onClick={(event: Event) => handleTabClick(event, tab)}
             >
-               if (tab.icon) {
+               @if (tab.icon) {
                   <i class={tab.icon} />
                }
                {tab.label}
@@ -312,4 +313,5 @@ export component TabSelector(props: TabSelectorProps) {
          }
       }
    </style>
+   </>
 }

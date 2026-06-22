@@ -1,11 +1,60 @@
-diff --git a/src/components/Renderer.ripple b/src/components/Renderer.ripple
-index dbb60be734a2b3469447ac8fce80d1c59a461e0e..3e8bc268d1c14d635c399bdafa5df421d5f89fa8 100644
---- a/src/components/Renderer.ripple
-+++ b/src/components/Renderer.ripple
-@@ -6,19 +6,27 @@ import { matchPath } from '../utils/matchPath';
- import { getParams } from '../utils/getParams';
- import { SYMBOLS } from '../constants';
+diff --git a/node_modules/ripple-router/.bun-tag-9fa119deabc764d1 b/.bun-tag-9fa119deabc764d1
+new file mode 100644
+index 0000000000000000000000000000000000000000..e69de29bb2d1d6434b8b29ae775ad8c2e48c5391
+diff --git a/src/components/Link.ripple b/src/components/Link.tsrx
+similarity index 87%
+rename from src/components/Link.ripple
+rename to src/components/Link.tsrx
+index 9f3c5b6573da53a35e4f8dead51484f6fec03099..062851c026cc8a64b26f4fdcb30ef2cae3cfa2db 100644
+--- a/src/components/Link.ripple
++++ b/src/components/Link.tsrx
+@@ -11,7 +11,7 @@ function isExternalUrl(url: string): boolean {
+ /**
+  * Link component - passes all props to anchor tag, intercepts onclick for client-side navigation.
+  */
+-export component Link(props: { href: string; children: Component } & AnchorHTMLAttributes<HTMLAnchorElement>) {
++export function Link(props: { href: string; children: Component } & AnchorHTMLAttributes<HTMLAnchorElement>) @{
+ 	const { children, href, ...rest } = props;
+ 	const isExternal = isExternalUrl(href);
  
+@@ -30,6 +30,6 @@ export component Link(props: { href: string; children: Component } & AnchorHTMLA
+ 	};
+ 
+ 	<a href={href} onclick={handleClick} {...rest}>
+-		<children />
++		{children}
+ 	</a>
+ }
+diff --git a/src/components/NotFound.ripple b/C:/Users/NoomS/.bun/install/cache/ripple-router@1.0.1@@@1/src/components/NotFound.ripple
+deleted file mode 100644
+index 98ce333e8e7ba820fcc176cad0986f16a8c6b743..0000000000000000000000000000000000000000
+diff --git a/node_modules/ripple-router/src/components/NotFound.tsrx b/src/components/NotFound.tsrx
+new file mode 100644
+index 0000000000000000000000000000000000000000..cf344c45f81f8cbd64583406c188ea703eb3a357
+--- /dev/null
++++ b/src/components/NotFound.tsrx
+@@ -0,0 +1,3 @@
++export function NotFound() @{
++	<div>{'Not found'}</div>
++}
+\ No newline at end of file
+diff --git a/src/components/Renderer.ripple b/C:/Users/NoomS/.bun/install/cache/ripple-router@1.0.1@@@1/src/components/Renderer.ripple
+deleted file mode 100644
+index dbb60be734a2b3469447ac8fce80d1c59a461e0e..0000000000000000000000000000000000000000
+diff --git a/node_modules/ripple-router/src/components/Renderer.tsrx b/src/components/Renderer.tsrx
+new file mode 100644
+index 0000000000000000000000000000000000000000..17e689114b3e7d9daadbc2d5dda4c1156b1d4720
+--- /dev/null
++++ b/src/components/Renderer.tsrx
+@@ -0,0 +1,68 @@
++import { effect, track } from 'ripple';
++import { NotFound } from '../components/NotFound.tsrx';
++import { RoutesContext } from '../contexts/RoutesContext.tsrx';
++import { formatPath } from '../utils/formatPath';
++import { matchPath } from '../utils/matchPath';
++import { getParams } from '../utils/getParams';
++import { SYMBOLS } from '../constants';
++
 +function normalizePath(path: string): string {
 +    if (path.length > 1 && path.endsWith('/')) {
 +        return path.slice(0, -1);
@@ -14,69 +63,124 @@ index dbb60be734a2b3469447ac8fce80d1c59a461e0e..3e8bc268d1c14d635c399bdafa5df421
 +    return path;
 +}
 +
- export component Renderer() {
-     const routes = RoutesContext.get();
-     let routeMatched = track(() => false);
- 
-     // Get location pathname
--    let path = track(() => window.location.pathname);
--    let locationPathFragments = track(() => formatPath(@path));
++export function Renderer() @{
++    const routes = RoutesContext.get();
++    let routeMatched = track(() => false);
++
++    // Get location pathname
 +    let path = track(() => normalizePath(window.location.pathname));
 +    let locationPathFragments = track(() => formatPath(path.value));
-     let element = track(null);
-     let params = track(null);
- 
-     effect(() => {
-         function listenToNavigation() {
--            @path = window.location.pathname;
++    let element = track(null);
++    let params = track(null);
++
++    effect(() => {
++        function listenToNavigation() {
 +            path.value = normalizePath(window.location.pathname);
-         }
- 
-         window.addEventListener('popstate', listenToNavigation);
-@@ -26,22 +34,27 @@ export component Renderer() {
-     })
- 
-     effect(() => {
++        }
++
++        window.addEventListener('popstate', listenToNavigation);
++        return () => window.removeEventListener('popstate', listenToNavigation);
++    })
++
++    effect(() => {
 +        routeMatched.value = false;
 +        element.value = null;
 +        params.value = null;
 +
-         for (const route of routes.keys()) {
-             const routePathFragments = formatPath(route);
- 
--            if (matchPath(routePathFragments, @locationPathFragments)) {
--                @routeMatched = true;
--                @element = routes.get(route);
--                @params = getParams(routePathFragments, @locationPathFragments);
++        for (const route of routes.keys()) {
++            const routePathFragments = formatPath(route);
++
 +            if (matchPath(routePathFragments, locationPathFragments.value)) {
 +                routeMatched.value = true;
 +                element.value = routes.get(route);
 +                params.value = getParams(routePathFragments, locationPathFragments.value);
 +                break;
-             }
-         }
-     })
++            }
++        }
++    })
++
++    <>
++        @if (routeMatched.value) {
++            <{element.value} params={params.value} />
++        }
++        
++        @if (!routeMatched.value) {
++            const CustomNotFound = routes.get(SYMBOLS.CATCH_ALL);
++
++            @if (CustomNotFound) {
++                <{CustomNotFound} />
++            } @else {
++                <NotFound />
++            }
++        }
++    </>
++}
+diff --git a/src/components/Route.ripple b/src/components/Route.tsrx
+similarity index 74%
+rename from src/components/Route.ripple
+rename to src/components/Route.tsrx
+index 9cd9c9c5d37319b7480ac7dd9f680749275fafdc..1963dbc5da21fc604b2128dfcf2a9b50ce45ec33 100644
+--- a/src/components/Route.ripple
++++ b/src/components/Route.tsrx
+@@ -1,7 +1,7 @@
  
--    if (@routeMatched) {
--        <@element params={@params} />
-+    if (routeMatched.value) {
-+        <@element params={params.value} />
-     }
-     
--    if (!@routeMatched) {
-+    if (!routeMatched.value) {
-         const CustomNotFound = routes.get(SYMBOLS.CATCH_ALL);
+ import type { Component } from 'ripple';
  
-         if (CustomNotFound) {
-diff --git a/src/components/Router.ripple b/src/components/Router.ripple
-index cf1b812e90e2858aa8409b0ab5e4cba07ec3a9eb..fe39be9dd2a8c5c125169d62e5e15e5251a2a91e 100644
+-import { RoutesContext } from '../contexts/RoutesContext.ripple';
++import { RoutesContext } from '../contexts/RoutesContext.tsrx';
+ 
+ /**
+  * Route component.
+@@ -10,7 +10,7 @@ import { RoutesContext } from '../contexts/RoutesContext.ripple';
+  * @param props.path - The path of the route.
+  * @param props.element - The element to render when the route matches.
+  */
+-export component Route(props: { path: string, element: Component }) {
++export function Route(props: { path: string, element: Component }) @{
+     const { path, element } = props;
+ 
+     const routes = RoutesContext.get();
+diff --git a/src/components/Router.ripple b/src/components/Router.tsrx
+similarity index 50%
+rename from src/components/Router.ripple
+rename to src/components/Router.tsrx
+index cf1b812e90e2858aa8409b0ab5e4cba07ec3a9eb..eea153392af8124e82ad165b6cddda9c787cd67f 100644
 --- a/src/components/Router.ripple
-+++ b/src/components/Router.ripple
-@@ -8,6 +8,6 @@ import { Renderer } from '../components/Renderer.ripple';
++++ b/src/components/Router.tsrx
+@@ -1,4 +1,4 @@
+-import { Renderer } from '../components/Renderer.ripple';
++import { Renderer } from '../components/Renderer.tsrx';
+ 
+ /**
+  * Router component.
+@@ -7,7 +7,9 @@ import { Renderer } from '../components/Renderer.ripple';
+  * @param props.children - The router children.
   * @returns The router component.
   */
- export component Router(props) {
+-export component Router(props) {
 -	<props.children />
-+	{props.children}
-     <Renderer />
+-    <Renderer />
++export function Router(props) @{
++    <>
++        {props.children}
++        <Renderer />
++    </>
  }
+diff --git a/src/contexts/RoutesContext.ripple b/src/contexts/RoutesContext.tsrx
+similarity index 100%
+rename from src/contexts/RoutesContext.ripple
+rename to src/contexts/RoutesContext.tsrx
+diff --git a/src/index.ts b/src/index.ts
+index 1272c6a52a5260a8753ca4d6766f4c8fe2c6c8a8..c7f44a2014753844cf6578f056ffa794543381d8 100644
+--- a/src/index.ts
++++ b/src/index.ts
+@@ -1,6 +1,6 @@
+-export { Router } from './components/Router.ripple';
+-export { Route } from './components/Route.ripple';
+-export { Link } from './components/Link.ripple';
++export { Router } from './components/Router.tsrx';
++export { Route } from './components/Route.tsrx';
++export { Link } from './components/Link.tsrx';
+ 
+ export { default as navigateTo } from './utils/navigateTo';
+ 

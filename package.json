@@ -18,26 +18,27 @@
    "license": "MIT",
    "devDependencies": {
       "@prettier/plugin-php": "^0.25.0",
-      "@ripple-ts/eslint-parser": "0.3.12",
-      "@ripple-ts/eslint-plugin": "0.3.12",
-      "@ripple-ts/prettier-plugin": "0.3.12",
-      "@ripple-ts/typescript-plugin": "0.3.12",
-      "@ripple-ts/vite-plugin": "0.3.12",
-      "@types/node": "^25.6.0",
-      "@typescript-eslint/parser": "^8.58.1",
+      "@ripple-ts/eslint-parser": "0.3.25",
+      "@ripple-ts/eslint-plugin": "0.3.25",
+      "@ripple-ts/prettier-plugin": "0.3.25",
+      "@ripple-ts/typescript-plugin": "1.0.1",
+      "@ripple-ts/vite-plugin": "0.3.84",
+      "@types/node": "^25.9.4",
+      "@typescript-eslint/parser": "^8.61.1",
       "eslint": "^9.39.4",
-      "prettier": "^3.8.2",
+      "prettier": "^3.8.4",
       "typescript": "^5.9.3",
-      "vite": "^7.3.2",
-      "vitest": "^4.1.4"
+      "vite": "^7.3.5",
+      "vitest": "^4.1.9"
    },
    "dependencies": {
       "notyf": "^3.10.0",
-      "ripple": "0.3.12",
+      "ripple": "0.3.84",
       "ripple-router": "^1.0.1"
    },
    "packageManager": "bun@1.3.10",
    "patchedDependencies": {
-      "ripple-router@1.0.1": "patches/ripple-router@1.0.1.patch"
+      "ripple-router@1.0.1": "patches/ripple-router@1.0.1.patch",
+      "@ripple-ts/eslint-parser@0.3.25": "patches/@ripple-ts%2Feslint-parser@0.3.25.patch"
    }
 }

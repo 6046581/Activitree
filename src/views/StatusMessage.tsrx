@@ -1,4 +1,4 @@
-export component StatusMessage(props: Record<string, any>) {
+export function StatusMessage(props: Record<string, any>) @{
    let loading = Boolean(props?.["loading"] ?? false);
 
    const icon = String(props?.["icon"] ?? "fas fa-info-circle");
@@ -6,16 +6,21 @@ export component StatusMessage(props: Record<string, any>) {
    const label = String(props?.["label"] ?? "");
    const link = props?.["link"] ?? null;
 
+   <>
    <article class="message" role="status">
-      if (loading) {
-         <i class="fas fa-spinner fa-spin" aria-hidden="true" />
-         <p>{"Loading..."}</p>
-      } else {
-         <i class={icon} aria-hidden="true" />
-         <div>
-            <h4>{title}</h4>
-            <p>{label}</p>
-         </div>
+      @if (loading) {
+         <>
+            <i class="fas fa-spinner fa-spin" aria-hidden="true" />
+            <p>{"Loading..."}</p>
+         </>
+      } @else {
+         <>
+            <i class={icon} aria-hidden="true" />
+            <div>
+               <h4>{title}</h4>
+               <p>{label}</p>
+            </div>
+         </>
       }
    </article>
 
@@ -46,4 +51,5 @@ export component StatusMessage(props: Record<string, any>) {
          margin: 0;
       }
    </style>
+   </>
 }

@@ -1,6 +1,6 @@
 import { track } from "ripple";
 
-export component Wallpaper() {
+export function Wallpaper() @{
    let wallpaperSrc = track("");
    let loadError = track(false);
 
@@ -22,8 +22,9 @@ export component Wallpaper() {
 
    wallpaperSrc.value = getRandomWallpaper();
 
+   <>
    <div id="wallpaper">
-      if (!loadError.value) {
+      @if (!loadError.value) {
          <img src={wallpaperSrc.value} alt="Wallpaper" loading="lazy" onload={handleImageLoad} onerror={handleImageError} />
       }
    </div>
@@ -64,4 +65,5 @@ export component Wallpaper() {
          }
       }
    </style>
+   </>
 }
