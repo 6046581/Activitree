@@ -1,4 +1,3 @@
-import { effect } from "ripple";
 import { Router, Route } from "ripple-router";
 
 // Pages
@@ -14,25 +13,6 @@ import { NavBar } from "./components/NavBar.tsrx";
 import { Wallpaper } from "./components/Wallpaper.tsrx";
 
 export function App() @{
-   effect(() => {
-      let previousPathname = window.location.pathname;
-
-      function handlePopState() {
-         const currentPathname = window.location.pathname;
-
-         // HACK: force a full reload when the route path changes to prevent many many many display issues. Ripple-router is such a pain.
-         if (true && currentPathname !== previousPathname) {
-            window.location.reload();
-            return;
-         }
-
-         previousPathname = currentPathname;
-      }
-
-      window.addEventListener("popstate", handlePopState);
-      return () => window.removeEventListener("popstate", handlePopState);
-   }, []);
-
    <>
    <div class="app">
       <Wallpaper />
